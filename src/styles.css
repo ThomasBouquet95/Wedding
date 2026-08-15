@@ -76,20 +76,9 @@
   &:hover img {
     transform: scale(1.045);
   }
-  /* Voile blanc semi-transparent pour alléger et uniformiser les photos. */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(255, 255, 255, 0.16);
-    pointer-events: none;
-    transition: background 0.5s ease;
-  }
-  &:hover::after {
-    background: rgba(255, 255, 255, 0.05);
-  }
+  /* Le voile blanc qui « unifiait » les photos a disparu avec le filtre global :
+     posé sur des images déjà étalonnées, il ne faisait que les laiter. */
 }
-
 
 @utility eyebrow {
   font-family: var(--font-display);
@@ -199,7 +188,7 @@
   --secondary: oklch(0.945 0.012 110);
   --secondary-foreground: oklch(0.36 0.014 130);
   --muted: oklch(0.955 0.008 100);
-  --muted-foreground: oklch(0.56 0.012 125);
+  --muted-foreground: oklch(0.505 0.014 128);
   --accent: oklch(0.9 0.017 120);
   --accent-foreground: oklch(0.33 0.014 130);
   --sage: oklch(0.82 0.021 125);
@@ -284,13 +273,13 @@
     line-height: 1.7;
   }
 
-  /* Traitement photographique unifié : légèrement désaturé, clair, voilé de blanc
-     pour donner une cohérence aérienne à toutes les images du site.
-     Opt-out : data-tone="raw" (illustrations, logos). */
-  img:not([data-tone="raw"]) {
-    filter: saturate(0.72) contrast(0.97) brightness(1.32) sepia(0.02);
-  }
+  /* L'harmonisation des photographies est faite en amont, image par image, par
+     `scripts/grade-photos.py` : même point noir, même point blanc, hautes
+     lumières préservées. Un filtre CSS global ne peut pas y arriver — un même
+     `brightness()` éclaircit une photo sombre et brûle une photo déjà claire,
+     ce qui creusait justement les écarts qu'il prétendait combler.
 
+     Il ne reste donc rien à corriger ici. */
 
   h1,
   h2,

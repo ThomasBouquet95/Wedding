@@ -61,7 +61,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
           </button>
           {/* Lien brut (rechargement complet) plutôt que <Link> : le routeur
               vient d'échouer. `BASE_URL` tient compte du sous-chemin de
-              déploiement, "/Wedding/" sur GitHub Pages. */}
+              déploiement lorsque le site n'est pas servi à la racine. */}
           <a
             href={import.meta.env.BASE_URL}
             className="border border-border px-8 py-3.5 label-xs text-ink transition-colors hover:bg-secondary"
@@ -123,8 +123,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=Karla:wght@300;400;500&display=swap",
       },
-      // `BASE_URL` vaut "/" à la racine, "/Wedding/" sous GitHub Pages : le
-      // favicon suit le sous-chemin sur lequel le site est servi.
+      // `BASE_URL` vaut "/" à la racine : le favicon suit le sous-chemin sur
+      // lequel le site est servi.
       { rel: "icon", href: `${import.meta.env.BASE_URL}favicon.ico`, type: "image/x-icon" },
     ],
   }),

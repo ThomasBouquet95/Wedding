@@ -1,9 +1,5 @@
 # Mise en ligne sur Vercel
 
-> Alternative : `DEPLOIEMENT-GITHUB-PAGES.md` décrit une mise en ligne statique
-> sur GitHub Pages, automatisée par GitHub Actions. Les deux cibles coexistent
-> dans le dépôt.
-
 ## Avant toute chose
 
 Déclarer le domaine définitif dans la variable d'environnement `VITE_SITE_URL`,

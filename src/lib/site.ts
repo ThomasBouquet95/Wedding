@@ -3,8 +3,7 @@
  * og:image) et les balises canoniques, qui exigent des URL absolues.
  *
  * Renseignée au build par `VITE_SITE_URL`, sans slash final, et en incluant le
- * sous-chemin si le site n'est pas servi à la racine — par exemple
- * `https://thomasbouquet95.github.io/Wedding` sur GitHub Pages.
+ * sous-chemin si le site n'est pas servi à la racine.
  *
  * À défaut, le domaine définitif ci-dessous sert de valeur par défaut.
  */

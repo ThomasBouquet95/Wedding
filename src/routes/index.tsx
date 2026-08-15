@@ -85,14 +85,12 @@ function Index() {
           decoding="async"
           className="absolute inset-0 -z-10 size-full object-cover object-[50%_45%]"
         />
-        {/* Voile blanc léger pour éclaircir et uniformiser la photo. */}
-        <div className="absolute inset-0 z-[-9] bg-white/18" />
-        <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/55 via-ink/5 to-ink/15" />
-
+        {/* Voile sombre unique, concentré sur le bas où se pose le titre. */}
+        <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/82 via-ink/48 to-ink/12" />
 
         <div className="container-page">
           <Reveal>
-            <p className="label-xs text-background/85">Provence · 2027</p>
+            <p className="label-xs text-background">Provence · 2027</p>
             <h1 className="mt-6 display-xl text-background">
               Alexandra
               <span className="mx-3 font-serif italic text-background/70 sm:mx-5">&amp;</span>
@@ -161,7 +159,9 @@ function Index() {
         <Reveal className="order-2 flex items-center px-6 py-20 sm:px-14 lg:order-1 lg:py-28">
           <div className="max-w-md">
             <p className="eyebrow">Le lieu</p>
-            <h2 className="mt-6 display-md text-ink">Un couvent du XIIIᵉ, posé dans les collines</h2>
+            <h2 className="mt-6 display-md text-ink">
+              Un couvent du XIIIᵉ, posé dans les collines
+            </h2>
             <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">
               Cour ombragée, chapelle, longues terrasses ouvertes sur la vallée : nous y passerons
               tout le week-end, entre Luberon et plateau de Valensole.
@@ -227,9 +227,9 @@ function Index() {
           loading="lazy"
           className="absolute inset-0 -z-10 size-full object-cover"
         />
-        {/* Voile blanc léger pour éclaircir et uniformiser la photo. */}
-        <div className="absolute inset-0 z-[-9] bg-white/15" />
-        <div className="absolute inset-0 z-[-8] bg-ink/35" />
+        {/* Le texte est centré sur toute la hauteur : ici un voile uniforme,
+            un peu plus dense, plutôt qu'un dégradé. */}
+        <div className="absolute inset-0 z-[-8] bg-ink/45" />
 
         <Reveal className="container-page py-20 text-center">
           <p className="label-xs text-background/85">Galerie</p>
@@ -283,12 +283,7 @@ function Index() {
                   rel="noreferrer noopener"
                   className="img-zoom relative block aspect-square w-full"
                 >
-                  <img
-                    src={p.src}
-                    alt={p.alt}
-                    loading="lazy"
-                    className="size-full object-cover"
-                  />
+                  <img src={p.src} alt={p.alt} loading="lazy" className="size-full object-cover" />
                   <span className="absolute inset-0 flex items-center justify-center bg-ink/0 opacity-0 transition-all duration-500 hover:bg-ink/35 hover:opacity-100">
                     <Instagram className="size-5 text-background" strokeWidth={1.2} />
                   </span>

@@ -6,15 +6,16 @@
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
-// Build statique pour GitHub Pages : `STATIC_BUILD=true npm run build` écrit
-// dans `dist/client/` un dossier de fichiers HTML/CSS/JS servable tel quel,
-// une page HTML complète par route. Sans cette variable, le build reste celui
-// d'origine (SSR via Nitro, cf. DEPLOIEMENT-VERCEL.md).
+// Option de build statique, inutilisée par le déploiement Vercel courant :
+// `STATIC_BUILD=true npm run build` écrit dans `dist/client/` un dossier de
+// fichiers servable tel quel, une page HTML complète par route. Pratique pour
+// prévisualiser le site sans serveur, ou pour un hébergeur purement statique.
+// Sans cette variable, le build reste le SSR Nitro (cf. DEPLOIEMENT-VERCEL.md).
 const isStaticBuild = process.env["STATIC_BUILD"] === "true";
 
-// GitHub Pages sert le site sous `/<nom-du-dépôt>/` tant qu'aucun domaine
-// personnalisé n'est branché. Le workflow renseigne BASE_PATH en conséquence ;
-// avec un domaine personnalisé (site servi à la racine), laisser vide.
+// Sous-chemin de service. Vide (donc « / ») pour un site servi à la racine,
+// ce qui est le cas sur Vercel ; à renseigner seulement si le site est publié
+// dans un sous-dossier.
 const basePath = process.env["BASE_PATH"] || "/";
 
 export default defineConfig({

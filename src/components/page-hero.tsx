@@ -21,14 +21,15 @@ export function PageHero({
         className="absolute inset-0 -z-10 size-full object-cover"
         loading="eager"
       />
-      {/* Voile blanc léger pour éclaircir et uniformiser la photo. */}
-      <div className="absolute inset-0 z-[-9] bg-white/22" />
-      <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/50 via-ink/10 to-ink/15" />
-
+      {/* Un seul voile, sombre, et seulement là où le titre se pose. Le voile
+          blanc qui le précédait éclaircissait la photo pour la « stabiliser »,
+          puis ce dégradé la rassombrissait pour rendre le texte lisible : les
+          deux s'annulaient, en ne laissant que la perte de contraste. */}
+      <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/82 via-ink/55 to-ink/22" />
 
       <div className="container-page">
         <div className="max-w-2xl">
-          <p className="label-xs text-background/85">{eyebrow}</p>
+          <p className="label-xs text-background">{eyebrow}</p>
           <div className="mt-5 h-px w-14 bg-background/50" />
           <h1 className="mt-6 display-lg text-background">{title}</h1>
           {intro ? (
