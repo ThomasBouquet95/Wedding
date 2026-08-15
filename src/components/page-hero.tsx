@@ -25,7 +25,7 @@ export function PageHero({
           blanc qui le précédait éclaircissait la photo pour la « stabiliser »,
           puis ce dégradé la rassombrissait pour rendre le texte lisible : les
           deux s'annulaient, en ne laissant que la perte de contraste. */}
-      <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/82 via-ink/55 to-ink/22" />
+      <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/88 from-0% via-ink/68 via-45% to-transparent to-82%" />
 
       <div className="container-page">
         <div className="max-w-2xl">

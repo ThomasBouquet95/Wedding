@@ -87,7 +87,7 @@ function Page() {
         title="Questions fréquentes"
         intro="Les réponses aux questions que l'on nous pose le plus souvent sur le week-end."
         image={parc}
-        imageAlt="Le parc du Couvent Notre-Dame des Prés"
+        imageAlt="La piscine du domaine et ses transats"
       />
 
       <section className="container-page py-16 sm:py-24">

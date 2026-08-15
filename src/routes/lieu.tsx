@@ -30,10 +30,26 @@ export const Route = createFileRoute("/lieu")({
 });
 
 const practical = [
-  { icon: MapPin, title: "Adresse", text: "Couvent Notre-Dame des Prés, 04110 Reillanne, Provence" },
-  { icon: Clock, title: "Temps de trajet", text: "Aix-en-Provence 1h · Marseille 1h30 · Avignon 1h15 · Nice 2h15" },
-  { icon: Car, title: "Parking", text: "Stationnement gratuit sur place, à deux pas de l'entrée du domaine." },
-  { icon: TreePalm, title: "Le domaine", text: "Un ancien couvent du XIIIᵉ siècle, ses jardins, sa chapelle, sa piscine et ses oliviers." },
+  {
+    icon: MapPin,
+    title: "Adresse",
+    text: "Couvent Notre-Dame des Prés, 04110 Reillanne, Provence",
+  },
+  {
+    icon: Clock,
+    title: "Temps de trajet",
+    text: "Aix-en-Provence 1h · Marseille 1h30 · Avignon 1h15 · Nice 2h15",
+  },
+  {
+    icon: Car,
+    title: "Parking",
+    text: "Stationnement gratuit sur place, à deux pas de l'entrée du domaine.",
+  },
+  {
+    icon: TreePalm,
+    title: "Le domaine",
+    text: "Un ancien couvent du XIIIᵉ siècle, ses jardins, sa chapelle, sa piscine et ses oliviers.",
+  },
 ];
 
 function Page() {

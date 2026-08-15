@@ -75,7 +75,7 @@ function Page() {
         title="Tout ce qu'il faut savoir"
         intro="Quelques repères pour préparer sereinement votre week-end en Provence."
         image={bambouseraie}
-        imageAlt="La bambouseraie du domaine"
+        imageAlt="L'allée de cérémonie, chaises alignées sous les bambous"
       />
 
       <section className="container-page py-16 sm:py-24">

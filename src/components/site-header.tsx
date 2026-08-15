@@ -59,7 +59,7 @@ export function SiteHeader() {
           "fixed inset-x-0 top-0 z-50 transition-all duration-700",
           solid
             ? "border-b border-border/60 bg-background/90 backdrop-blur-xl"
-            : "border-b border-transparent bg-gradient-to-b from-ink/55 via-ink/20 to-transparent",
+            : "border-b border-transparent bg-gradient-to-b from-ink/60 via-ink/25 to-transparent",
         )}
       >
         <div className="container-page grid h-[4.25rem] grid-cols-[minmax(0,1fr)_auto] items-center gap-4 lg:h-[5.25rem] lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]">

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
-import chambre from "@/assets/chambre.webp";
+import couloir from "@/assets/couloir.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
@@ -122,8 +122,8 @@ function Page() {
         eyebrow="Hébergements"
         title="Où dormir"
         intro="Réservez tôt : la Provence se remplit vite en juin. Voici les adresses que nous avons repérées autour du domaine."
-        image={chambre}
-        imageAlt="Une chambre du Couvent Notre-Dame des Prés"
+        image={couloir}
+        imageAlt="Un couloir du Couvent Notre-Dame des Prés, oliviers en pot"
       />
 
       <section className="container-page py-16 sm:py-24">

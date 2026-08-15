@@ -2,13 +2,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import hero from "@/assets/hero.webp";
-import facade from "@/assets/facade.webp";
+import bambouseraie from "@/assets/bambouseraie.webp";
 import cour from "@/assets/cour.webp";
 import drone from "@/assets/drone.webp";
+import reception from "@/assets/reception.webp";
+import arcades from "@/assets/arcades.webp";
+import piscine from "@/assets/piscine.webp";
+import oliviers from "@/assets/oliviers.webp";
+import diner from "@/assets/diner.webp";
+import salle from "@/assets/salle.webp";
+import couloir from "@/assets/couloir.webp";
+import soiree from "@/assets/soiree.webp";
+import toits from "@/assets/toits.webp";
+import chapelle from "@/assets/chapelle.webp";
+import courHaute from "@/assets/cour-haute.webp";
+import facade from "@/assets/facade.webp";
 import parc from "@/assets/parc.webp";
-import chambre from "@/assets/chambre.webp";
-import bambouseraie from "@/assets/bambouseraie.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 
@@ -30,14 +39,49 @@ export const Route = createFileRoute("/galerie")({
   component: Page,
 });
 
+/** `span` fait respirer la grille : les images verticales les plus fortes
+ *  occupent deux rangées, les panoramiques deux colonnes. */
 const photos = [
-  { src: hero, alt: "La façade du couvent et sa piscine", span: "sm:row-span-2" },
-  { src: facade, alt: "La façade du Couvent Notre-Dame des Prés", span: "" },
-  { src: drone, alt: "Vue aérienne du domaine et de son parc", span: "" },
-  { src: parc, alt: "Le parc du couvent et ses arbres centenaires", span: "sm:col-span-2" },
-  { src: cour, alt: "La cour intérieure et ses arcades, tables dressées", span: "sm:col-span-2" },
-  { src: bambouseraie, alt: "La bambouseraie du domaine", span: "" },
-  { src: chambre, alt: "Une des chambres du couvent", span: "sm:row-span-2" },
+  {
+    src: bambouseraie,
+    alt: "L'allée de cérémonie, chaises alignées sous les bambous",
+    span: "sm:row-span-2",
+  },
+  { src: facade, alt: "La façade du Couvent Notre-Dame des Prés en plein jour", span: "" },
+  { src: piscine, alt: "La piscine du domaine, vue à la verticale", span: "" },
+  {
+    src: reception,
+    alt: "La réception devant la façade, sous les voiles d'ombrage",
+    span: "sm:col-span-2",
+  },
+  {
+    src: cour,
+    alt: "Le cloître, longues tables dressées sous les guirlandes",
+    span: "sm:row-span-2",
+  },
+  { src: oliviers, alt: "La façade bordée d'oliviers et de lavandes", span: "" },
+  { src: arcades, alt: "Les arcades de pierre ouvrant sur la cour", span: "" },
+  {
+    src: drone,
+    alt: "Le domaine vu du ciel au crépuscule, la cour illuminée",
+    span: "sm:row-span-2",
+  },
+  {
+    src: courHaute,
+    alt: "La cour carrée et ses tables rondes, vues du ciel",
+    span: "sm:col-span-2",
+  },
+  { src: soiree, alt: "Le salon de bambou au couchant", span: "" },
+  {
+    src: diner,
+    alt: "Le dîner dressé dans le cloître, vu depuis les étages",
+    span: "sm:row-span-2",
+  },
+  { src: salle, alt: "La salle voûtée et son bar, sous les guirlandes", span: "sm:col-span-2" },
+  { src: couloir, alt: "Un couloir du couvent, oliviers en pot et voûtes de pierre", span: "" },
+  { src: toits, alt: "Les toitures du couvent et la vallée", span: "" },
+  { src: parc, alt: "La piscine et ses transats, au pied des grands arbres", span: "" },
+  { src: chapelle, alt: "La façade de la chapelle du couvent", span: "sm:col-span-2" },
 ];
 
 function Page() {
@@ -63,13 +107,17 @@ function Page() {
       <PageHero
         eyebrow="Galerie"
         title="Quelques images"
-        intro="Un avant-goût du lieu et de la lumière de juin, au fil des jardins, du parc et des façades de pierre du couvent."
-        image={parc}
-        imageAlt="Le parc du Couvent Notre-Dame des Prés"
+        intro="Un avant-goût du lieu et de la lumière de juin : le cloître, la bambouseraie, la piscine et les façades de pierre."
+        image={reception}
+        imageAlt="La réception devant la façade du couvent, au couchant"
       />
 
       <section className="container-page py-16 sm:py-24">
-        <div className="grid auto-rows-[220px] grid-cols-1 gap-3 sm:grid-cols-3 sm:auto-rows-[260px]">
+        {/* `grid-flow-dense` : les vignettes sur deux rangées ou deux colonnes
+            laissent sinon des trous, que les images suivantes viennent combler
+            en remontant. L'ordre de lecture s'en trouve légèrement bousculé,
+            sans conséquence pour une galerie. */}
+        <div className="grid auto-rows-[220px] grid-flow-dense grid-cols-1 gap-3 sm:auto-rows-[260px] sm:grid-cols-3">
           {photos.map((p, i) => (
             <Reveal key={p.alt} delay={i * 60} className={p.span}>
               <button
@@ -78,16 +126,10 @@ function Page() {
                 aria-label={`Agrandir l'image : ${p.alt}`}
                 className="img-zoom size-full"
               >
-                <img
-                  src={p.src}
-                  alt={p.alt}
-                  loading="lazy"
-                  className="size-full object-cover"
-                />
+                <img src={p.src} alt={p.alt} loading="lazy" className="size-full object-cover" />
               </button>
             </Reveal>
           ))}
-
         </div>
       </section>
 

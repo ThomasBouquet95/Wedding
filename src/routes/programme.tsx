@@ -62,7 +62,7 @@ function Page() {
         title="Le week-end, jour par jour"
         intro="Les horaires indiqués sont donnés à titre indicatif et seront précisés d'ici le printemps 2027."
         image={cour}
-        imageAlt="La cour intérieure du couvent, tables dressées en plein jour"
+        imageAlt="Le cloître du couvent, tables dressées sous les guirlandes"
       />
 
       <section className="container-page py-16 sm:py-24">

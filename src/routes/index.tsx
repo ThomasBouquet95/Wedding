@@ -7,7 +7,7 @@ import facadePiscine from "@/assets/facade-piscine.webp";
 import parc from "@/assets/parc.webp";
 import drone from "@/assets/drone.webp";
 import bambouseraie from "@/assets/bambouseraie.webp";
-import chambre from "@/assets/chambre.webp";
+import couloir from "@/assets/couloir.webp";
 import olive from "@/assets/olive-sprig.webp";
 import { Reveal } from "@/components/reveal";
 
@@ -51,7 +51,7 @@ const sections = [
     label: "Le programme",
     text: "Le déroulé du week-end : soirée d'accueil le vendredi, cérémonie et dîner le samedi, journée libre le dimanche.",
     image: drone,
-    alt: "Vue aérienne du couvent, de son parc et de la piscine",
+    alt: "Le domaine vu du ciel au crépuscule, la cour illuminée",
   },
   {
     to: "/informations",
@@ -59,15 +59,15 @@ const sections = [
     label: "Comment venir",
     text: "Train, avion, voiture, covoiturage entre invités et stationnement au domaine.",
     image: facadePiscine,
-    alt: "La façade du couvent et la piscine, en plein jour",
+    alt: "Le domaine et sa piscine vus du ciel",
   },
   {
     to: "/hebergements",
     n: "03",
     label: "Où dormir",
     text: "Nos adresses préférées, du village de Reillanne à Forcalquier, de 5 à 25 minutes.",
-    image: chambre,
-    alt: "Une chambre du couvent, fenêtre ouverte sur le parc",
+    image: couloir,
+    alt: "Un couloir du couvent, oliviers en pot et voûtes de pierre",
   },
 ] as const;
 
@@ -78,15 +78,15 @@ function Index() {
       <section className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden pb-14 sm:pb-20">
         <img
           src={hero}
-          alt="La façade du Couvent Notre-Dame des Prés et sa piscine, sous le soleil de Provence"
-          width={1500}
-          height={2250}
+          alt="La façade du couvent au couchant, salon de plein air et guirlandes lumineuses"
+          width={1800}
+          height={1171}
           fetchPriority="high"
           decoding="async"
           className="absolute inset-0 -z-10 size-full object-cover object-[50%_45%]"
         />
         {/* Voile sombre unique, concentré sur le bas où se pose le titre. */}
-        <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/82 via-ink/48 to-ink/12" />
+        <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/88 from-0% via-ink/70 via-42% to-transparent to-76%" />
 
         <div className="container-page">
           <Reveal>
@@ -178,7 +178,7 @@ function Index() {
         <div className="img-zoom order-1 h-[54svh] lg:order-2 lg:h-auto">
           <img
             src={cour}
-            alt="La cour intérieure du couvent et ses arcades, tables dressées en plein jour"
+            alt="Le cloître du couvent, longues tables dressées sous les guirlandes"
             loading="lazy"
             className="size-full object-cover"
           />
@@ -223,7 +223,7 @@ function Index() {
       <section className="relative isolate flex min-h-[52svh] items-center overflow-hidden">
         <img
           src={parc}
-          alt="Le parc du Couvent Notre-Dame des Prés"
+          alt="La piscine du domaine et ses transats, au pied des grands arbres"
           loading="lazy"
           className="absolute inset-0 -z-10 size-full object-cover"
         />
@@ -271,10 +271,10 @@ function Index() {
 
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { src: parc, alt: "Le parc du couvent" },
-              { src: bambouseraie, alt: "La bambouseraie du domaine" },
-              { src: drone, alt: "Vue aérienne du domaine" },
-              { src: chambre, alt: "Une chambre du couvent" },
+              { src: parc, alt: "La piscine et ses transats" },
+              { src: bambouseraie, alt: "L'allée de cérémonie sous les bambous" },
+              { src: drone, alt: "Le domaine vu du ciel au crépuscule" },
+              { src: couloir, alt: "Un couloir du couvent et ses oliviers en pot" },
             ].map((p, i) => (
               <Reveal key={p.alt} delay={i * 90}>
                 <a

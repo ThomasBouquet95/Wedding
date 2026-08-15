@@ -8,10 +8,16 @@ impossible : un même `brightness()` éclaircit correctement une photo sombre et
 brûle une photo déjà claire. Le calage se fait donc ici, image par image, avant
 le build — le CSS n'a plus qu'à ne rien abîmer.
 
-Chaque image est ramenée aux mêmes repères tonaux (point noir, point blanc,
+Chaque image est rapprochée de repères tonaux communs (point noir, point blanc,
 luminance moyenne), avec une épaule douce dans les hautes lumières : les blancs
 se tassent sous un plafond au lieu de brûler, là où une multiplication brutale
 écrête et détruit le détail.
+
+« Rapprochée », pas « alignée » : les photographies viennent de photographes
+différents et sont déjà étalonnées. Les caler toutes sur la même luminance
+effacerait ce qui fait leur intérêt — une vue au crépuscule doit rester plus
+sombre qu'un couloir en plein midi. `STRENGTH` règle donc la part du chemin
+parcourue vers la cible ; le reste de l'écart est du parti pris, pas un défaut.
 
     python3 scripts/grade-photos.py
 
@@ -30,14 +36,22 @@ ROOT = Path(__file__).resolve().parent.parent
 SOURCE_DIR = ROOT / "src" / "assets" / "source"
 OUTPUT_DIR = ROOT / "src" / "assets"
 
-# Qualité WebP : 86 place le poids total au niveau des originaux (~2 Mo) ;
-# au-delà, la taille grimpe sans gain visible sur ces photographies.
+# Sortie : les sources sont conservées en pleine définition, mais le site n'a
+# besoin que de ces dimensions. 1500 px et qualité 78 tiennent la galerie
+# entière sous ~3,5 Mo, chargée en différé, sans ramollir les pleines largeurs.
+MAX_OUTPUT_EDGE = 1500
+WEBP_QUALITY = 78
 
 # Les illustrations détourées (logos, rameau d'olivier) n'ont rien à voir avec
 # la photographie : les étalonner écraserait leur transparence et leur trait.
 SKIP = {"olive-sprig.webp"}
 
 # --- Repères de l'étalonnage -------------------------------------------------
+# Part du chemin parcourue vers les cibles ci-dessous. 1 = normalisation
+# complète (les photos se ressemblent, mais l'heure de la journée disparaît),
+# 0 = aucune correction. À 0,35 les écarts criants se resserrent et les
+# intentions du photographe survivent.
+STRENGTH = 0.35
 # Luminance visée, en lumière linéaire. Volontairement claire (ambiance
 # estivale, pierre blonde) mais loin de la saturation.
 TARGET_MEAN = 0.44
@@ -54,11 +68,12 @@ SHOULDER = 0.72
 # linéaire de 0,99 est déjà encodée 255 en sRGB, donc viser 1 laisserait
 # réapparaître du blanc pur dans les ciels.
 CEILING = 0.96
-# Désaturation légère, pour la cohérence entre photos et la palette du site.
-SATURATION = 0.84
-# Réchauffement assumé : la pierre blonde et la lumière rasante des photos de
-# référence tirent nettement vers l'ambre, le bleu est retenu d'autant.
-WARMTH = np.array([1.030, 1.004, 0.963], dtype=np.float32)
+# Désaturation quasi nulle : ces photographies sont déjà sourdes, en pousser
+# davantage les viderait.
+SATURATION = 0.96
+# Réchauffement à peine perceptible : la lumière ambrée est déjà dans les
+# fichiers, il n'y a rien à ajouter.
+WARMTH = np.array([1.008, 1.001, 0.991], dtype=np.float32)
 
 LUMA = np.array([0.2126, 0.7152, 0.0722], dtype=np.float32)
 
@@ -93,21 +108,22 @@ def grade(image):
 
     luma = lin @ LUMA
 
-    # 1. Même point noir et même point blanc pour toutes les photos : c'est ce
-    #    calage qui fait qu'elles se ressemblent enfin.
+    # 1. Rapprochement des points noir et blanc : c'est ce calage qui resserre
+    #    les écarts les plus visibles d'une photo à l'autre.
     black = np.percentile(luma, BLACK_PCT)
     white = np.percentile(luma, WHITE_PCT)
     if white - black < 1e-4:
         return image
-    lin = (lin - black) / (white - black)
-    lin = lin * (TARGET_WHITE - TARGET_BLACK) + TARGET_BLACK
-    lin = np.clip(lin, 0.0, None)
+    stretched = (lin - black) / (white - black)
+    stretched = stretched * (TARGET_WHITE - TARGET_BLACK) + TARGET_BLACK
+    lin = np.clip(lin + (stretched - lin) * STRENGTH, 0.0, None)
 
-    # 2. Exposition alignée sur la luminance visée. Le gain est borné pour ne
-    #    pas transformer une photo de nuit en plein jour.
+    # 2. Exposition rapprochée de la luminance visée, du même pas partiel. Le
+    #    gain est borné pour ne pas transformer une photo de nuit en plein jour.
     mean = float((lin @ LUMA).mean())
     if mean > 1e-4:
-        lin *= np.clip(TARGET_MEAN / mean, 0.6, 1.7)
+        gain = np.clip(TARGET_MEAN / mean, 0.6, 1.7)
+        lin *= 1.0 + (gain - 1.0) * STRENGTH
 
     # 3. Désaturation et réchauffement, appliqués sur une base déjà homogène.
     grey = (lin @ LUMA)[..., None]
@@ -148,7 +164,9 @@ def main():
         graded = grade(image)
         after, clipped = stats(graded)
 
-        graded.save(OUTPUT_DIR / path.name, "WEBP", quality=86, method=6)
+        if max(graded.size) > MAX_OUTPUT_EDGE:
+            graded.thumbnail((MAX_OUTPUT_EDGE, MAX_OUTPUT_EDGE), Image.LANCZOS)
+        graded.save(OUTPUT_DIR / path.name, "WEBP", quality=WEBP_QUALITY, method=6)
         print(f"{path.name:24}{before:9.2f}{after:9.2f}{clipped:7.1f}%")
 
 
