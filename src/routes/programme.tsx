@@ -3,66 +3,47 @@ import { SITE_URL } from "@/lib/site";
 import cour from "@/assets/cour.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
+import { translations, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/programme")({
-  head: () => ({
-    meta: [
-      { title: "Le programme — Alexandra & Thomas" },
-      {
-        name: "description",
-        content:
-          "Le déroulé du mariage : soirée d'accueil le vendredi 25, cérémonie et dîner le samedi 26 juin 2027, journée libre le dimanche 27.",
-      },
-      { property: "og:title", content: "Le programme — Alexandra & Thomas" },
-      {
-        property: "og:description",
-        content: "Vendredi 25, samedi 26 et journée libre le dimanche 27 juin 2027.",
-      },
-      { property: "og:url", content: SITE_URL + "/programme" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/programme" }],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].programme;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical =
+      match.search.lang === "en" ? SITE_URL + "/programme?lang=en" : SITE_URL + "/programme";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/programme" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/programme?lang=en" },
+      ],
+    };
+  },
   component: Page,
 });
 
-const days = [
-  {
-    day: "Vendredi 25 juin",
-    subtitle: "Soirée d'accueil",
-    note: "Arrivée tranquille, puis la soirée d'accueil, tous ensemble sous les arbres.",
-    events: [
-      { time: "À partir de 17h", label: "Arrivée et installation" },
-      { time: "18h", label: "Soirée d'accueil" },
-    ],
-  },
-  {
-    day: "Samedi 26 juin",
-    subtitle: "Le grand jour",
-    note: "La journée principale : cérémonie dans le parc, puis dîner et soirée dans la cour. Robe longue et costume attendus.",
-    events: [
-      { time: "16h", label: "Cérémonie" },
-      { time: "20h", label: "Dîner et soirée" },
-    ],
-  },
-  {
-    day: "Dimanche 27 juin",
-    subtitle: "Journée libre",
-    note: "Rien d'obligatoire : le lieu reste à votre disposition pour prolonger les festivités, piscine comprise.",
-    events: [
-      { time: "Toute la journée", label: "Le lieu et la piscine restent à votre disposition" },
-    ],
-  },
-];
-
 function Page() {
+  const t = useT();
+  const days = t.programme.days;
+
   return (
     <>
       <PageHero
-        eyebrow="Programme"
-        title="Le week-end, jour par jour"
-        intro="Les horaires indiqués sont donnés à titre indicatif et seront précisés d'ici le printemps 2027."
+        eyebrow={t.programme.eyebrow}
+        title={t.programme.heading}
+        intro={t.programme.intro}
         image={cour}
-        imageAlt="Le cloître du couvent, tables dressées sous les guirlandes"
+        imageAlt={t.programme.heroAlt}
       />
 
       <section className="container-page py-16 sm:py-24">
@@ -110,7 +91,7 @@ function Page() {
 
         <Reveal className="mx-auto mt-8 max-w-5xl border-t border-border pt-10">
           <p className="text-center text-[0.9rem] leading-relaxed text-muted-foreground">
-            Les horaires définitifs seront mis à jour sur ce site au printemps 2027.
+            {t.programme.footer}
           </p>
         </Reveal>
       </section>

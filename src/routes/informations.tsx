@@ -4,78 +4,56 @@ import { Car, MessageCircle, Plane, Shirt, Sun, Train } from "lucide-react";
 import bambouseraie from "@/assets/bambouseraie.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
+import { translations, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/informations")({
-  head: () => ({
-    meta: [
-      { title: "Informations pratiques — Alexandra & Thomas" },
-      {
-        name: "description",
-        content:
-          "Dress code, météo, transports et parking pour le mariage des 25 et 26 juin 2027 en Provence.",
-      },
-      { property: "og:title", content: "Informations pratiques — Alexandra & Thomas" },
-      {
-        property: "og:description",
-        content: "Dress code, météo, transports et parking.",
-      },
-      { property: "og:url", content: SITE_URL + "/informations" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/informations" }],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].informations;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical =
+      match.search.lang === "en" ? SITE_URL + "/informations?lang=en" : SITE_URL + "/informations";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/informations" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/informations?lang=en" },
+      ],
+    };
+  },
   component: Page,
 });
 
-const blocks = [
-  {
-    icon: Shirt,
-    title: "Dress code",
-    group: "Le week-end",
-    text: "Élégance. Pour la soirée du samedi, robe longue attendue pour les femmes et costume pour les hommes. Le vendredi soir et le dimanche, tenue plus décontractée mais soignée. Prévoyez des talons compatibles avec les allées de gravier et une étole pour la fraîcheur du soir.",
-  },
-  {
-    icon: Sun,
-    title: "Météo habituelle",
-    group: "Le week-end",
-    text: "Fin juin en Provence : 28 à 32 °C en journée, 17 à 20 °C en soirée. Soleil franc, ombre précieuse et nuits douces.",
-  },
-  {
-    icon: MessageCircle,
-    title: "Langues parlées",
-    group: "Le week-end",
-    text: "Le week-end se déroulera en français et en anglais.",
-  },
-  {
-    icon: Plane,
-    title: "En avion",
-    group: "Y venir",
-    text: "Aéroport Marseille-Provence à 1h15, Nice Côte d'Azur à 2h15. Prévoyez une voiture de location à l'arrivée, ou une place dans celle d'un autre invité.",
-  },
-  {
-    icon: Train,
-    title: "En train",
-    group: "Y venir",
-    text: "Gare TGV Aix-en-Provence (1h) ou gare de Manosque-Gréoux (25 min). Il faudra ensuite louer une voiture, ou trouver une place dans celle d'un autre invité : nous mettrons en place une liste des personnes venant en voiture avec des places libres.",
-  },
-  {
-    icon: Car,
-    title: "En voiture et parking",
-    group: "Y venir",
-    text: "A51 sortie Manosque, puis 25 minutes de petites routes. Un parking gratuit se trouve à l'entrée du domaine.",
-  },
-];
-
-const groups = ["Le week-end", "Y venir"] as const;
-
 function Page() {
+  const t = useT();
+  const b = t.informations.blocks;
+  const groups = [t.informations.groups.weekend, t.informations.groups.coming] as const;
+  const blocks = [
+    { icon: Shirt, group: groups[0], ...b.dress },
+    { icon: Sun, group: groups[0], ...b.weather },
+    { icon: MessageCircle, group: groups[0], ...b.languages },
+    { icon: Plane, group: groups[1], ...b.plane },
+    { icon: Train, group: groups[1], ...b.train },
+    { icon: Car, group: groups[1], ...b.car },
+  ];
+
   return (
     <>
       <PageHero
-        eyebrow="Informations pratiques"
-        title="Tout ce qu'il faut savoir"
-        intro="Quelques repères pour préparer sereinement votre week-end en Provence."
+        eyebrow={t.informations.eyebrow}
+        title={t.informations.heading}
+        intro={t.informations.intro}
         image={bambouseraie}
-        imageAlt="L'allée de cérémonie, chaises alignées sous les bambous"
+        imageAlt={t.informations.heroAlt}
       />
 
       <section className="container-page py-16 sm:py-24">
@@ -112,21 +90,19 @@ function Page() {
         ))}
 
         <Reveal className="mt-20 border-t border-border pt-12 text-center">
-          <p className="text-[0.95rem] text-muted-foreground">
-            D'autres questions&nbsp;? La plupart des réponses sont déjà là.
-          </p>
+          <p className="text-[0.95rem] text-muted-foreground">{t.informations.footer}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Link
               to="/faq"
               className="inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
-              Consulter les questions fréquentes
+              {t.informations.faqCta}
             </Link>
             <Link
               to="/hebergements"
               className="inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
-              Voir les hébergements
+              {t.informations.stayCta}
             </Link>
           </div>
         </Reveal>

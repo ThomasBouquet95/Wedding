@@ -11,68 +11,49 @@ import bambouseraie from "@/assets/bambouseraie.webp";
 import couloir from "@/assets/couloir.webp";
 import olive from "@/assets/olive-sprig.webp";
 import { Reveal } from "@/components/reveal";
+import { translations, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Alexandra & Thomas — Mariage en Provence, 25-26 juin 2027" },
-      {
-        name: "description",
-        content:
-          "Toutes les informations pratiques du mariage d'Alexandra & Thomas, les 25 et 26 juin 2027 au Couvent Notre-Dame des Prés à Reillanne, avec une journée libre le 27 : programme, accès, hébergements.",
-      },
-      { property: "og:title", content: "Alexandra & Thomas — 25-26 juin 2027" },
-      {
-        property: "og:description",
-        content:
-          "Programme, accès et hébergements pour le week-end au Couvent Notre-Dame des Prés, Reillanne.",
-      },
-      { property: "og:url", content: SITE_URL + "/" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/" }],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].home;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical = match.search.lang === "en" ? SITE_URL + "/?lang=en" : SITE_URL + "/";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/?lang=en" },
+      ],
+    };
+  },
   component: Index,
 });
 
-const facts = [
-  {
-    icon: Calendar,
-    label: "Les dates",
-    value: "Vendredi 25 et samedi 26 juin 2027 · dimanche 27, journée libre",
-  },
-  { icon: MapPin, label: "Le lieu", value: "Couvent Notre-Dame des Prés, Reillanne" },
-  { icon: Shirt, label: "Tenue", value: "Robe longue et costume pour le samedi soir" },
-  { icon: Car, label: "Accès", value: "Aix 1h · Marseille 1h30 · parking sur place" },
-];
-
-const sections = [
-  {
-    to: "/programme",
-    n: "01",
-    label: "Le programme",
-    text: "Le déroulé du week-end : soirée d'accueil le vendredi, cérémonie et dîner le samedi, journée libre le dimanche.",
-    image: bambouseraie,
-    alt: "L'allée de cérémonie, chaises alignées sous les bambous",
-  },
-  {
-    to: "/informations",
-    n: "02",
-    label: "Comment venir",
-    text: "Train, avion, voiture, covoiturage entre invités et stationnement au domaine.",
-    image: facadePiscine,
-    alt: "Le domaine et sa piscine vus du ciel",
-  },
-  {
-    to: "/hebergements",
-    n: "03",
-    label: "Où dormir",
-    text: "Nos adresses préférées, du village de Reillanne à Forcalquier, de 5 à 25 minutes.",
-    image: couloir,
-    alt: "Un couloir du couvent, oliviers en pot et voûtes de pierre",
-  },
-] as const;
-
 function Index() {
+  const t = useT();
+  const home = t.home;
+  const facts = [
+    { icon: Calendar, ...home.facts.dates },
+    { icon: MapPin, ...home.facts.place },
+    { icon: Shirt, ...home.facts.dress },
+    { icon: Car, ...home.facts.access },
+  ];
+  const sections = [
+    { to: "/programme", n: "01", image: bambouseraie, ...home.sections.programme },
+    { to: "/informations", n: "02", image: facadePiscine, ...home.sections.informations },
+    { to: "/hebergements", n: "03", image: couloir, ...home.sections.hebergements },
+  ] as const;
+
   return (
     <>
       {/* Hero : la photographie porte tout, la typographie s'y pose */}
@@ -86,7 +67,7 @@ function Index() {
           <source media="(max-width: 767px)" srcSet={heroMobile} width={1446} height={1809} />
           <img
             src={hero}
-            alt="La façade du couvent au couchant, salon de plein air et guirlandes lumineuses"
+            alt={home.heroAlt}
             width={1800}
             height={1171}
             fetchPriority="high"
@@ -99,7 +80,7 @@ function Index() {
 
         <div className="container-page">
           <Reveal>
-            <p className="label-xs text-background">Provence · 2027</p>
+            <p className="label-xs text-background">{home.eyebrow}</p>
             <h1 className="mt-6 display-xl text-background">
               Alexandra
               <span className="mx-3 font-serif italic text-background/70 sm:mx-5">&amp;</span>
@@ -108,16 +89,14 @@ function Index() {
 
             <div className="mt-9 flex flex-col gap-6 border-t border-background/25 pt-6 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <p className="label-xs text-background">25 — 26 juin 2027</p>
-                <p className="mt-2 text-[0.95rem] text-background/80">
-                  Couvent Notre-Dame des Prés · Reillanne
-                </p>
+                <p className="label-xs text-background">{home.dates}</p>
+                <p className="mt-2 text-[0.95rem] text-background/80">{home.place}</p>
               </div>
               <Link
                 to="/programme"
                 className="inline-flex w-full items-center justify-center gap-3 border border-background/45 px-6 py-4 label-xs text-background transition-colors hover:bg-background hover:text-ink sm:w-fit sm:px-7 sm:py-3.5"
               >
-                Découvrir le week-end
+                {home.cta}
               </Link>
             </div>
           </Reveal>
@@ -135,13 +114,11 @@ function Index() {
             className="mx-auto h-10 w-auto opacity-70"
           />
           <p className="mx-auto mt-10 font-serif text-[1.6rem] leading-[1.5] font-light text-ink italic sm:text-[2rem]">
-            Un été en Provence, dans un couvent du XIIIᵉ siècle, entre pierre claire, cyprès et
-            oliviers.
+            {home.quote}
           </p>
           <div className="mx-auto mt-10 h-px w-16 bg-border" />
           <p className="mx-auto mt-10 max-w-xl text-[0.95rem] leading-relaxed text-muted-foreground">
-            Vous trouverez ici tout ce dont vous avez besoin pour préparer votre venue : le déroulé
-            des journées, le domaine, les accès et nos adresses pour dormir aux alentours.
+            {home.intro}
           </p>
         </Reveal>
       </section>
@@ -167,38 +144,30 @@ function Index() {
       <section className="grid lg:grid-cols-2">
         <Reveal className="order-2 flex items-center px-6 py-20 sm:px-14 lg:order-1 lg:py-28">
           <div className="max-w-md">
-            <p className="eyebrow">Le lieu</p>
-            <h2 className="mt-6 display-md text-ink">
-              Un couvent du XIIIᵉ, posé dans les collines
-            </h2>
+            <p className="eyebrow">{home.venue.eyebrow}</p>
+            <h2 className="mt-6 display-md text-ink">{home.venue.heading}</h2>
             <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">
-              Cour ombragée, chapelle, longues terrasses ouvertes sur la vallée : nous y passerons
-              tout le week-end, entre Luberon et plateau de Valensole.
+              {home.venue.text}
             </p>
             <Link
               to="/lieu"
               className="group mt-7 inline-flex min-h-11 items-center gap-3 label-xs text-ink"
             >
-              Découvrir le domaine
+              {home.venue.cta}
               <span className="h-px w-8 bg-olive transition-all duration-500 group-hover:w-14" />
             </Link>
           </div>
         </Reveal>
         <div className="img-zoom order-1 h-[54svh] lg:order-2 lg:h-auto">
-          <img
-            src={cour}
-            alt="Le cloître du couvent, longues tables dressées sous les guirlandes"
-            loading="lazy"
-            className="size-full object-cover"
-          />
+          <img src={cour} alt={home.venue.alt} loading="lazy" className="size-full object-cover" />
         </div>
       </section>
 
       {/* Les trois entrées principales */}
       <section className="container-page py-24 sm:py-32">
         <Reveal className="max-w-xl">
-          <p className="eyebrow">Préparer votre venue</p>
-          <h2 className="mt-5 display-md text-ink">L'essentiel, en trois pages</h2>
+          <p className="eyebrow">{home.sections.eyebrow}</p>
+          <h2 className="mt-5 display-md text-ink">{home.sections.heading}</h2>
         </Reveal>
 
         <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
@@ -232,7 +201,7 @@ function Index() {
       <section className="relative isolate flex min-h-[52svh] items-center overflow-hidden">
         <img
           src={parc}
-          alt="La piscine du domaine et ses transats, au pied des grands arbres"
+          alt={home.gallery.alt}
           loading="lazy"
           className="absolute inset-0 -z-10 size-full object-cover"
         />
@@ -241,15 +210,15 @@ function Index() {
         <div className="absolute inset-0 z-[-8] bg-ink/45" />
 
         <Reveal className="container-page py-20 text-center">
-          <p className="label-xs text-background/85">Galerie</p>
+          <p className="label-xs text-background/85">{home.gallery.eyebrow}</p>
           <p className="mx-auto mt-6 max-w-xl font-serif text-[1.5rem] leading-snug font-light text-background italic sm:text-[1.9rem]">
-            Le domaine, ses jardins et la lumière de juin.
+            {home.gallery.quote}
           </p>
           <Link
             to="/galerie"
             className="mt-10 inline-block border border-background/45 px-8 py-3.5 label-xs text-background transition-colors hover:bg-background hover:text-ink"
           >
-            Voir les images
+            {home.gallery.cta}
           </Link>
         </Reveal>
       </section>
@@ -260,11 +229,10 @@ function Index() {
         <div className="container-page py-20 sm:py-24">
           <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-xl">
-              <p className="eyebrow">Instagram</p>
-              <h2 className="mt-5 display-md text-ink">Le domaine, au fil des saisons</h2>
+              <p className="eyebrow">{home.instagram.eyebrow}</p>
+              <h2 className="mt-5 display-md text-ink">{home.instagram.heading}</h2>
               <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">
-                Le Couvent partage régulièrement ses images sur Instagram : la lumière, les jardins
-                et les tables dressées, avant notre week-end de juin.
+                {home.instagram.text}
               </p>
             </div>
             <a
@@ -280,10 +248,10 @@ function Index() {
 
           <div className="mt-12 grid grid-cols-2 gap-3 sm:grid-cols-4">
             {[
-              { src: parc, alt: "La piscine et ses transats" },
-              { src: bambouseraie, alt: "L'allée de cérémonie sous les bambous" },
-              { src: drone, alt: "Le domaine vu du ciel au crépuscule" },
-              { src: couloir, alt: "Un couloir du couvent et ses oliviers en pot" },
+              { src: parc, alt: home.instagram.alts[0]! },
+              { src: bambouseraie, alt: home.instagram.alts[1]! },
+              { src: drone, alt: home.instagram.alts[2]! },
+              { src: couloir, alt: home.instagram.alts[3]! },
             ].map((p, i) => (
               <Reveal key={p.alt} delay={i * 90}>
                 <a
@@ -306,16 +274,15 @@ function Index() {
       {/* Bon à savoir */}
       <section className="container-narrow py-24 text-center sm:py-28">
         <Reveal>
-          <p className="eyebrow">Bon à savoir</p>
+          <p className="eyebrow">{home.good.eyebrow}</p>
           <p className="mx-auto mt-6 max-w-xl text-[0.95rem] leading-relaxed text-muted-foreground">
-            Les horaires définitifs et les derniers détails seront mis à jour sur ce site au
-            printemps 2027.
+            {home.good.text}
           </p>
           <Link
             to="/faq"
             className="mt-9 inline-block border border-olive/50 px-8 py-3.5 label-xs text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
           >
-            Questions fréquentes
+            {home.good.cta}
           </Link>
         </Reveal>
       </section>

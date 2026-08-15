@@ -7,97 +7,74 @@ import facadePiscine from "@/assets/facade-piscine.webp";
 import parc from "@/assets/parc.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
+import { translations, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/lieu")({
-  head: () => ({
-    meta: [
-      { title: "Le lieu — Couvent Notre-Dame des Prés, Reillanne" },
-      {
-        name: "description",
-        content:
-          "Le Couvent Notre-Dame des Prés à Reillanne, en Provence : adresse, carte, temps de trajet et stationnement.",
-      },
-      { property: "og:title", content: "Le lieu — Couvent Notre-Dame des Prés" },
-      {
-        property: "og:description",
-        content: "Adresse, carte, temps de trajet et stationnement pour le mariage.",
-      },
-      { property: "og:url", content: SITE_URL + "/lieu" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/lieu" }],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].lieu;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical = match.search.lang === "en" ? SITE_URL + "/lieu?lang=en" : SITE_URL + "/lieu";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/lieu" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/lieu?lang=en" },
+      ],
+    };
+  },
   component: Page,
 });
 
-const practical = [
-  {
-    icon: MapPin,
-    title: "Adresse",
-    text: "Couvent Notre-Dame des Prés, 04110 Reillanne, Provence",
-  },
-  {
-    icon: Clock,
-    title: "Temps de trajet",
-    text: "Aix-en-Provence 1h · Marseille 1h30 · Avignon 1h15 · Nice 2h15",
-  },
-  {
-    icon: Car,
-    title: "Parking",
-    text: "Stationnement gratuit sur place, à deux pas de l'entrée du domaine.",
-  },
-  {
-    icon: TreePalm,
-    title: "Le domaine",
-    text: "Un ancien couvent du XIIIᵉ siècle, ses jardins, sa chapelle, sa piscine et ses oliviers.",
-  },
-];
-
 function Page() {
+  const t = useT();
+  const practical = [
+    { icon: MapPin, ...t.lieu.practical[0]! },
+    { icon: Clock, ...t.lieu.practical[1]! },
+    { icon: Car, ...t.lieu.practical[2]! },
+    { icon: TreePalm, ...t.lieu.practical[3]! },
+  ];
+
   return (
     <>
       <PageHero
-        eyebrow="Le lieu"
-        title="Couvent Notre-Dame des Prés"
-        intro="Un ancien couvent posé au milieu des collines, à Reillanne, entre Luberon et plateau de Valensole."
+        eyebrow={t.lieu.eyebrow}
+        title={t.lieu.heading}
+        intro={t.lieu.intro}
         image={drone}
-        imageAlt="Vue aérienne du Couvent Notre-Dame des Prés et de son parc"
+        imageAlt={t.lieu.heroAlt}
       />
 
       <section className="container-page grid items-center gap-14 py-20 lg:grid-cols-2 sm:py-28">
         <Reveal>
-          <p className="eyebrow">Le domaine</p>
-          <h2 className="mt-5 text-3xl font-light text-ink">
-            Huit siècles d'histoire, en pierre claire
-          </h2>
-          <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">
-            Fondé au XIIIᵉ siècle, le Couvent Notre-Dame des Prés fut d'abord un monastère de
-            religieuses, bâti à l'écart du village de Reillanne, au milieu des prés qui lui ont
-            donné son nom. Sa chapelle et son cloître voûté datent de cette première époque.
-          </p>
-          <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">
-            Vendu comme bien national à la Révolution, le couvent devint tour à tour ferme puis
-            grande maison de famille. Les longs bâtiments, les arcades de la cour et les terrasses
-            ouvertes sur la vallée gardent la trace de ces vies successives.
-          </p>
-          <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">
-            Restauré dans le respect de la pierre d'origine, il n'accueille aujourd'hui que quelques
-            mariages par an. Nous y passerons tout le week-end : cour ombragée, chapelle, parc aux
-            arbres centenaires, bambouseraie et piscine.
-          </p>
+          <p className="eyebrow">{t.lieu.domainEyebrow}</p>
+          <h2 className="mt-5 text-3xl font-light text-ink">{t.lieu.domainHeading}</h2>
+          <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">{t.lieu.p1}</p>
+          <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">{t.lieu.p2}</p>
+          <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">{t.lieu.p3}</p>
           <a
             href="https://www.couventnddp.com"
             target="_blank"
             rel="noreferrer"
             className="mt-6 inline-flex min-h-11 items-center border-b border-olive/60 font-display text-[0.75rem] tracking-[0.24em] uppercase text-ink sm:text-[0.7rem]"
           >
-            Visiter le site du couvent
+            {t.lieu.siteCta}
           </a>
         </Reveal>
         <Reveal delay={120} className="grid gap-3 sm:grid-cols-2">
           <div className="img-zoom aspect-[4/3] w-full sm:col-span-2">
             <img
               src={cour}
-              alt="La cour intérieure du couvent et ses arcades"
+              alt={t.lieu.alts.cour}
               loading="lazy"
               className="size-full object-cover"
             />
@@ -105,7 +82,7 @@ function Page() {
           <div className="img-zoom aspect-square w-full">
             <img
               src={facadePiscine}
-              alt="La façade du couvent et la piscine"
+              alt={t.lieu.alts.facadePiscine}
               loading="lazy"
               className="size-full object-cover"
             />
@@ -113,7 +90,7 @@ function Page() {
           <div className="img-zoom aspect-square w-full">
             <img
               src={parc}
-              alt="Le parc du couvent et ses arbres centenaires"
+              alt={t.lieu.alts.parc}
               loading="lazy"
               className="size-full object-cover"
             />
@@ -137,10 +114,10 @@ function Page() {
 
       <section className="container-page py-20 sm:py-24">
         <Reveal>
-          <h2 className="text-center text-2xl font-light text-ink">Nous trouver</h2>
+          <h2 className="text-center text-2xl font-light text-ink">{t.lieu.findUs}</h2>
           <div className="mt-10 aspect-[16/10] w-full overflow-hidden border border-border sm:aspect-[16/7]">
             <iframe
-              title="Carte du Couvent Notre-Dame des Prés à Reillanne"
+              title={t.lieu.mapTitle}
               src="https://www.google.com/maps?q=Couvent%20Notre-Dame%20des%20Pr%C3%A9s%2C%20Reillanne&output=embed"
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
@@ -157,7 +134,7 @@ function Page() {
               rel="noreferrer"
               className="inline-flex min-h-11 items-center justify-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
-              Ouvrir l'itinéraire
+              {t.lieu.itinerary}
             </a>
           </div>
         </Reveal>

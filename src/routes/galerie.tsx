@@ -20,78 +20,84 @@ import facade from "@/assets/facade.webp";
 import parc from "@/assets/parc.webp";
 import { PageHero } from "@/components/page-hero";
 import { cn } from "@/lib/utils";
+import { translations, useT } from "@/lib/i18n";
 import { Reveal } from "@/components/reveal";
 
 export const Route = createFileRoute("/galerie")({
-  head: () => ({
-    meta: [
-      { title: "Galerie — Alexandra & Thomas" },
-      {
-        name: "description",
-        content:
-          "Le domaine, ses jardins et ses intérieurs : quelques images du Couvent Notre-Dame des Prés.",
-      },
-      { property: "og:title", content: "Galerie — Alexandra & Thomas" },
-      { property: "og:description", content: "Le domaine, ses jardins et ses intérieurs." },
-      { property: "og:url", content: SITE_URL + "/galerie" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/galerie" }],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].galerie;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical =
+      match.search.lang === "en" ? SITE_URL + "/galerie?lang=en" : SITE_URL + "/galerie";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/galerie" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/galerie?lang=en" },
+      ],
+    };
+  },
   component: Page,
 });
 
-/** `span` fait respirer la grille : les images verticales les plus fortes
- *  occupent deux rangées, les panoramiques deux colonnes. */
+/** Les légendes vivent dans le dictionnaire (`galerie.alts`), dans le même
+ *  ordre que ce tableau : ici ne restent que la source, l'encombrement dans
+ *  la grille et, au besoin, le cadrage. */
 const photos = [
   {
     src: bambouseraie,
-    alt: "L'allée de cérémonie, chaises alignées sous les bambous",
     span: "sm:row-span-2",
   },
-  { src: facade, alt: "La façade du Couvent Notre-Dame des Prés en plein jour", span: "" },
-  { src: piscine, alt: "La piscine du domaine, vue à la verticale", span: "" },
+  { src: facade, span: "" },
+  { src: piscine, span: "" },
   {
     src: reception,
-    alt: "La réception devant la façade, sous les voiles d'ombrage",
     span: "sm:col-span-2",
   },
   {
     src: cour,
-    alt: "Le cloître, longues tables dressées sous les guirlandes",
     span: "sm:row-span-2",
   },
-  { src: oliviers, alt: "La façade bordée d'oliviers et de lavandes", span: "" },
-  { src: arcades, alt: "Les arcades de pierre ouvrant sur la cour", span: "" },
+  { src: oliviers, span: "" },
+  { src: arcades, span: "" },
   {
     src: drone,
-    alt: "Le domaine vu du ciel au crépuscule, la cour illuminée",
     span: "sm:row-span-2",
   },
   {
     src: courHaute,
-    alt: "La cour carrée et ses tables rondes, vues du ciel",
     span: "sm:col-span-2",
   },
-  { src: soiree, alt: "Le salon de bambou au couchant", span: "" },
+  { src: soiree, span: "" },
   {
     src: diner,
-    alt: "Le dîner dressé dans le cloître, vu depuis les étages",
     span: "sm:row-span-2",
   },
-  { src: salle, alt: "La salle voûtée et son bar, sous les guirlandes", span: "sm:col-span-2" },
-  { src: couloir, alt: "Un couloir du couvent, oliviers en pot et voûtes de pierre", span: "" },
-  { src: toits, alt: "Les toitures du couvent et la vallée", span: "" },
+  { src: salle, span: "sm:col-span-2" },
+  { src: couloir, span: "" },
+  { src: toits, span: "" },
   {
     src: parc,
-    alt: "La piscine et ses transats, au pied des grands arbres",
     span: "",
     // Sans cela, la vignette ne montre que la cime des arbres.
     position: "object-bottom",
   },
-  { src: chapelle, alt: "La façade de la chapelle du couvent", span: "sm:col-span-2" },
+  { src: chapelle, span: "sm:col-span-2" },
 ];
 
 function Page() {
+  const t = useT();
+  const alts = t.galerie.alts;
   const [active, setActive] = useState<number | null>(null);
   const touchStart = useRef<number | null>(null);
 
@@ -113,11 +119,11 @@ function Page() {
   return (
     <>
       <PageHero
-        eyebrow="Galerie"
-        title="Quelques images"
-        intro="Un avant-goût du lieu et de la lumière de juin : le cloître, la bambouseraie, la piscine et les façades de pierre."
+        eyebrow={t.galerie.eyebrow}
+        title={t.galerie.heading}
+        intro={t.galerie.intro}
         image={reception}
-        imageAlt="La réception devant la façade du couvent, au couchant"
+        imageAlt={t.galerie.heroAlt}
       />
 
       <section className="container-page py-16 sm:py-24">
@@ -127,16 +133,16 @@ function Page() {
             sans conséquence pour une galerie. */}
         <div className="grid auto-rows-[220px] grid-flow-dense grid-cols-1 gap-3 sm:auto-rows-[260px] sm:grid-cols-3">
           {photos.map((p, i) => (
-            <Reveal key={p.alt} delay={i * 60} className={p.span}>
+            <Reveal key={i} delay={i * 60} className={p.span}>
               <button
                 type="button"
                 onClick={() => setActive(i)}
-                aria-label={`Agrandir l'image : ${p.alt}`}
+                aria-label={`${t.galerie.enlarge} : ${alts[i]}`}
                 className="img-zoom size-full"
               >
                 <img
                   src={p.src}
-                  alt={p.alt}
+                  alt={alts[i]}
                   loading="lazy"
                   className={cn("size-full object-cover", p.position)}
                 />
@@ -150,7 +156,7 @@ function Page() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={photos[active]!.alt}
+          aria-label={alts[active]}
           className="fixed inset-0 z-[60] flex flex-col bg-ink/95"
           onClick={() => setActive(null)}
           onTouchStart={(e) => {
@@ -182,7 +188,7 @@ function Page() {
             </p>
             <button
               type="button"
-              aria-label="Fermer"
+              aria-label={t.galerie.close}
               className="-mr-2 inline-flex size-12 items-center justify-center text-background"
               onClick={() => setActive(null)}
             >
@@ -193,13 +199,13 @@ function Page() {
           <div className="flex min-h-0 flex-1 items-center justify-center px-3 pb-3">
             <img
               src={photos[active]!.src}
-              alt={photos[active]!.alt}
+              alt={alts[active]}
               className="max-h-full max-w-full object-contain"
             />
           </div>
 
           <p className="shrink-0 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center text-[0.85rem] leading-relaxed text-background/70">
-            {photos[active]!.alt}
+            {alts[active]}
           </p>
         </div>
       ) : null}

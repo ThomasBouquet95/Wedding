@@ -6,88 +6,63 @@ import parc from "@/assets/parc.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
-
-const faqs = [
-  {
-    q: "À quelle heure faut-il arriver ?",
-    a: "Le vendredi, dès 17h pour vous installer, le cocktail débute à 18h. Le samedi, merci d'être sur place 20 minutes avant la cérémonie, prévue vers 16h.",
-  },
-  {
-    q: "Quel est le dress code ?",
-    a: "Pour la soirée du samedi, robe longue pour les femmes et costume pour les hommes. Le vendredi soir et le dimanche, tenue plus décontractée mais soignée. Évitez les talons trop fins : les allées sont en gravier. Prévoyez une étole pour la fraîcheur du soir.",
-  },
-  {
-    q: "Où dormir ?",
-    a: "Il ne reste pas de place au domaine : les chambres sont déjà attribuées. Nous avons rassemblé dix adresses autour du couvent, de 3 à 21 minutes, sur la page Hébergements. Réservez tôt : juin est une période très demandée en Provence.",
-  },
-  {
-    q: "Où se garer ?",
-    a: "Un parking gratuit se trouve à l'entrée du domaine.",
-  },
-  {
-    q: "Puis-je venir avec un accompagnant ?",
-    a: "Votre invitation précise le nombre de places qui vous sont réservées. En cas de doute, écrivez-nous et nous verrons ensemble.",
-  },
-  {
-    q: "Comment se rendre au domaine et en repartir ?",
-    a: "Chacun organise son trajet : il n'y a pas de navette à l'arrivée ni au départ. Pour faciliter le covoiturage, nous mettrons en place une liste des personnes venant en voiture avec des places libres. Le samedi soir, à l'issue de la cérémonie, du dîner et de la soirée, un retour sera assuré vers les hébergements les plus proches.",
-  },
-  {
-    q: "Nous aimerions soutenir le mariage, comment faire ?",
-    a: "Contactez directement Alexandra ou Thomas : ce sont eux qui s'en occupent.",
-  },
-  {
-    q: "Quand aurai-je les derniers détails ?",
-    a: "Les horaires définitifs et les derniers détails seront publiés ici au printemps 2027.",
-  },
-];
+import { translations, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: "FAQ — Alexandra & Thomas" },
-      {
-        name: "description",
-        content:
-          "Réponses aux questions les plus fréquentes : horaires, dress code, hébergement, parking et trajets.",
-      },
-      { property: "og:title", content: "FAQ — Alexandra & Thomas" },
-      {
-        property: "og:description",
-        content: "Horaires, dress code, hébergement, parking, trajets.",
-      },
-      { property: "og:url", content: SITE_URL + "/faq" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/faq" }],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "FAQPage",
-          mainEntity: faqs.map((f) => ({
-            "@type": "Question",
-            name: f.q,
-            acceptedAnswer: { "@type": "Answer", text: f.a },
-          })),
-        }),
-      },
-    ],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].faq;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical = match.search.lang === "en" ? SITE_URL + "/faq?lang=en" : SITE_URL + "/faq";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/faq" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/faq?lang=en" },
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: translations[match.search.lang === "en" ? "en" : "fr"].faq.items.map(
+              (f) => ({
+                "@type": "Question",
+                name: f.q,
+                acceptedAnswer: { "@type": "Answer", text: f.a },
+              }),
+            ),
+          }),
+        },
+      ],
+    };
+  },
   component: Page,
 });
 
 function Page() {
+  const t = useT();
+  const faqs = t.faq.items;
   const [open, setOpen] = useState<number | null>(0);
 
   return (
     <>
       <PageHero
-        eyebrow="FAQ"
-        title="Questions fréquentes"
-        intro="Les réponses aux questions que l'on nous pose le plus souvent sur le week-end."
+        eyebrow={t.faq.eyebrow}
+        title={t.faq.heading}
+        intro={t.faq.intro}
         image={parc}
-        imageAlt="La piscine du domaine et ses transats"
+        imageAlt={t.faq.heroAlt}
       />
 
       <section className="container-page py-16 sm:py-24">
@@ -136,9 +111,7 @@ function Page() {
           ))}
 
           <Reveal className="mt-14 text-center">
-            <p className="text-[0.9rem] leading-relaxed text-muted-foreground">
-              Une question qui n'est pas là&nbsp;? Les mariés restent joignables directement.
-            </p>
+            <p className="text-[0.9rem] leading-relaxed text-muted-foreground">{t.faq.footer}</p>
           </Reveal>
         </div>
       </section>

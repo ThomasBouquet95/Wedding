@@ -4,138 +4,133 @@ import couloir from "@/assets/couloir.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
+import { translations, useT } from "@/lib/i18n";
 
 export const Route = createFileRoute("/hebergements")({
-  head: () => ({
-    meta: [
-      { title: "Hébergements — Alexandra & Thomas" },
-      {
-        name: "description",
-        content:
-          "Dix hôtels, chambres d'hôtes et gîtes repérés autour de Reillanne pour le week-end du mariage, de 3 à 21 minutes du domaine.",
-      },
-      { property: "og:title", content: "Hébergements — Alexandra & Thomas" },
-      {
-        property: "og:description",
-        content: "Nos adresses repérées autour du domaine, de 3 à 21 minutes.",
-      },
-      { property: "og:url", content: SITE_URL + "/hebergements" },
-    ],
-    links: [{ rel: "canonical", href: SITE_URL + "/hebergements" }],
-  }),
+  head: ({ match }) => {
+    const p = translations[match.search.lang === "en" ? "en" : "fr"].hebergements;
+    // La version dans l'autre langue est déclarée en `alternate` : sans quoi
+    // les moteurs traiteraient les deux URL comme du contenu dupliqué.
+    const canonical =
+      match.search.lang === "en" ? SITE_URL + "/hebergements?lang=en" : SITE_URL + "/hebergements";
+
+    return {
+      meta: [
+        { title: p.title },
+        { name: "description", content: p.description },
+        { property: "og:title", content: p.title },
+        { property: "og:description", content: p.description },
+        { property: "og:url", content: canonical },
+        { property: "og:locale", content: match.search.lang === "en" ? "en_GB" : "fr_FR" },
+      ],
+      links: [
+        { rel: "canonical", href: canonical },
+        { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/hebergements" },
+        { rel: "alternate", hrefLang: "en", href: SITE_URL + "/hebergements?lang=en" },
+      ],
+    };
+  },
   component: Page,
 });
 
 /**
  * Les adresses repérées autour du domaine, classées de la plus proche à la
- * plus éloignée. `highlight` marque les deux adresses que nous recommandons
- * en premier : ce sont les seules assez proches pour rentrer à pied.
+ * plus éloignée. Noms, prix et étoiles ne se traduisent pas ; le type, la
+ * distance et les commentaires sont des clés du dictionnaire.
  */
 const stays = [
   {
     name: "Domaine Paradis",
-    type: "Chambre d'hôtes",
+    type: "bnb",
     stars: "3★",
     price: "200 €",
-    distance: "3 min en voiture · 15 min à pied",
+    distance: "d3walk15",
     highlight: true,
-    forWhom: "Idéal entre amis",
-    text: "Tout près du domaine, et la seule adresse avec les Pradaous d'où l'on peut rentrer à pied.",
+    forWhom: "friendsIdeal",
+    note: "paradis",
   },
   {
     name: "Domaine des Pradaous",
-    type: "Gîte",
+    type: "gite",
     price: "165 €",
-    distance: "3 min en voiture · 20 min à pied",
+    distance: "d3walk20",
     highlight: true,
-    forWhom: "Idéal entre amis",
-    text: "À deux pas du domaine, en gîte : parfait pour se regrouper à plusieurs.",
+    forWhom: "friendsIdeal",
+    note: "pradaous",
   },
   {
     name: "Le Moulin des Prédelles",
-    type: "Chambre d'hôtes",
+    type: "bnb",
     stars: "3★",
     price: "160 €",
-    distance: "6 min en voiture",
-    forWhom: "Peu adapté aux groupes d'amis",
+    distance: "d6",
+    forWhom: "friendsPoor",
   },
-  {
-    name: "Lou Paradou",
-    type: "Hôtel",
-    stars: "3★",
-    price: "150 €",
-    distance: "7 min en voiture",
-  },
+  { name: "Lou Paradou", type: "hotel", stars: "3★", price: "150 €", distance: "d7" },
   {
     name: "Le Sens des Merveilles",
-    type: "Gîte",
+    type: "gite",
     price: "160 €",
-    distance: "15 min en voiture",
-    forWhom: "Bien entre amis, ambiance jeune",
+    distance: "d15",
+    forWhom: "friendsYoung",
   },
   {
     name: "Le Couvent des Minimes",
-    type: "Hôtel",
+    type: "hotel",
     stars: "5★",
     price: "300 €",
-    distance: "17 min en voiture",
-    forWhom: "Bien en famille",
-    text: "L'adresse la plus luxueuse de la sélection ; un bloc de chambres y est réservé.",
+    distance: "d17",
+    forWhom: "family",
+    note: "minimes",
   },
   {
     name: "La Bastide Saint Georges",
-    type: "Hôtel",
+    type: "hotel",
     stars: "4★",
     price: "200 €",
-    distance: "20 min en voiture",
-    forWhom: "Bien en famille",
+    distance: "d20",
+    forWhom: "family",
   },
   {
     name: "Les Prairies de l'Encrême",
-    type: "Gîte",
+    type: "gite",
     stars: "3★",
-    price: "300 € la maison entière",
-    distance: "20 min en voiture",
-    text: "Location entière, à partager entre plusieurs.",
+    priceKey: "wholeHouse",
+    distance: "d20",
+    note: "prairies",
   },
-  {
-    name: "Provence Au Cœur",
-    type: "Apart'hôtel",
-    stars: "4★",
-    price: "120 €",
-    distance: "20 min en voiture",
-  },
+  { name: "Provence Au Cœur", type: "aparthotel", stars: "4★", price: "120 €", distance: "d20" },
   {
     name: "Villa Saint Marc",
-    type: "Chambre d'hôtes",
+    type: "bnb",
     stars: "3★",
     price: "50 €",
-    distance: "21 min en voiture",
-    text: "L'option la plus économique de la sélection.",
+    distance: "d21",
+    note: "villa",
   },
-];
+] as const;
 
 function Page() {
+  const t = useT();
+  const h = t.hebergements;
+
   return (
     <>
       <PageHero
-        eyebrow="Hébergements"
-        title="Où dormir"
-        intro="Réservez tôt : la Provence se remplit vite en juin. Voici les adresses que nous avons repérées autour du domaine."
+        eyebrow={h.eyebrow}
+        title={h.heading}
+        intro={h.intro}
         image={couloir}
-        imageAlt="Un couloir du Couvent Notre-Dame des Prés, oliviers en pot"
+        imageAlt={h.heroAlt}
       />
 
       <section className="container-page py-16 sm:py-24">
         <Reveal className="mx-auto max-w-2xl text-center">
-          <p className="eyebrow">Nos adresses</p>
+          <p className="eyebrow">{h.listEyebrow}</p>
           <p className="mt-5 font-serif text-2xl leading-relaxed font-light text-ink sm:text-[1.8rem]">
-            Dix adresses repérées autour du domaine, de trois à vingt minutes.
+            {h.listHeading}
           </p>
-          <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">
-            Les chambres du domaine sont déjà attribuées : il n'y reste pas de place. Les tarifs
-            sont indicatifs, par nuit, et méritent d'être revérifiés au moment de réserver.
-          </p>
+          <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">{h.listNote}</p>
         </Reveal>
 
         <div className="mt-16 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
@@ -145,14 +140,14 @@ function Page() {
               delay={i * 70}
               className={cn(
                 "flex flex-col p-8 transition-colors duration-500 sm:p-10",
-                s.highlight ? "bg-sand/50 hover:bg-sand/70" : "bg-background hover:bg-sand/25",
+                "highlight" in s ? "bg-sand/50 hover:bg-sand/70" : "bg-background hover:bg-sand/25",
               )}
             >
               <div className="flex items-baseline justify-between gap-4">
                 <p className="font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.66rem] sm:tracking-[0.24em]">
-                  {s.distance}
+                  {h.distances[s.distance]}
                 </p>
-                {s.stars ? (
+                {"stars" in s ? (
                   <p className="shrink-0 text-[0.8rem] text-muted-foreground">{s.stars}</p>
                 ) : null}
               </div>
@@ -162,18 +157,19 @@ function Page() {
               </h2>
 
               <p className="mt-2 text-[0.82rem] tracking-wide text-muted-foreground/80">
-                {s.type} · {s.price} la nuit
+                {h.types[s.type]} ·{" "}
+                {"priceKey" in s ? h.prices[s.priceKey] : `${s.price} ${h.perNight}`}
               </p>
 
-              {s.text ? (
+              {"note" in s ? (
                 <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">
-                  {s.text}
+                  {h.notes[s.note]}
                 </p>
               ) : null}
 
-              {s.forWhom ? (
+              {"forWhom" in s ? (
                 <p className="mt-auto pt-6 font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.64rem]">
-                  {s.forWhom}
+                  {h.forWhom[s.forWhom]}
                 </p>
               ) : null}
             </Reveal>
@@ -182,8 +178,7 @@ function Page() {
 
         <Reveal className="mt-14 text-center">
           <p className="mx-auto max-w-2xl text-[0.9rem] leading-relaxed text-muted-foreground">
-            Prévoyez votre trajet jusqu'au domaine : il n'y a pas de navette à l'arrivée ni au
-            départ. Le samedi soir, un retour sera assuré vers les hébergements les plus proches.
+            {h.footer}
           </p>
         </Reveal>
       </section>

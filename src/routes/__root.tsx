@@ -3,6 +3,8 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
+  retainSearchParams,
+  stripSearchParams,
   useRouter,
   HeadContent,
   Scripts,
@@ -13,23 +15,25 @@ import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { SITE_URL, OG_IMAGE } from "@/lib/site";
+import { useLang, useT, type Lang } from "@/lib/i18n";
 
 function NotFoundComponent() {
+  const t = useT();
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-6">
       <div className="max-w-md text-center">
-        <p className="eyebrow">Page introuvable</p>
-        <h1 className="mt-6 display-lg text-ink">Cette page n'existe pas</h1>
+        <p className="eyebrow">{t.errors.notFoundEyebrow}</p>
+        <h1 className="mt-6 display-lg text-ink">{t.errors.notFoundTitle}</h1>
         <p className="mt-5 text-[0.95rem] leading-relaxed text-muted-foreground">
-          Le lien a peut-être changé. Retrouvez toutes les informations du week-end depuis
-          l'accueil.
+          {t.errors.notFoundText}
         </p>
         <div className="mt-9">
           <Link
             to="/"
             className="inline-flex items-center justify-center border border-olive/50 px-8 py-3.5 label-xs text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
           >
-            Retour à l'accueil
+            {t.errors.backHome}
           </Link>
         </div>
       </div>
@@ -40,14 +44,15 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const t = useT();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-6">
       <div className="max-w-md text-center">
-        <p className="eyebrow">Erreur</p>
-        <h1 className="mt-6 display-lg text-ink">Cette page n'a pas pu s'afficher</h1>
+        <p className="eyebrow">{t.errors.errorEyebrow}</p>
+        <h1 className="mt-6 display-lg text-ink">{t.errors.errorTitle}</h1>
         <p className="mt-5 text-[0.95rem] leading-relaxed text-muted-foreground">
-          Un incident est survenu de notre côté. Vous pouvez réessayer ou revenir à l'accueil.
+          {t.errors.errorText}
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-4">
           <button
@@ -57,7 +62,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             }}
             className="border border-olive/50 px-8 py-3.5 label-xs text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
           >
-            Réessayer
+            {t.errors.retry}
           </button>
           {/* Lien brut (rechargement complet) plutôt que <Link> : le routeur
               vient d'échouer. `BASE_URL` tient compte du sous-chemin de
@@ -66,7 +71,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             href={import.meta.env.BASE_URL}
             className="border border-border px-8 py-3.5 label-xs text-ink transition-colors hover:bg-secondary"
           >
-            Retour à l'accueil
+            {t.errors.backHome}
           </a>
         </div>
       </div>
@@ -75,11 +80,33 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
+  // La langue est toujours renseignée à l'exécution — toute valeur inconnue
+  // retombe sur le français — mais déclarée facultative : la rendre
+  // obligatoire forcerait chaque `<Link>` du site à la transporter à la main.
+  validateSearch: (search: Record<string, unknown>): { lang?: Lang } => ({
+    lang: search["lang"] === "en" ? "en" : "fr",
+  }),
+  search: {
+    middlewares: [
+      // `?lang=en` doit survivre au passage d'une page à l'autre, sans quoi
+      // chaque navigation repartirait en français.
+      retainSearchParams(["lang"]),
+      // Le français étant la valeur par défaut, `?lang=fr` n'apparaît jamais
+      // dans l'URL. Ce retrait est explicite, donc `retainSearchParams` ne le
+      // réintroduit pas : c'est ce qui permet de revenir au français.
+      stripSearchParams({ lang: "fr" as Lang }),
+    ],
+  },
+  head: ({ match }) => ({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Alexandra & Thomas — 25-26 juin 2027, Provence" },
+      {
+        title:
+          match.search.lang === "en"
+            ? "Alexandra & Thomas — 25–26 June 2027, Provence"
+            : "Alexandra & Thomas — 25-26 juin 2027, Provence",
+      },
       {
         name: "description",
         content:
@@ -126,6 +153,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       // `BASE_URL` vaut "/" à la racine : le favicon suit le sous-chemin sur
       // lequel le site est servi.
       { rel: "icon", href: `${import.meta.env.BASE_URL}favicon.ico`, type: "image/x-icon" },
+      { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/" },
+      { rel: "alternate", hrefLang: "en", href: SITE_URL + "/?lang=en" },
     ],
   }),
   shellComponent: RootShell,
@@ -135,8 +164,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const lang = useLang();
+
   return (
-    <html lang="fr">
+    <html lang={lang}>
       <head>
         <HeadContent />
         {/* Sans JavaScript, les blocs .reveal resteraient à opacity:0. */}
