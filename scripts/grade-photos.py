@@ -56,7 +56,6 @@ FULL_BLEED = {
     "drone.webp",
     "facade-piscine.webp",
     "couple.webp",
-    "couple-portrait.webp",
     "couple-mobile.webp",
 }
 FULL_BLEED_QUALITY = 84

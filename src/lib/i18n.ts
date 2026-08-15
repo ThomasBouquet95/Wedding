@@ -99,12 +99,6 @@ const fr = {
         alt: "Un couloir du couvent, oliviers en pot et voûtes de pierre",
       },
     },
-    couple: {
-      eyebrow: "Nous deux",
-      heading: "Alexandra & Thomas",
-      text: "Nous avons hâte de vous retrouver en Provence, l'été prochain, pour fêter cela tous ensemble.",
-      alt: "Alexandra et Thomas, souriants, une coupe à la main",
-    },
     gallery: {
       eyebrow: "Galerie",
       quote: "Le domaine, ses jardins et la lumière de juin.",
@@ -469,12 +463,6 @@ const en: Translated<typeof fr> = {
         text: "Our favourite addresses, from the village of Reillanne to Forcalquier, 5 to 25 minutes away.",
         alt: "A convent corridor, potted olive trees and stone vaults",
       },
-    },
-    couple: {
-      eyebrow: "The two of us",
-      heading: "Alexandra & Thomas",
-      text: "We can't wait to see you in Provence next summer, to celebrate all together.",
-      alt: "Alexandra and Thomas, smiling, a glass in hand",
     },
     gallery: {
       eyebrow: "Gallery",
