@@ -34,11 +34,12 @@ jobs:
       # soit le domaine personnalisé s'il est configuré dans Settings → Pages.
       - name: Résoudre l'URL du site
         id: pages
+        # Prérequis : Pages doit être activé sur le dépôt, source « GitHub
+        # Actions » (cf. DEPLOIEMENT-GITHUB-PAGES.md). L'option `enablement`
+        # de cette action ne peut pas s'en charger : créer le site Pages exige
+        # les droits d'administration du dépôt, que le GITHUB_TOKEN d'un
+        # workflow n'a pas.
         uses: actions/configure-pages@v5
-        with:
-          # Active GitHub Pages sur le dépôt au premier passage, plutôt que
-          # d'exiger un réglage manuel dans Settings → Pages.
-          enablement: true
 
       - run: npm ci
 
