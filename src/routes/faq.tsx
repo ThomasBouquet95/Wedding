@@ -13,32 +13,32 @@ const faqs = [
     a: "Le vendredi, dès 17h pour vous installer, le cocktail débute à 18h. Le samedi, merci d'être sur place 20 minutes avant la cérémonie, prévue vers 16h.",
   },
   {
-    q: "Peut-on venir avec des enfants ?",
-    a: "Oui, les enfants sont les bienvenus tout le week-end. Une garde et des animations seront prévues le samedi soir : les détails seront précisés avec les mariés.",
-  },
-  {
     q: "Quel est le dress code ?",
-    a: "Élégance estivale, dans des tons naturels. Évitez les talons trop fins : les allées sont en gravier. Prévoyez une étole pour la soirée.",
+    a: "Pour la soirée du samedi, robe longue pour les femmes et costume pour les hommes. Le vendredi soir et le dimanche, tenue plus décontractée mais soignée. Évitez les talons trop fins : les allées sont en gravier. Prévoyez une étole pour la fraîcheur du soir.",
   },
   {
     q: "Où dormir ?",
-    a: "Quelques chambres sont disponibles au domaine, et nous avons rassemblé nos adresses préférées sur la page Hébergements. Réservez tôt : juin est une période très demandée.",
+    a: "Il ne reste pas de place au domaine : les chambres sont déjà attribuées. Nous avons rassemblé dix adresses autour du couvent, de 3 à 21 minutes, sur la page Hébergements. Réservez tôt : juin est une période très demandée en Provence.",
   },
   {
     q: "Où se garer ?",
-    a: "Un parking gratuit se trouve à l'entrée du domaine. Les voitures peuvent y rester la nuit sans problème.",
+    a: "Un parking gratuit se trouve à l'entrée du domaine.",
   },
   {
     q: "Puis-je venir avec un accompagnant ?",
     a: "Votre invitation précise le nombre de places qui vous sont réservées. En cas de doute, écrivez-nous et nous verrons ensemble.",
   },
   {
-    q: "Y a-t-il des navettes ?",
-    a: "Oui, des navettes relieront Manosque et Forcalquier au domaine le vendredi et le samedi, ainsi que les retours en fin de soirée. Les horaires seront communiqués au printemps 2027.",
+    q: "Comment se rendre au domaine et en repartir ?",
+    a: "Chacun organise son trajet : il n'y a pas de navette à l'arrivée ni au départ. Pour faciliter le covoiturage, nous mettrons en place une liste des personnes venant en voiture avec des places libres. Le samedi soir, à l'issue de la cérémonie, du dîner et de la soirée, un retour sera assuré vers les hébergements les plus proches.",
+  },
+  {
+    q: "Nous aimerions soutenir le mariage, comment faire ?",
+    a: "Contactez directement Alexandra ou Thomas : ce sont eux qui s'en occupent.",
   },
   {
     q: "Quand aurai-je les derniers détails ?",
-    a: "Les horaires définitifs, les navettes et les derniers détails seront publiés ici au printemps 2027.",
+    a: "Les horaires définitifs et les derniers détails seront publiés ici au printemps 2027.",
   },
 ];
 
@@ -49,10 +49,13 @@ export const Route = createFileRoute("/faq")({
       {
         name: "description",
         content:
-          "Réponses aux questions les plus fréquentes : horaires, enfants, dress code, hébergement, parking et navettes.",
+          "Réponses aux questions les plus fréquentes : horaires, dress code, hébergement, parking et trajets.",
       },
       { property: "og:title", content: "FAQ — Alexandra & Thomas" },
-      { property: "og:description", content: "Horaires, enfants, dress code, hébergement, parking." },
+      {
+        property: "og:description",
+        content: "Horaires, dress code, hébergement, parking, trajets.",
+      },
       { property: "og:url", content: SITE_URL + "/faq" },
     ],
     links: [{ rel: "canonical", href: SITE_URL + "/faq" }],

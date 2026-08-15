@@ -47,10 +47,9 @@ const days = [
   {
     day: "Dimanche 27 juin",
     subtitle: "Journée libre",
-    note: "Rien d'obligatoire : le lieu reste à votre disposition pour prolonger les festivités.",
+    note: "Rien d'obligatoire : le lieu reste à votre disposition pour prolonger les festivités, piscine comprise.",
     events: [
-      { time: "Toute la journée", label: "Le lieu reste à votre disposition" },
-      { time: "En fin de journée", label: "Départs échelonnés" },
+      { time: "Toute la journée", label: "Le lieu et la piscine restent à votre disposition" },
     ],
   },
 ];
@@ -111,7 +110,7 @@ function Page() {
 
         <Reveal className="mx-auto mt-8 max-w-5xl border-t border-border pt-10">
           <p className="text-center text-[0.9rem] leading-relaxed text-muted-foreground">
-            Les horaires définitifs et les navettes seront mis à jour sur ce site au printemps 2027.
+            Les horaires définitifs seront mis à jour sur ce site au printemps 2027.
           </p>
         </Reveal>
       </section>

@@ -3,6 +3,7 @@ import { SITE_URL } from "@/lib/site";
 import chambre from "@/assets/chambre.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/hebergements")({
   head: () => ({
@@ -11,12 +12,12 @@ export const Route = createFileRoute("/hebergements")({
       {
         name: "description",
         content:
-          "Hôtels, maisons d'hôtes et locations recommandés autour de Reillanne pour le week-end du mariage.",
+          "Dix hôtels, chambres d'hôtes et gîtes repérés autour de Reillanne pour le week-end du mariage, de 3 à 21 minutes du domaine.",
       },
       { property: "og:title", content: "Hébergements — Alexandra & Thomas" },
       {
         property: "og:description",
-        content: "Nos adresses préférées autour du domaine, à 5 à 25 minutes.",
+        content: "Nos adresses repérées autour du domaine, de 3 à 21 minutes.",
       },
       { property: "og:url", content: SITE_URL + "/hebergements" },
     ],
@@ -25,43 +26,92 @@ export const Route = createFileRoute("/hebergements")({
   component: Page,
 });
 
+/**
+ * Les adresses repérées autour du domaine, classées de la plus proche à la
+ * plus éloignée. `highlight` marque les deux adresses que nous recommandons
+ * en premier : ce sont les seules assez proches pour rentrer à pied.
+ */
 const stays = [
   {
-    name: "Le Couvent Notre-Dame des Prés",
-    type: "Sur place · nombre de chambres limité",
-    distance: "0 min",
-    text: "Quelques chambres sont disponibles au sein même du domaine, attribuées en priorité aux familles.",
+    name: "Domaine Paradis",
+    type: "Chambre d'hôtes",
+    stars: "3★",
+    price: "200 €",
+    distance: "3 min en voiture · 15 min à pied",
+    highlight: true,
+    forWhom: "Idéal entre amis",
+    text: "Tout près du domaine, et la seule adresse avec les Pradaous d'où l'on peut rentrer à pied.",
   },
   {
-    name: "Maisons d'hôtes de Reillanne",
-    type: "Chambres d'hôtes",
-    distance: "5 min en voiture",
-    text: "Plusieurs adresses de charme dans le village, idéales pour un séjour de deux ou trois nuits.",
+    name: "Domaine des Pradaous",
+    type: "Gîte",
+    price: "165 €",
+    distance: "3 min en voiture · 20 min à pied",
+    highlight: true,
+    forWhom: "Idéal entre amis",
+    text: "À deux pas du domaine, en gîte : parfait pour se regrouper à plusieurs.",
   },
   {
-    name: "Hôtels à Forcalquier",
-    type: "Hôtels 3 et 4 étoiles",
+    name: "Le Moulin des Prédelles",
+    type: "Chambre d'hôtes",
+    stars: "3★",
+    price: "160 €",
+    distance: "6 min en voiture",
+    forWhom: "Peu adapté aux groupes d'amis",
+  },
+  {
+    name: "Lou Paradou",
+    type: "Hôtel",
+    stars: "3★",
+    price: "150 €",
+    distance: "7 min en voiture",
+  },
+  {
+    name: "Le Sens des Merveilles",
+    type: "Gîte",
+    price: "160 €",
     distance: "15 min en voiture",
-    text: "La ville la plus proche, avec restaurants, commerces et un large choix d'hôtels.",
+    forWhom: "Bien entre amis, ambiance jeune",
   },
   {
-    name: "Manosque et alentours",
-    type: "Hôtels et résidences",
-    distance: "25 min en voiture",
-    text: "Une solution pratique si vous arrivez en train ou souhaitez des tarifs plus doux.",
+    name: "Le Couvent des Minimes",
+    type: "Hôtel",
+    stars: "5★",
+    price: "300 €",
+    distance: "17 min en voiture",
+    forWhom: "Bien en famille",
+    text: "L'adresse la plus luxueuse de la sélection ; un bloc de chambres y est réservé.",
   },
   {
-    name: "Locations Airbnb",
-    type: "Maisons et mas à partager",
-    distance: "5 à 30 min",
-    text: "Se regrouper à plusieurs dans un mas est souvent la plus belle option — et la plus économique.",
-    link: "https://www.airbnb.fr/s/Reillanne--France/homes",
+    name: "La Bastide Saint Georges",
+    type: "Hôtel",
+    stars: "4★",
+    price: "200 €",
+    distance: "20 min en voiture",
+    forWhom: "Bien en famille",
   },
   {
-    name: "Campings et insolite",
-    type: "Cabanes, yourtes, campings",
-    distance: "10 à 20 min",
-    text: "Pour les amoureux du plein air, plusieurs adresses agréables dans la vallée.",
+    name: "Les Prairies de l'Encrême",
+    type: "Gîte",
+    stars: "3★",
+    price: "300 € la maison entière",
+    distance: "20 min en voiture",
+    text: "Location entière, à partager entre plusieurs.",
+  },
+  {
+    name: "Provence Au Cœur",
+    type: "Apart'hôtel",
+    stars: "4★",
+    price: "120 €",
+    distance: "20 min en voiture",
+  },
+  {
+    name: "Villa Saint Marc",
+    type: "Chambre d'hôtes",
+    stars: "3★",
+    price: "50 €",
+    distance: "21 min en voiture",
+    text: "L'option la plus économique de la sélection.",
   },
 ];
 
@@ -71,7 +121,7 @@ function Page() {
       <PageHero
         eyebrow="Hébergements"
         title="Où dormir"
-        intro="Nous vous conseillons de réserver tôt : la Provence se remplit vite en juin. Voici nos adresses préférées."
+        intro="Réservez tôt : la Provence se remplit vite en juin. Voici les adresses que nous avons repérées autour du domaine."
         image={chambre}
         imageAlt="Une chambre du Couvent Notre-Dame des Prés"
       />
@@ -80,7 +130,11 @@ function Page() {
         <Reveal className="mx-auto max-w-2xl text-center">
           <p className="eyebrow">Nos adresses</p>
           <p className="mt-5 font-serif text-2xl leading-relaxed font-light text-ink sm:text-[1.8rem]">
-            Du domaine lui-même aux mas à partager, tout se trouve à moins de trente minutes.
+            Dix adresses repérées autour du domaine, de trois à vingt minutes.
+          </p>
+          <p className="mt-6 text-[0.95rem] leading-relaxed text-muted-foreground">
+            Les chambres du domaine sont déjà attribuées : il n'y reste pas de place. Les tarifs
+            sont indicatifs, par nuit, et méritent d'être revérifiés au moment de réserver.
           </p>
         </Reveal>
 
@@ -89,33 +143,47 @@ function Page() {
             <Reveal
               key={s.name}
               delay={i * 70}
-              className="group flex flex-col bg-background p-8 transition-colors duration-500 hover:bg-sand/40 sm:p-10"
+              className={cn(
+                "flex flex-col p-8 transition-colors duration-500 sm:p-10",
+                s.highlight ? "bg-sand/50 hover:bg-sand/70" : "bg-background hover:bg-sand/25",
+              )}
             >
-              <p className="font-display text-[0.66rem] tracking-[0.24em] uppercase text-olive">
-                {s.distance}
-              </p>
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="font-display text-[0.66rem] tracking-[0.24em] uppercase text-olive">
+                  {s.distance}
+                </p>
+                {s.stars ? (
+                  <p className="shrink-0 text-[0.8rem] text-muted-foreground">{s.stars}</p>
+                ) : null}
+              </div>
+
               <h2 className="mt-4 font-serif text-[1.45rem] leading-snug font-light text-ink">
                 {s.name}
               </h2>
-              <p className="mt-2 text-[0.82rem] tracking-wide text-muted-foreground/80">{s.type}</p>
-              <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">{s.text}</p>
-              {s.link ? (
-                <a
-                  href={s.link}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-6 inline-block self-start border-b border-olive/60 pb-1 font-display text-[0.64rem] tracking-[0.24em] uppercase text-ink transition-colors hover:border-olive hover:text-olive"
-                >
-                  Voir les annonces
-                </a>
+
+              <p className="mt-2 text-[0.82rem] tracking-wide text-muted-foreground/80">
+                {s.type} · {s.price} la nuit
+              </p>
+
+              {s.text ? (
+                <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">
+                  {s.text}
+                </p>
+              ) : null}
+
+              {s.forWhom ? (
+                <p className="mt-auto pt-6 font-display text-[0.62rem] tracking-[0.22em] uppercase text-olive">
+                  {s.forWhom}
+                </p>
               ) : null}
             </Reveal>
           ))}
         </div>
 
         <Reveal className="mt-14 text-center">
-          <p className="text-[0.9rem] leading-relaxed text-muted-foreground">
-            Des navettes relieront Manosque, Forcalquier et le domaine le vendredi et le samedi.
+          <p className="mx-auto max-w-2xl text-[0.9rem] leading-relaxed text-muted-foreground">
+            Prévoyez votre trajet jusqu'au domaine : il n'y a pas de navette à l'arrivée ni au
+            départ. Le samedi soir, un retour sera assuré vers les hébergements les plus proches.
           </p>
         </Reveal>
       </section>

@@ -57,7 +57,7 @@ const sections = [
     to: "/informations",
     n: "02",
     label: "Comment venir",
-    text: "Train, avion, voiture, navettes depuis Manosque et stationnement au domaine.",
+    text: "Train, avion, voiture, covoiturage entre invités et stationnement au domaine.",
     image: facadePiscine,
     alt: "La façade du couvent et la piscine, en plein jour",
   },
@@ -299,8 +299,8 @@ function Index() {
         <Reveal>
           <p className="eyebrow">Bon à savoir</p>
           <p className="mx-auto mt-6 max-w-xl text-[0.95rem] leading-relaxed text-muted-foreground">
-            Les horaires définitifs, les navettes depuis Manosque et les derniers détails seront mis
-            à jour sur ce site au printemps 2027.
+            Les horaires définitifs et les derniers détails seront mis à jour sur ce site au
+            printemps 2027.
           </p>
           <Link
             to="/faq"

@@ -12,12 +12,12 @@ export const Route = createFileRoute("/informations")({
       {
         name: "description",
         content:
-          "Dress code, météo, transports, parking et langues parlées pour le mariage des 25 et 26 juin 2027 en Provence.",
+          "Dress code, météo, transports et parking pour le mariage des 25 et 26 juin 2027 en Provence.",
       },
       { property: "og:title", content: "Informations pratiques — Alexandra & Thomas" },
       {
         property: "og:description",
-        content: "Dress code, météo, transports, parking et navettes.",
+        content: "Dress code, météo, transports et parking.",
       },
       { property: "og:url", content: SITE_URL + "/informations" },
     ],
@@ -43,25 +43,25 @@ const blocks = [
     icon: MessageCircle,
     title: "Langues parlées",
     group: "Le week-end",
-    text: "Le week-end se déroulera en français et en anglais. Les moments clés de la cérémonie seront traduits.",
+    text: "Le week-end se déroulera en français et en anglais.",
   },
   {
     icon: Plane,
     title: "En avion",
     group: "Y venir",
-    text: "Aéroport Marseille-Provence à 1h15, Nice Côte d'Azur à 2h15. Location de voiture conseillée à l'arrivée.",
+    text: "Aéroport Marseille-Provence à 1h15, Nice Côte d'Azur à 2h15. Prévoyez une voiture de location à l'arrivée, ou une place dans celle d'un autre invité.",
   },
   {
     icon: Train,
     title: "En train",
     group: "Y venir",
-    text: "Gare TGV Aix-en-Provence (1h) ou gare de Manosque-Gréoux (25 min). Nous organiserons des navettes depuis Manosque le vendredi et le samedi.",
+    text: "Gare TGV Aix-en-Provence (1h) ou gare de Manosque-Gréoux (25 min). Il faudra ensuite louer une voiture, ou trouver une place dans celle d'un autre invité : nous mettrons en place une liste des personnes venant en voiture avec des places libres.",
   },
   {
     icon: Car,
     title: "En voiture et parking",
     group: "Y venir",
-    text: "A51 sortie Manosque, puis 25 minutes de petites routes. Parking gratuit et sécurisé au domaine, les voitures peuvent y rester la nuit.",
+    text: "A51 sortie Manosque, puis 25 minutes de petites routes. Un parking gratuit se trouve à l'entrée du domaine.",
   },
 ];
 

@@ -6,7 +6,7 @@ export const navLinks = [
   { to: "/", label: "Accueil", hint: "Le week-end en un regard" },
   { to: "/programme", label: "Programme", hint: "Les trois journées" },
   { to: "/lieu", label: "Le lieu", hint: "Couvent Notre-Dame des Prés" },
-  { to: "/informations", label: "Accès & infos", hint: "Venir, dress code, navettes" },
+  { to: "/informations", label: "Accès & infos", hint: "Venir, dress code, parking" },
   { to: "/hebergements", label: "Hébergements", hint: "Où dormir alentour" },
   { to: "/galerie", label: "Galerie", hint: "Le domaine en images" },
   { to: "/faq", label: "Questions", hint: "Les réponses utiles" },
