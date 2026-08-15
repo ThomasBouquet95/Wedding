@@ -35,6 +35,10 @@ jobs:
       - name: Résoudre l'URL du site
         id: pages
         uses: actions/configure-pages@v5
+        with:
+          # Active GitHub Pages sur le dépôt au premier passage, plutôt que
+          # d'exiger un réglage manuel dans Settings → Pages.
+          enablement: true
 
       - run: npm ci
 

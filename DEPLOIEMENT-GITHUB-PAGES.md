@@ -4,14 +4,16 @@ Le site est une vitrine sans partie serveur : chaque page peut être générée 
 HTML au moment du build, puis servie telle quelle par GitHub Pages. Le workflow
 `.github/workflows/deploy-github-pages.yml` s'en charge à chaque push.
 
-## Activer Pages (une seule fois, à faire à la main)
+## Activation
 
-Dépôt → **Settings** → **Pages** → *Build and deployment* → **Source :
-GitHub Actions**.
+Rien à faire : l'étape `actions/configure-pages` est configurée avec
+`enablement: true`, ce qui active GitHub Pages sur le dépôt au premier
+passage et le règle sur la source *GitHub Actions*.
 
-Sans cette étape le workflow échoue à la dernière étape (`deploy-pages`) avec
-une erreur de type *« Pages site not found »*. Relancer ensuite le workflow
-depuis l'onglet **Actions** → *Déploiement GitHub Pages* → **Run workflow**.
+En cas d'échec de cette étape (*« Get Pages site failed »*), l'activation peut
+se faire à la main — dépôt → **Settings** → **Pages** → *Build and deployment* →
+**Source : GitHub Actions** — puis relancer le workflow depuis l'onglet
+**Actions** → *Déploiement GitHub Pages* → **Run workflow**.
 
 Tant que la branche `claude/website-github-deploy-hv2kmd` n'est pas fusionnée
 dans `main`, le workflow se déclenche sur les deux branches ; la ligne
