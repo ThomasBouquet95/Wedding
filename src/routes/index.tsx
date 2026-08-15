@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { Calendar, Car, Instagram, MapPin, Shirt } from "lucide-react";
 import couple from "@/assets/couple.webp";
+import couplePortrait from "@/assets/couple-portrait.webp";
 import coupleMobile from "@/assets/couple-mobile.webp";
 import cour from "@/assets/cour.webp";
 import facadePiscine from "@/assets/facade-piscine.webp";
@@ -123,6 +124,29 @@ function Index() {
           <p className="mx-auto mt-10 max-w-xl text-[0.95rem] leading-relaxed text-muted-foreground">
             {home.intro}
           </p>
+        </Reveal>
+      </section>
+
+      {/* Les mariés, en entier : le héros les recadre nécessairement, ici la
+          photographie garde ses proportions d'origine. */}
+      <section className="container-page pb-24 sm:pb-28">
+        <Reveal className="mx-auto max-w-4xl">
+          <figure>
+            <img
+              src={couplePortrait}
+              alt={home.couple.alt}
+              width={1600}
+              height={1066}
+              loading="lazy"
+              className="h-auto w-full"
+            />
+            <figcaption className="mt-8 text-center">
+              <p className="eyebrow">{home.couple.eyebrow}</p>
+              <p className="mx-auto mt-5 max-w-xl text-[0.95rem] leading-relaxed text-muted-foreground">
+                {home.couple.text}
+              </p>
+            </figcaption>
+          </figure>
         </Reveal>
       </section>
 

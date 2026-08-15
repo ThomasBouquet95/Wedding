@@ -56,6 +56,7 @@ FULL_BLEED = {
     "drone.webp",
     "facade-piscine.webp",
     "couple.webp",
+    "couple-portrait.webp",
     "couple-mobile.webp",
 }
 FULL_BLEED_QUALITY = 84
@@ -120,8 +121,14 @@ def soft_shoulder(x, knee, ceiling):
     return out
 
 
+def is_monochrome(rgb):
+    """Vraie si l'image ne porte pratiquement pas de couleur."""
+    return float((rgb.max(axis=2) - rgb.min(axis=2)).mean()) < 0.02
+
+
 def grade(image):
     rgb = np.asarray(image.convert("RGB"), dtype=np.float32) / 255.0
+    mono = is_monochrome(rgb)
     lin = srgb_to_linear(rgb)
 
     luma = lin @ LUMA
@@ -144,9 +151,11 @@ def grade(image):
         lin *= 1.0 + (gain - 1.0) * STRENGTH
 
     # 3. Désaturation et réchauffement, appliqués sur une base déjà homogène.
-    grey = (lin @ LUMA)[..., None]
-    lin = grey + (lin - grey) * SATURATION
-    lin *= WARMTH
+    #    Sautés pour une image en noir et blanc, que le virage teinterait.
+    if not mono:
+        grey = (lin @ LUMA)[..., None]
+        lin = grey + (lin - grey) * SATURATION
+        lin *= WARMTH
 
     # 4. Épaule douce, en dernier : elle doit voir les valeurs définitives.
     #    Placée avant la désaturation ou le réchauffement, ces étapes
