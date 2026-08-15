@@ -1,0 +1,75 @@
+name: Déploiement GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      # À retirer une fois la branche fusionnée dans main.
+      - claude/website-github-deploy-hv2kmd
+  workflow_dispatch:
+
+# Jetons requis par actions/deploy-pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un seul déploiement à la fois ; les déploiements en attente sont annulés.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      # Renvoie l'URL publique du site : soit https://<user>.github.io/<dépôt>,
+      # soit le domaine personnalisé s'il est configuré dans Settings → Pages.
+      - name: Résoudre l'URL du site
+        id: pages
+        uses: actions/configure-pages@v5
+
+      - run: npm ci
+
+      - name: Build statique
+        env:
+          STATIC_BUILD: "true"
+          # "/Wedding" avec le domaine github.io, "/" avec un domaine personnalisé.
+          PAGES_BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          # Sert aux balises canoniques et Open Graph, qui exigent des URL absolues.
+          VITE_SITE_URL: ${{ steps.pages.outputs.base_url }}
+        run: |
+          # Vite attend un chemin de base terminé par un slash, et un seul.
+          export BASE_PATH="${PAGES_BASE_PATH%/}/"
+          npm run build
+
+      - name: Préparer les fichiers à publier
+        run: |
+          # Sans ce fichier, GitHub Pages passe la sortie dans Jekyll, qui
+          # ignore les fichiers et dossiers commençant par un underscore.
+          touch dist/client/.nojekyll
+          # Filet pour les URL inconnues : GitHub Pages sert 404.html, le
+          # routeur prend alors le relais côté client et affiche sa page
+          # « Page introuvable ».
+          cp dist/client/index.html dist/client/404.html
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist/client
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
