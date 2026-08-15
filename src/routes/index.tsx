@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { Calendar, Car, Instagram, MapPin, Shirt } from "lucide-react";
-import hero from "@/assets/hero.webp";
-import heroMobile from "@/assets/hero-mobile.webp";
+import couple from "@/assets/couple.webp";
+import coupleMobile from "@/assets/couple-mobile.webp";
 import cour from "@/assets/cour.webp";
 import facadePiscine from "@/assets/facade-piscine.webp";
 import parc from "@/assets/parc.webp";
@@ -59,24 +59,27 @@ function Index() {
       {/* Hero : la photographie porte tout, la typographie s'y pose */}
       <section className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden pb-14 sm:pb-20">
         {/* Direction artistique plutôt qu'un simple redimensionnement : sur un
-            téléphone, la photo panoramique était recadrée si étroitement qu'il
-            fallait l'agrandir près de trois fois — d'où le flou — et que le
-            soleil couchant sortait du cadre. La version verticale est la même
-            scène, au même moment, mais cadrée en hauteur. */}
+            téléphone, un cadrage large est réduit à une bande verticale
+            étroite — ici moins de la moitié de la largeur — qui couperait les
+            mariés. La variante mobile est recadrée en amont autour d'eux
+            deux. Le cadrage vertical est remonté : les visages sont dans le
+            tiers supérieur, le voile sombre occupe le bas. */}
         <picture className="absolute inset-0 -z-10">
-          <source media="(max-width: 767px)" srcSet={heroMobile} width={1446} height={1809} />
+          <source media="(max-width: 767px)" srcSet={coupleMobile} width={984} height={1894} />
           <img
-            src={hero}
+            src={couple}
             alt={home.heroAlt}
-            width={1800}
-            height={1171}
+            width={2048}
+            height={1894}
             fetchPriority="high"
             decoding="async"
-            className="size-full object-cover object-[50%_45%]"
+            className="size-full object-cover object-[50%_28%]"
           />
         </picture>
-        {/* Voile sombre unique, concentré sur le bas où se pose le titre. */}
-        <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/88 from-0% via-ink/70 via-42% to-transparent to-76%" />
+        {/* Voile resserré sur le bas : sur une photographie de paysage il
+            pouvait monter haut sans dommage, mais ici il assombrirait les
+            mariés eux-mêmes. Il s'arrête donc sous les visages. */}
+        <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/90 from-0% via-ink/70 via-42% to-transparent to-68%" />
 
         <div className="container-page">
           <Reveal>

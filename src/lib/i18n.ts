@@ -59,7 +59,7 @@ const fr = {
     dates: "25 — 26 juin 2027",
     place: "Couvent Notre-Dame des Prés · Reillanne",
     cta: "Découvrir le week-end",
-    heroAlt: "La façade du couvent au couchant, salon de plein air et guirlandes lumineuses",
+    heroAlt: "Alexandra et Thomas, souriants, une coupe à la main",
     quote:
       "Un été en Provence, dans un couvent du XIIIᵉ siècle, entre pierre claire, cyprès et oliviers.",
     intro:
@@ -227,6 +227,7 @@ const fr = {
       "Un couloir du couvent, oliviers en pot et voûtes de pierre",
       "Les toitures du couvent et la vallée",
       "La piscine et ses transats, au pied des grands arbres",
+      "La façade du couvent au couchant, salon de plein air et guirlandes lumineuses",
       "La façade de la chapelle du couvent",
     ],
   },
@@ -423,7 +424,7 @@ const en: Translated<typeof fr> = {
     dates: "25 — 26 June 2027",
     place: "Couvent Notre-Dame des Prés · Reillanne",
     cta: "Discover the weekend",
-    heroAlt: "The convent façade at sunset, outdoor seating and festoon lights",
+    heroAlt: "Alexandra and Thomas, smiling, a glass in hand",
     quote:
       "A summer in Provence, in a thirteenth-century convent, among pale stone, cypresses and olive trees.",
     intro:
@@ -588,6 +589,7 @@ const en: Translated<typeof fr> = {
       "A convent corridor, potted olive trees and stone vaults",
       "The convent roofs and the valley",
       "The pool and its deckchairs, beneath the tall trees",
+      "The convent façade at sunset, outdoor seating and festoon lights",
       "The façade of the convent chapel",
     ],
   },

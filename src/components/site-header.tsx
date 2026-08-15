@@ -123,7 +123,7 @@ export function SiteHeader() {
             A<span className={solid ? "text-olive" : "text-background/70"}>&amp;</span>T
           </Link>
 
-          <nav className="hidden items-center gap-8 lg:flex lg:justify-self-center">
+          <nav className="hidden items-center gap-6 lg:flex lg:justify-self-center xl:gap-8">
             {navPaths.slice(1).map((link) => (
               <Link
                 key={link.to}
@@ -147,15 +147,10 @@ export function SiteHeader() {
             ))}
           </nav>
 
-          <div className="hidden items-center gap-6 lg:flex lg:justify-self-end">
-            <p
-              className={cn(
-                "label-xs transition-colors",
-                solid ? "text-muted-foreground" : "text-background/80",
-              )}
-            >
-              {t.header.dates}
-            </p>
+          {/* La date a quitté l'en-tête : avec sept liens de navigation et le
+              sélecteur de langue, elle chevauchait le dernier lien dès 1440 px.
+              Elle reste présente dans le héros, le pied de page et le menu. */}
+          <div className="hidden lg:flex lg:justify-self-end">
             <LanguageSwitch solid={solid} />
           </div>
 

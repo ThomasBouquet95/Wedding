@@ -47,8 +47,7 @@ WEBP_QUALITY = 78
 # rendait floues sur un écran de téléphone à 3× (jusqu'à 2,9 fois agrandies).
 # Elles gardent donc leur définition d'origine et une qualité plus élevée.
 FULL_BLEED = {
-    "hero.webp",
-    "hero-mobile.webp",
+    "couchant.webp",
     "reception.webp",
     "bambouseraie.webp",
     "parc.webp",
@@ -56,6 +55,8 @@ FULL_BLEED = {
     "couloir.webp",
     "drone.webp",
     "facade-piscine.webp",
+    "couple.webp",
+    "couple-mobile.webp",
 }
 FULL_BLEED_QUALITY = 84
 

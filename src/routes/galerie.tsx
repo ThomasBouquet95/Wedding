@@ -17,6 +17,7 @@ import toits from "@/assets/toits.webp";
 import chapelle from "@/assets/chapelle.webp";
 import courHaute from "@/assets/cour-haute.webp";
 import facade from "@/assets/facade.webp";
+import couchant from "@/assets/couchant.webp";
 import parc from "@/assets/parc.webp";
 import { PageHero } from "@/components/page-hero";
 import { cn } from "@/lib/utils";
@@ -92,6 +93,7 @@ const photos = [
     // Sans cela, la vignette ne montre que la cime des arbres.
     position: "object-bottom",
   },
+  { src: couchant, span: "sm:col-span-2" },
   { src: chapelle, span: "sm:col-span-2" },
 ];
 
