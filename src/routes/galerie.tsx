@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import bambouseraie from "@/assets/bambouseraie.webp";
 import cour from "@/assets/cour.webp";
@@ -19,6 +19,7 @@ import courHaute from "@/assets/cour-haute.webp";
 import facade from "@/assets/facade.webp";
 import parc from "@/assets/parc.webp";
 import { PageHero } from "@/components/page-hero";
+import { cn } from "@/lib/utils";
 import { Reveal } from "@/components/reveal";
 
 export const Route = createFileRoute("/galerie")({
@@ -80,12 +81,19 @@ const photos = [
   { src: salle, alt: "La salle voûtée et son bar, sous les guirlandes", span: "sm:col-span-2" },
   { src: couloir, alt: "Un couloir du couvent, oliviers en pot et voûtes de pierre", span: "" },
   { src: toits, alt: "Les toitures du couvent et la vallée", span: "" },
-  { src: parc, alt: "La piscine et ses transats, au pied des grands arbres", span: "" },
+  {
+    src: parc,
+    alt: "La piscine et ses transats, au pied des grands arbres",
+    span: "",
+    // Sans cela, la vignette ne montre que la cime des arbres.
+    position: "object-bottom",
+  },
   { src: chapelle, alt: "La façade de la chapelle du couvent", span: "sm:col-span-2" },
 ];
 
 function Page() {
   const [active, setActive] = useState<number | null>(null);
+  const touchStart = useRef<number | null>(null);
 
   useEffect(() => {
     if (active === null) return;
@@ -126,7 +134,12 @@ function Page() {
                 aria-label={`Agrandir l'image : ${p.alt}`}
                 className="img-zoom size-full"
               >
-                <img src={p.src} alt={p.alt} loading="lazy" className="size-full object-cover" />
+                <img
+                  src={p.src}
+                  alt={p.alt}
+                  loading="lazy"
+                  className={cn("size-full object-cover", p.position)}
+                />
               </button>
             </Reveal>
           ))}
@@ -138,22 +151,56 @@ function Page() {
           role="dialog"
           aria-modal="true"
           aria-label={photos[active]!.alt}
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-ink/90 p-4"
+          className="fixed inset-0 z-[60] flex flex-col bg-ink/95"
           onClick={() => setActive(null)}
+          onTouchStart={(e) => {
+            touchStart.current = e.touches[0]?.clientX ?? null;
+          }}
+          onTouchEnd={(e) => {
+            // Balayage horizontal : sur un téléphone, c'est le geste attendu
+            // pour passer d'une image à l'autre — les flèches du clavier ne
+            // servent qu'au bureau.
+            const start = touchStart.current;
+            const end = e.changedTouches[0]?.clientX;
+            touchStart.current = null;
+            if (start == null || end == null || Math.abs(end - start) < 50) return;
+            setActive((i) =>
+              end < start
+                ? ((i ?? 0) + 1) % photos.length
+                : ((i ?? 0) - 1 + photos.length) % photos.length,
+            );
+          }}
         >
-          <button
-            type="button"
-            aria-label="Fermer"
-            className="absolute top-6 right-6 text-background"
-            onClick={() => setActive(null)}
+          {/* Barre haute opaque : la croix se détachait mal sur les images
+              claires, et sa cible tactile faisait moins de 44 px. */}
+          <div
+            className="flex shrink-0 items-center justify-between px-4 py-2"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="size-6" strokeWidth={1.1} />
-          </button>
-          <img
-            src={photos[active]!.src}
-            alt={photos[active]!.alt}
-            className="max-h-[86vh] max-w-full object-contain"
-          />
+            <p className="label-xs text-background/70">
+              {active + 1} / {photos.length}
+            </p>
+            <button
+              type="button"
+              aria-label="Fermer"
+              className="-mr-2 inline-flex size-12 items-center justify-center text-background"
+              onClick={() => setActive(null)}
+            >
+              <X className="size-6" strokeWidth={1.1} />
+            </button>
+          </div>
+
+          <div className="flex min-h-0 flex-1 items-center justify-center px-3 pb-3">
+            <img
+              src={photos[active]!.src}
+              alt={photos[active]!.alt}
+              className="max-h-full max-w-full object-contain"
+            />
+          </div>
+
+          <p className="shrink-0 px-6 pb-[max(1rem,env(safe-area-inset-bottom))] text-center text-[0.85rem] leading-relaxed text-background/70">
+            {photos[active]!.alt}
+          </p>
         </div>
       ) : null}
     </>

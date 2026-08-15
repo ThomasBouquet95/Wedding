@@ -95,7 +95,7 @@ function Page() {
                       aria-hidden
                       className="absolute top-[0.55rem] -left-[calc(2rem+3px)] size-[5px] rounded-full bg-olive sm:-left-[calc(2.5rem+3px)]"
                     />
-                    <p className="font-display text-[0.68rem] tracking-[0.24em] uppercase text-muted-foreground">
+                    <p className="font-display text-[0.75rem] tracking-[0.22em] uppercase text-muted-foreground sm:text-[0.68rem] sm:tracking-[0.24em]">
                       {e.time}
                     </p>
                     <p className="mt-2 font-serif text-xl leading-snug font-light text-ink">

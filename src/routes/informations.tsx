@@ -99,7 +99,7 @@ function Page() {
                 .map((b, i) => (
                   <Reveal key={b.title} delay={i * 70} className="border-t border-border/70 pt-6">
                     <b.icon className="size-5 text-olive" strokeWidth={1.1} />
-                    <h3 className="mt-5 font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
+                    <h3 className="mt-5 font-display text-[0.78rem] tracking-[0.22em] uppercase text-ink sm:text-[0.72rem] sm:tracking-[0.24em]">
                       {b.title}
                     </h3>
                     <p className="mt-3 text-[0.95rem] leading-relaxed text-muted-foreground">
@@ -118,13 +118,13 @@ function Page() {
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Link
               to="/faq"
-              className="border border-olive/50 px-7 py-3 font-display text-[0.68rem] tracking-[0.24em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
+              className="inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
               Consulter les questions fréquentes
             </Link>
             <Link
               to="/hebergements"
-              className="border border-olive/50 px-7 py-3 font-display text-[0.68rem] tracking-[0.24em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
+              className="inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
               Voir les hébergements
             </Link>

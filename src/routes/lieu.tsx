@@ -88,7 +88,7 @@ function Page() {
             href="https://www.couventnddp.com"
             target="_blank"
             rel="noreferrer"
-            className="mt-8 inline-block border-b border-olive/60 pb-1 font-display text-[0.7rem] tracking-[0.24em] uppercase text-ink"
+            className="mt-6 inline-flex min-h-11 items-center border-b border-olive/60 font-display text-[0.75rem] tracking-[0.24em] uppercase text-ink sm:text-[0.7rem]"
           >
             Visiter le site du couvent
           </a>
@@ -126,7 +126,7 @@ function Page() {
           {practical.map((item, i) => (
             <Reveal key={item.title} delay={i * 90}>
               <item.icon className="size-5 text-olive" strokeWidth={1.1} />
-              <h3 className="mt-5 font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
+              <h3 className="mt-5 font-display text-[0.78rem] tracking-[0.22em] uppercase text-ink sm:text-[0.72rem] sm:tracking-[0.24em]">
                 {item.title}
               </h3>
               <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.text}</p>
@@ -147,16 +147,19 @@ function Page() {
               className="size-full border-0"
             />
           </div>
-          <p className="mt-6 text-center text-sm text-muted-foreground">
+          {/* Bloc plutôt qu'un lien noyé dans un paragraphe : c'est l'action
+              principale de la section, et sur téléphone un lien en ligne ne
+              faisait que 19 px de haut. */}
+          <div className="mt-6 text-center">
             <a
               href="https://www.google.com/maps/search/?api=1&query=Couvent+Notre-Dame+des+Pr%C3%A9s+Reillanne"
               target="_blank"
               rel="noreferrer"
-              className="border-b border-olive/60 pb-0.5"
+              className="inline-flex min-h-11 items-center justify-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
-              Ouvrir l'itinéraire dans Google Maps
+              Ouvrir l'itinéraire
             </a>
-          </p>
+          </div>
         </Reveal>
       </section>
     </>

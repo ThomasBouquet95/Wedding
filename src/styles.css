@@ -50,10 +50,16 @@
 
 @utility label-xs {
   font-family: var(--font-display);
-  font-size: 0.66rem;
+  /* 12 px sur téléphone, où l'écran est proche et souvent en plein soleil ;
+     resserré au-delà, la mise en page y gagnant en finesse. */
+  font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.28em;
+  letter-spacing: 0.26em;
   text-transform: uppercase;
+  @media (width >= 40rem) {
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+  }
 }
 
 @utility rule-thin {
@@ -82,11 +88,15 @@
 
 @utility eyebrow {
   font-family: var(--font-display);
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
   color: var(--olive);
+  @media (width >= 40rem) {
+    font-size: 0.6875rem;
+    letter-spacing: 0.32em;
+  }
 }
 
 @utility reveal {

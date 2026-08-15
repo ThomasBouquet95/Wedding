@@ -42,6 +42,23 @@ OUTPUT_DIR = ROOT / "src" / "assets"
 MAX_OUTPUT_EDGE = 1500
 WEBP_QUALITY = 78
 
+# Les images affichées en pleine largeur sont recadrées par `object-cover` sur
+# des zones bien plus grandes que les vignettes : les réduire à 1500 px les
+# rendait floues sur un écran de téléphone à 3× (jusqu'à 2,9 fois agrandies).
+# Elles gardent donc leur définition d'origine et une qualité plus élevée.
+FULL_BLEED = {
+    "hero.webp",
+    "hero-mobile.webp",
+    "reception.webp",
+    "bambouseraie.webp",
+    "parc.webp",
+    "cour.webp",
+    "couloir.webp",
+    "drone.webp",
+    "facade-piscine.webp",
+}
+FULL_BLEED_QUALITY = 84
+
 # Les illustrations détourées (logos, rameau d'olivier) n'ont rien à voir avec
 # la photographie : les étalonner écraserait leur transparence et leur trait.
 SKIP = {"olive-sprig.webp"}
@@ -164,9 +181,11 @@ def main():
         graded = grade(image)
         after, clipped = stats(graded)
 
-        if max(graded.size) > MAX_OUTPUT_EDGE:
+        full_bleed = path.name in FULL_BLEED
+        if not full_bleed and max(graded.size) > MAX_OUTPUT_EDGE:
             graded.thumbnail((MAX_OUTPUT_EDGE, MAX_OUTPUT_EDGE), Image.LANCZOS)
-        graded.save(OUTPUT_DIR / path.name, "WEBP", quality=WEBP_QUALITY, method=6)
+        quality = FULL_BLEED_QUALITY if full_bleed else WEBP_QUALITY
+        graded.save(OUTPUT_DIR / path.name, "WEBP", quality=quality, method=6)
         print(f"{path.name:24}{before:9.2f}{after:9.2f}{clipped:7.1f}%")
 
 

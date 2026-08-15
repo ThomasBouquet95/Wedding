@@ -30,12 +30,12 @@ export function SiteFooter() {
             </p>
           </div>
 
-          <nav aria-label="Pages du site" className="grid grid-cols-2 gap-x-8 gap-y-4">
+          <nav aria-label="Pages du site" className="grid grid-cols-2 gap-x-8 gap-y-1">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className="group label-xs text-muted-foreground transition-colors hover:text-ink"
+                className="group inline-flex min-h-11 items-center label-xs text-muted-foreground transition-colors hover:text-ink"
               >
                 {link.label}
               </Link>
@@ -44,7 +44,7 @@ export function SiteFooter() {
               href="https://www.instagram.com/couventnotredamedespres/"
               target="_blank"
               rel="noreferrer noopener"
-              className="label-xs text-muted-foreground transition-colors hover:text-ink"
+              className="inline-flex min-h-11 items-center label-xs text-muted-foreground transition-colors hover:text-ink"
             >
               Instagram du lieu
             </a>

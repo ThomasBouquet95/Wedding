@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { Calendar, Car, Instagram, MapPin, Shirt } from "lucide-react";
 import hero from "@/assets/hero.webp";
+import heroMobile from "@/assets/hero-mobile.webp";
 import cour from "@/assets/cour.webp";
 import facadePiscine from "@/assets/facade-piscine.webp";
 import parc from "@/assets/parc.webp";
@@ -50,8 +51,8 @@ const sections = [
     n: "01",
     label: "Le programme",
     text: "Le déroulé du week-end : soirée d'accueil le vendredi, cérémonie et dîner le samedi, journée libre le dimanche.",
-    image: drone,
-    alt: "Le domaine vu du ciel au crépuscule, la cour illuminée",
+    image: bambouseraie,
+    alt: "L'allée de cérémonie, chaises alignées sous les bambous",
   },
   {
     to: "/informations",
@@ -76,15 +77,23 @@ function Index() {
     <>
       {/* Hero : la photographie porte tout, la typographie s'y pose */}
       <section className="relative isolate flex min-h-[100svh] flex-col justify-end overflow-hidden pb-14 sm:pb-20">
-        <img
-          src={hero}
-          alt="La façade du couvent au couchant, salon de plein air et guirlandes lumineuses"
-          width={1800}
-          height={1171}
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 -z-10 size-full object-cover object-[50%_45%]"
-        />
+        {/* Direction artistique plutôt qu'un simple redimensionnement : sur un
+            téléphone, la photo panoramique était recadrée si étroitement qu'il
+            fallait l'agrandir près de trois fois — d'où le flou — et que le
+            soleil couchant sortait du cadre. La version verticale est la même
+            scène, au même moment, mais cadrée en hauteur. */}
+        <picture className="absolute inset-0 -z-10">
+          <source media="(max-width: 767px)" srcSet={heroMobile} width={1446} height={1809} />
+          <img
+            src={hero}
+            alt="La façade du couvent au couchant, salon de plein air et guirlandes lumineuses"
+            width={1800}
+            height={1171}
+            fetchPriority="high"
+            decoding="async"
+            className="size-full object-cover object-[50%_45%]"
+          />
+        </picture>
         {/* Voile sombre unique, concentré sur le bas où se pose le titre. */}
         <div className="absolute inset-0 z-[-8] bg-gradient-to-t from-ink/88 from-0% via-ink/70 via-42% to-transparent to-76%" />
 
@@ -106,7 +115,7 @@ function Index() {
               </div>
               <Link
                 to="/programme"
-                className="inline-flex w-fit items-center gap-3 border border-background/45 px-7 py-3.5 label-xs text-background transition-colors hover:bg-background hover:text-ink"
+                className="inline-flex w-full items-center justify-center gap-3 border border-background/45 px-6 py-4 label-xs text-background transition-colors hover:bg-background hover:text-ink sm:w-fit sm:px-7 sm:py-3.5"
               >
                 Découvrir le week-end
               </Link>
@@ -168,7 +177,7 @@ function Index() {
             </p>
             <Link
               to="/lieu"
-              className="group mt-9 inline-flex items-center gap-3 label-xs text-ink"
+              className="group mt-7 inline-flex min-h-11 items-center gap-3 label-xs text-ink"
             >
               Découvrir le domaine
               <span className="h-px w-8 bg-olive transition-all duration-500 group-hover:w-14" />
@@ -262,7 +271,7 @@ function Index() {
               href="https://www.instagram.com/couventnotredamedespres/"
               target="_blank"
               rel="noreferrer noopener"
-              className="inline-flex w-fit items-center gap-3 border border-olive/50 px-7 py-3.5 label-xs text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
+              className="inline-flex w-full items-center justify-center gap-3 border border-olive/50 px-4 py-4 font-display text-[0.75rem] tracking-[0.1em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:w-fit sm:px-7 sm:py-3.5 sm:text-[0.68rem] sm:tracking-[0.24em]"
             >
               <Instagram className="size-4" strokeWidth={1.2} />
               @couventnotredamedespres

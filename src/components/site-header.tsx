@@ -67,7 +67,7 @@ export function SiteHeader() {
             to="/"
             aria-label="Alexandra & Thomas — accueil"
             className={cn(
-              "min-w-0 font-serif text-lg leading-none tracking-[0.2em] transition-colors lg:justify-self-start",
+              "-mx-2 inline-flex min-h-11 min-w-0 items-center px-2 font-serif text-lg leading-none tracking-[0.2em] transition-colors lg:justify-self-start",
               solid ? "text-ink" : "text-background",
             )}
           >
@@ -114,7 +114,7 @@ export function SiteHeader() {
             aria-controls="menu-mobile"
             onClick={() => setOpen((v) => !v)}
             className={cn(
-              "group flex items-center gap-3 justify-self-end py-2 lg:hidden",
+              "group -mr-2 flex min-h-11 items-center gap-3 justify-self-end px-2 py-2 lg:hidden",
               solid ? "text-ink" : "text-background",
             )}
           >

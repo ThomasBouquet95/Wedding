@@ -149,7 +149,7 @@ function Page() {
               )}
             >
               <div className="flex items-baseline justify-between gap-4">
-                <p className="font-display text-[0.66rem] tracking-[0.24em] uppercase text-olive">
+                <p className="font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.66rem] sm:tracking-[0.24em]">
                   {s.distance}
                 </p>
                 {s.stars ? (
@@ -172,7 +172,7 @@ function Page() {
               ) : null}
 
               {s.forWhom ? (
-                <p className="mt-auto pt-6 font-display text-[0.62rem] tracking-[0.22em] uppercase text-olive">
+                <p className="mt-auto pt-6 font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.64rem]">
                   {s.forWhom}
                 </p>
               ) : null}
