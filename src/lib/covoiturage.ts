@@ -93,6 +93,32 @@ export function whatsappHref(phone: string): string | null {
   return digits.length >= 8 && digits.length <= 15 ? `https://wa.me/${digits}` : null;
 }
 
+/**
+ * Les colonnes facultatives, ajoutées après coup. La base peut être en retard
+ * d'une migration sur le site ; plutôt que de refuser les inscriptions —
+ * PostgREST rejette tout envoi mentionnant une colonne absente, même à vide —
+ * on demande à la base ce qu'elle connaît et on masque le reste.
+ */
+export type Extras = { returnDestination: boolean; returnSeats: boolean };
+
+export const NO_EXTRAS: Extras = { returnDestination: false, returnSeats: false };
+
+export async function probeExtras(): Promise<Extras> {
+  const known = async (column: string) => {
+    try {
+      await rest(`?select=${column}&limit=0`);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  const [returnDestination, returnSeats] = await Promise.all([
+    known("return_destination"),
+    known("seats_return"),
+  ]);
+  return { returnDestination, returnSeats };
+}
+
 export async function fetchTrips(): Promise<Trip[]> {
   const response = await rest("?select=*&order=arrival_date.asc,arrival_slot.asc");
   return (await response.json()) as Trip[];
@@ -150,8 +176,10 @@ export function tripSummary(trip: TripInput, lang: Lang): string {
     `${l ? "Vers" : "To"}${s}${trip.destination}`,
     `${l ? "Arrivée" : "Arriving"}${s}${dateLabel(trip.arrival_date, lang)}, ${slotLabel(trip.arrival_slot, lang)}`,
     `${l ? "Retour" : "Heading back"}${s}${back}`,
-    `${l ? "Places libres" : "Free seats"}${s}${trip.seats ?? 0}`,
+    `${l ? "Places à l'aller" : "Seats on the way there"}${s}${trip.seats ?? 0}`,
   ];
+  if (trip.seats_return != null)
+    lines.push(`${l ? "Places au retour" : "Seats on the way back"}${s}${trip.seats_return}`);
   if (trip.comment) lines.push(`${l ? "Commentaire" : "Comment"}${s}${trip.comment}`);
   return lines.join("\n");
 }

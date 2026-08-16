@@ -7,11 +7,14 @@ import {
   dateLabel,
   deleteTrip,
   fetchTrips,
+  NO_EXTRAS,
+  probeExtras,
   slotLabel,
   SLOTS,
   tripSummary,
   updateTrip,
   whatsappHref,
+  type Extras,
   type Trip,
   type TripInput,
 } from "@/lib/covoiturage";
@@ -23,6 +26,7 @@ const DESTINATION = "Couvent Notre-Dame des Prés, Reillanne";
 const fieldClass =
   "mt-2 min-h-11 w-full border-0 border-b border-border bg-transparent py-2.5 text-[0.95rem] text-ink placeholder:text-muted-foreground/55 focus:border-olive focus:outline-none";
 const labelClass = "font-display text-[0.68rem] tracking-[0.22em] uppercase text-olive";
+const labelTodoClass = "font-display text-[0.68rem] tracking-[0.22em] uppercase text-clay";
 const buttonClass =
   "inline-flex min-h-11 items-center justify-center gap-2 border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.2em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50 sm:text-[0.68rem] sm:tracking-[0.24em]";
 // Les actions d'une carte. Elles sont posées sur une grille de deux colonnes :
@@ -45,6 +49,7 @@ type FormState = {
   returnElsewhere: boolean;
   returnDestination: string;
   seats: string;
+  seatsReturn: string;
   comment: string;
 };
 
@@ -61,6 +66,7 @@ const emptyForm: FormState = {
   returnElsewhere: false,
   returnDestination: "",
   seats: "1",
+  seatsReturn: "",
   comment: "",
 };
 
@@ -78,6 +84,7 @@ function formFromTrip(trip: Trip): FormState {
     returnElsewhere: Boolean(trip.return_destination),
     returnDestination: trip.return_destination ?? "",
     seats: String(trip.seats),
+    seatsReturn: trip.seats_return == null ? "" : String(trip.seats_return),
     comment: trip.comment ?? "",
   };
 }
@@ -109,6 +116,7 @@ export function Covoiturage() {
   const [notice, setNotice] = useState<string | null>(null);
   const [summary, setSummary] = useState("");
   const [copied, setCopied] = useState(false);
+  const [extras, setExtras] = useState<Extras>(NO_EXTRAS);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -120,6 +128,9 @@ export function Covoiturage() {
         setTrips([]);
         setBoardOpen(false);
       });
+    // On demande à la base quelles colonnes facultatives elle connaît, et on
+    // n'affiche que les champs correspondants.
+    probeExtras().then((e) => alive && setExtras(e));
     return () => {
       alive = false;
     };
@@ -127,6 +138,13 @@ export function Covoiturage() {
 
   const set = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
+
+  // Les champs indispensables encore vides. Ils ne se colorent qu'après une
+  // première tentative d'envoi : souligner en terre cuite un formulaire vierge
+  // reviendrait à gronder quelqu'un qui n'a pas encore commencé.
+  const REQUIRED = ["name", "phone", "origin", "destination", "arrivalDate"] as const;
+  const missing = REQUIRED.filter((k) => !form[k].trim());
+  const flagged = (key: (typeof REQUIRED)[number]) => status === "invalid" && missing.includes(key);
 
   function startEdit(trip: Trip) {
     setForm(formFromTrip(trip));
@@ -159,8 +177,7 @@ export function Covoiturage() {
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
-    const required = [form.name, form.phone, form.origin, form.destination, form.arrivalDate];
-    if (required.some((v) => !v.trim())) {
+    if (missing.length > 0) {
       setStatus("invalid");
       return;
     }
@@ -179,12 +196,13 @@ export function Covoiturage() {
       comment: form.comment.trim() || null,
     };
 
-    // La destination de retour n'est jointe qu'en cas de besoin : tant que la
-    // colonne n'existe pas côté base, PostgREST refuserait tout envoi la
-    // mentionnant, même à vide — et plus personne ne pourrait s'inscrire.
-    // La correction d'un trajet, elle, suppose déjà la nouvelle version.
-    const returnDestination = form.returnElsewhere ? form.returnDestination.trim() : "";
-    if (returnDestination || editingId) trip.return_destination = returnDestination || null;
+    // Les colonnes facultatives ne sont jointes que si la base les connaît :
+    // PostgREST rejette tout envoi mentionnant une colonne absente, même à
+    // vide, et plus personne ne pourrait alors s'inscrire.
+    if (extras.returnDestination)
+      trip.return_destination = form.returnElsewhere ? form.returnDestination.trim() || null : null;
+    if (extras.returnSeats)
+      trip.seats_return = form.departureDate && form.seatsReturn ? Number(form.seatsReturn) : null;
 
     setStatus("sending");
     setNotice(null);
@@ -293,7 +311,12 @@ export function Covoiturage() {
                 className="mt-9 grid gap-x-10 gap-y-7 sm:grid-cols-2"
                 noValidate
               >
-                <Field label={c.fields.name} required>
+                <Field
+                  label={c.fields.name}
+                  required
+                  todo={flagged("name")}
+                  todoLabel={c.toComplete}
+                >
                   <input
                     type="text"
                     value={form.name}
@@ -304,7 +327,13 @@ export function Covoiturage() {
                   />
                 </Field>
 
-                <Field label={c.fields.phone} required hint={c.fields.phoneHint}>
+                <Field
+                  label={c.fields.phone}
+                  required
+                  hint={c.fields.phoneHint}
+                  todo={flagged("phone")}
+                  todoLabel={c.toComplete}
+                >
                   <input
                     type="tel"
                     value={form.phone}
@@ -325,7 +354,12 @@ export function Covoiturage() {
                   onChange={(v) => set("whatsapp", v)}
                 />
 
-                <Field label={c.fields.origin} required>
+                <Field
+                  label={c.fields.origin}
+                  required
+                  todo={flagged("origin")}
+                  todoLabel={c.toComplete}
+                >
                   <input
                     type="text"
                     value={form.origin}
@@ -336,7 +370,12 @@ export function Covoiturage() {
                   />
                 </Field>
 
-                <Field label={c.fields.destination} required>
+                <Field
+                  label={c.fields.destination}
+                  required
+                  todo={flagged("destination")}
+                  todoLabel={c.toComplete}
+                >
                   <input
                     type="text"
                     value={form.destination}
@@ -347,7 +386,12 @@ export function Covoiturage() {
                   />
                 </Field>
 
-                <Field label={c.fields.arrivalDate} required>
+                <Field
+                  label={c.fields.arrivalDate}
+                  required
+                  todo={flagged("arrivalDate")}
+                  todoLabel={c.toComplete}
+                >
                   <input
                     type="date"
                     value={form.arrivalDate}
@@ -395,28 +439,32 @@ export function Covoiturage() {
                 </Field>
 
                 {/* Le retour ne ramène pas toujours au point de départ : on
-                  repart souvent vers un aéroport ou une gare. */}
-                <Choice
-                  legend={c.fields.returnElsewhere}
-                  yes={c.fields.yes}
-                  no={c.fields.no}
-                  value={form.returnElsewhere}
-                  onChange={(v) => set("returnElsewhere", v)}
-                />
-
-                {form.returnElsewhere ? (
-                  <div className="sm:col-span-2">
-                    <Field label={c.fields.returnDestination}>
-                      <input
-                        type="text"
-                        value={form.returnDestination}
-                        onChange={(e) => set("returnDestination", e.target.value)}
-                        maxLength={120}
-                        placeholder={c.fields.returnDestinationPlaceholder}
-                        className={fieldClass}
-                      />
-                    </Field>
-                  </div>
+                    repart souvent vers un aéroport ou une gare. La question
+                    n'apparaît que si la base connaît la colonne. */}
+                {extras.returnDestination ? (
+                  <>
+                    <Choice
+                      legend={c.fields.returnElsewhere}
+                      yes={c.fields.yes}
+                      no={c.fields.no}
+                      value={form.returnElsewhere}
+                      onChange={(v) => set("returnElsewhere", v)}
+                    />
+                    {form.returnElsewhere ? (
+                      <div className="sm:col-span-2">
+                        <Field label={c.fields.returnDestination}>
+                          <input
+                            type="text"
+                            value={form.returnDestination}
+                            onChange={(e) => set("returnDestination", e.target.value)}
+                            maxLength={120}
+                            placeholder={c.fields.returnDestinationPlaceholder}
+                            className={fieldClass}
+                          />
+                        </Field>
+                      </div>
+                    ) : null}
+                  </>
                 ) : null}
 
                 <Field label={c.fields.seats}>
@@ -432,6 +480,25 @@ export function Covoiturage() {
                     ))}
                   </select>
                 </Field>
+
+                {/* Une voiture pleine à l'arrivée peut repartir à moitié vide.
+                    La question ne se pose qu'une date de retour donnée. */}
+                {extras.returnSeats && form.departureDate ? (
+                  <Field label={c.fields.seatsReturn} optional={c.fields.optional}>
+                    <select
+                      value={form.seatsReturn}
+                      onChange={(e) => set("seatsReturn", e.target.value)}
+                      className={fieldClass}
+                    >
+                      <option value="">— {c.fields.choose} —</option>
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                ) : null}
 
                 <div className="sm:col-span-2">
                   <Field label={c.fields.comment} optional={c.fields.optional}>
@@ -451,7 +518,10 @@ export function Covoiturage() {
                     {c.consent}
                   </p>
                   {status === "invalid" ? (
-                    <p role="alert" className="mt-4 text-[0.88rem] text-ink">
+                    <p
+                      role="alert"
+                      className="mt-4 border-l-2 border-clay bg-clay-soft px-4 py-3 text-[0.88rem] text-clay"
+                    >
                       {c.invalid}
                     </p>
                   ) : null}
@@ -557,22 +627,32 @@ function Field({
   required,
   optional,
   hint,
+  todo,
+  todoLabel,
   children,
 }: {
   label: string;
   required?: boolean;
   optional?: string;
   hint?: string;
+  /** Champ indispensable resté vide : tout le bloc passe en terre cuite. */
+  todo?: boolean;
+  todoLabel?: string;
   children: React.ReactNode;
 }) {
   return (
-    <label className="block">
-      <span className={labelClass}>
+    <label className={`block ${todo ? "[&_input]:border-clay [&_select]:border-clay" : ""}`}>
+      <span className={todo ? labelTodoClass : labelClass}>
         {label}
         {required ? <span aria-hidden="true"> *</span> : null}
         {optional ? (
           <span className="ml-2 font-sans text-[0.72rem] tracking-normal normal-case text-muted-foreground/70">
             ({optional})
+          </span>
+        ) : null}
+        {todo && todoLabel ? (
+          <span className="ml-2 border border-clay/40 bg-clay-soft px-1.5 py-0.5 text-[0.6rem] tracking-[0.12em] text-clay">
+            {todoLabel}
           </span>
         ) : null}
       </span>
@@ -581,6 +661,26 @@ function Field({
         <span className="mt-2 block text-[0.78rem] text-muted-foreground/80">{hint}</span>
       ) : null}
     </label>
+  );
+}
+
+/** Le nombre de places d'un sens du trajet. */
+function Seats({ count }: { count: number }) {
+  const c = useT().covoiturage;
+  return (
+    <span className="inline-flex items-center gap-1.5 border border-olive/40 px-2 py-0.5 font-display text-[0.62rem] tracking-[0.14em] uppercase text-olive">
+      <Users className="size-3" strokeWidth={1.4} />
+      {count === 0 ? c.seatsNone : `${count} ${count > 1 ? c.seatsMany : c.seatsOne}`}
+    </span>
+  );
+}
+
+/** Ce qu'un invité n'a pas encore renseigné, signalé en terre cuite. */
+function Todo({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center border border-clay/40 bg-clay-soft px-2 py-0.5 font-display text-[0.62rem] tracking-[0.14em] uppercase text-clay">
+      {label}
+    </span>
   );
 }
 
@@ -612,37 +712,52 @@ function TripCard({
         active ? "border-olive bg-sand/30" : "border-border hover:bg-sand/25"
       }`}
     >
-      <div className="flex items-baseline justify-between gap-4">
-        <h4 className="font-serif text-[1.35rem] leading-snug font-light text-ink">{trip.name}</h4>
-        <span className="inline-flex shrink-0 items-center gap-1.5 font-display text-[0.66rem] tracking-[0.18em] uppercase text-olive">
-          <Users className="size-3.5" strokeWidth={1.3} />
-          {trip.seats === 0
-            ? c.seatsNone
-            : `${trip.seats} ${trip.seats > 1 ? c.seatsMany : c.seatsOne}`}
-        </span>
-      </div>
+      <h4 className="font-serif text-[1.35rem] leading-snug font-light text-ink">{trip.name}</h4>
 
-      <p className="mt-4 text-[0.95rem] leading-relaxed text-ink">
+      <p className="mt-3 text-[0.95rem] leading-relaxed text-ink">
         {trip.origin}
         <span className="mx-2 text-olive">→</span>
         {trip.destination}
       </p>
 
-      <dl className="mt-5 space-y-1.5 text-[0.88rem] text-muted-foreground">
-        <div className="flex gap-2">
-          <dt className="shrink-0 text-olive">{c.arrival}</dt>
-          <dd>
-            {dateLabel(trip.arrival_date, lang)} · {slotLabel(trip.arrival_slot, lang)}
+      {/* Aller et retour se lisent en vis-à-vis, chacun avec ses places : une
+          voiture pleine à l'arrivée peut repartir à moitié vide. */}
+      <dl className="mt-5 space-y-3 text-[0.88rem] text-muted-foreground">
+        <div>
+          <dt className="font-display text-[0.62rem] tracking-[0.2em] uppercase text-olive">
+            {c.arrival}
+          </dt>
+          <dd className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <span>
+              {dateLabel(trip.arrival_date, lang)} · {slotLabel(trip.arrival_slot, lang)}
+            </span>
+            <Seats count={trip.seats} />
           </dd>
         </div>
-        <div className="flex gap-2">
-          <dt className="shrink-0 text-olive">{c.departure}</dt>
-          <dd>
-            {trip.departure_date
-              ? `${dateLabel(trip.departure_date, lang)}${
-                  trip.departure_slot == null ? "" : ` · ${slotLabel(trip.departure_slot, lang)}`
-                }${trip.return_destination ? ` ${c.returnTo} ${trip.return_destination}` : ""}`
-              : c.departureUnknown}
+        <div>
+          <dt className="font-display text-[0.62rem] tracking-[0.2em] uppercase text-olive">
+            {c.departure}
+          </dt>
+          <dd className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+            {trip.departure_date ? (
+              <>
+                <span>
+                  {dateLabel(trip.departure_date, lang)}
+                  {trip.departure_slot == null ? "" : ` · ${slotLabel(trip.departure_slot, lang)}`}
+                  {trip.return_destination ? ` ${c.returnTo} ${trip.return_destination}` : ""}
+                </span>
+                {trip.seats_return == null ? (
+                  <Todo label={c.toComplete} />
+                ) : (
+                  <Seats count={trip.seats_return} />
+                )}
+              </>
+            ) : (
+              <>
+                <span className="text-clay">{c.departureUnknown}</span>
+                <Todo label={c.toComplete} />
+              </>
+            )}
           </dd>
         </div>
       </dl>

@@ -163,6 +163,8 @@
   --color-olive: var(--olive);
   --color-sand: var(--sand);
   --color-olive-deep: var(--olive-deep);
+  --color-clay: var(--clay);
+  --color-clay-soft: var(--clay-soft);
   --color-ink: var(--ink);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
@@ -206,6 +208,11 @@
   --olive: oklch(0.58 0.028 128);
   --olive-deep: oklch(0.375 0.026 132);
   --sand: oklch(0.93 0.017 85);
+  /* Terre cuite. Le rouge de `--destructive` jurerait au milieu des verts et
+     des sables ; cette teinte signale ce qui reste à compléter sans alarmer,
+     tout en gardant un contraste suffisant sur le fond clair. */
+  --clay: oklch(0.53 0.098 45);
+  --clay-soft: oklch(0.945 0.026 60);
   --ink: oklch(0.3 0.012 130);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);

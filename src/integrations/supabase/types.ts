@@ -46,6 +46,7 @@ export type Database = {
           origin: string;
           phone: string;
           return_destination: string | null;
+          seats_return: number | null;
           seats: number;
           whatsapp: boolean;
         };
@@ -63,6 +64,7 @@ export type Database = {
           phone: string;
           return_destination?: string | null;
           seats?: number;
+          seats_return?: number | null;
           whatsapp?: boolean;
         };
         Update: {
@@ -79,6 +81,7 @@ export type Database = {
           phone?: string;
           return_destination?: string | null;
           seats?: number;
+          seats_return?: number | null;
           whatsapp?: boolean;
         };
         Relationships: [];
