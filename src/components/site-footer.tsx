@@ -25,6 +25,7 @@ export function SiteFooter() {
               Alexandra <span className="text-olive">&amp;</span> Thomas
             </p>
             <p className="mt-3 label-xs text-muted-foreground">{t.footer.dates}</p>
+            <p className="mt-3 text-[0.9rem] text-muted-foreground">{t.footer.location}</p>
             <p className="mt-6 max-w-sm text-[0.9rem] leading-relaxed text-muted-foreground">
               {t.footer.address}
             </p>

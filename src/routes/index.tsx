@@ -143,7 +143,7 @@ function Index() {
         </div>
       </section>
 
-      {/* Le lieu */}
+      {/* Le Couvent */}
       <section className="grid lg:grid-cols-2">
         <Reveal className="order-2 flex items-center px-6 py-20 sm:px-14 lg:order-1 lg:py-28">
           <div className="max-w-md">
@@ -227,7 +227,7 @@ function Index() {
       </section>
 
       {/* Bon à savoir */}
-      {/* Instagram du domaine */}
+      {/* Instagram du Couvent */}
       <section className="border-t border-border/70 bg-sage-soft/30">
         <div className="container-page py-20 sm:py-24">
           <Reveal className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">

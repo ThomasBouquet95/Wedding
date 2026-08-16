@@ -34,80 +34,21 @@ export const Route = createFileRoute("/hebergements")({
 });
 
 /**
- * Les adresses repérées autour du domaine, classées de la plus proche à la
- * plus éloignée. Noms, prix et étoiles ne se traduisent pas ; le type, la
- * distance et les commentaires sont des clés du dictionnaire.
+ * Les adresses repérées autour du Couvent, de la plus proche à la plus
+ * éloignée. Ne restent ici que ce qui ne se traduit pas — nom, étoiles — et
+ * les clés du dictionnaire pour la distance et le descriptif.
  */
 const stays = [
-  {
-    name: "Domaine Paradis",
-    type: "bnb",
-    stars: "3★",
-    price: "200 €",
-    distance: "d3walk15",
-    highlight: true,
-    forWhom: "friendsIdeal",
-    note: "paradis",
-  },
-  {
-    name: "Domaine des Pradaous",
-    type: "gite",
-    price: "165 €",
-    distance: "d3walk20",
-    highlight: true,
-    forWhom: "friendsIdeal",
-    note: "pradaous",
-  },
-  {
-    name: "Le Moulin des Prédelles",
-    type: "bnb",
-    stars: "3★",
-    price: "160 €",
-    distance: "d6",
-    forWhom: "friendsPoor",
-  },
-  { name: "Lou Paradou", type: "hotel", stars: "3★", price: "150 €", distance: "d7" },
-  {
-    name: "Le Sens des Merveilles",
-    type: "gite",
-    price: "160 €",
-    distance: "d15",
-    forWhom: "friendsYoung",
-  },
-  {
-    name: "Le Couvent des Minimes",
-    type: "hotel",
-    stars: "5★",
-    price: "300 €",
-    distance: "d17",
-    forWhom: "family",
-    note: "minimes",
-  },
-  {
-    name: "La Bastide Saint Georges",
-    type: "hotel",
-    stars: "4★",
-    price: "200 €",
-    distance: "d20",
-    forWhom: "family",
-  },
-  {
-    name: "Les Prairies de l'Encrême",
-    type: "gite",
-    stars: "3★",
-    priceKey: "wholeHouse",
-    distance: "d20",
-    note: "prairies",
-  },
-  { name: "Provence Au Cœur", type: "aparthotel", stars: "4★", price: "120 €", distance: "d20" },
-  {
-    name: "Villa Saint Marc",
-    type: "bnb",
-    stars: "3★",
-    price: "50 €",
-    distance: "d21",
-    note: "villa",
-  },
+  { id: "paradis", name: "Domaine Paradis", stars: "3★", distance: "d3walk15", highlight: true },
+  { id: "pradaous", name: "Domaine des Pradaous", distance: "d3walk20", highlight: true },
+  { id: "moulin", name: "Le Moulin des Prédelles", stars: "3★", distance: "d6" },
+  { id: "louParadou", name: "Lou Paradou", stars: "3★", distance: "d7" },
+  { id: "merveilles", name: "Le Sens des Merveilles", distance: "d15" },
+  { id: "minimes", name: "Le Couvent des Minimes", stars: "5★", distance: "d17" },
+  { id: "bastide", name: "La Bastide Saint-Georges", stars: "4★", distance: "d20" },
+  { id: "prairies", name: "Les Prairies de l'Encrême", stars: "3★", distance: "d20" },
+  { id: "provence", name: "Provence Au Cœur", stars: "4★", distance: "d20" },
+  { id: "villa", name: "Villa Saint Marc", stars: "3★", distance: "d21" },
 ] as const;
 
 function Page() {
@@ -136,7 +77,7 @@ function Page() {
         <div className="mt-16 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
           {stays.map((s, i) => (
             <Reveal
-              key={s.name}
+              key={s.id}
               delay={i * 70}
               className={cn(
                 "flex flex-col p-8 transition-colors duration-500 sm:p-10",
@@ -157,19 +98,16 @@ function Page() {
               </h2>
 
               <p className="mt-2 text-[0.82rem] tracking-wide text-muted-foreground/80">
-                {h.types[s.type]} ·{" "}
-                {"priceKey" in s ? h.prices[s.priceKey] : `${s.price} ${h.perNight}`}
+                {h.items[s.id].type}
               </p>
 
-              {"note" in s ? (
-                <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">
-                  {h.notes[s.note]}
-                </p>
-              ) : null}
+              <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">
+                {h.items[s.id].description}
+              </p>
 
-              {"forWhom" in s ? (
+              {h.items[s.id].badge ? (
                 <p className="mt-auto pt-6 font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.64rem]">
-                  {h.forWhom[s.forWhom]}
+                  {h.items[s.id].badge}
                 </p>
               ) : null}
             </Reveal>
