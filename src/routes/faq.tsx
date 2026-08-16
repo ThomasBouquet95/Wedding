@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { useState } from "react";
 import { Plus } from "lucide-react";
@@ -111,7 +111,16 @@ function Page() {
           ))}
 
           <Reveal className="mt-14 text-center">
-            <p className="text-[0.9rem] leading-relaxed text-muted-foreground">{t.faq.footer}</p>
+            <Link
+              to="/informations"
+              hash="covoiturage"
+              className="inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
+            >
+              {t.faq.carpoolCta}
+            </Link>
+            <p className="mt-10 text-[0.9rem] leading-relaxed text-muted-foreground">
+              {t.faq.footer}
+            </p>
           </Reveal>
         </div>
       </section>

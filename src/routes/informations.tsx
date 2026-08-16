@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
 import { Car, MessageCircle, Plane, Shirt, Sun, Train } from "lucide-react";
 import bambouseraie from "@/assets/bambouseraie.webp";
+import { Covoiturage } from "@/components/covoiturage";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { translations, useT } from "@/lib/i18n";
@@ -88,8 +89,13 @@ function Page() {
             </div>
           </div>
         ))}
+      </section>
 
-        <Reveal className="mt-20 border-t border-border pt-12 text-center">
+      {/* Le tableau de covoiturage entre invités */}
+      <Covoiturage />
+
+      <section className="container-page py-16 sm:py-20">
+        <Reveal className="text-center">
           <p className="text-[0.95rem] text-muted-foreground">{t.informations.footer}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-4">
             <Link

@@ -241,15 +241,15 @@ const fr = {
     eyebrow: "Hébergements",
     heading: "Où séjourner",
     intro:
-      "Nous vous recommandons de réserver assez tôt : le mois de juin est une période très demandée en Provence. Voici notre sélection d'hébergements à proximité du Couvent.",
+      "Voici les adresses que nous avons repérées autour du Couvent. Ce sont des suggestions : chacun réserve librement celle qui lui convient. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
     heroAlt: "Couloir voûté du Couvent avec des oliviers en pot",
     listEyebrow: "Nos adresses",
     listHeading:
       "Dix adresses situées entre quelques minutes à pied et une vingtaine de minutes en voiture du Couvent.",
     listNote:
-      "Les chambres du Couvent ont déjà été attribuées et il n'y a malheureusement plus de disponibilité sur place. Les tarifs indiqués sont donnés à titre indicatif et doivent être vérifiés directement auprès des établissements au moment de la réservation.",
+      "Aucune chambre n'est retenue pour le mariage : chaque adresse ci-dessous est une simple suggestion, à réserver directement et librement auprès de l'établissement, en votre nom. Il n'y a pas d'hébergement disponible sur place au Couvent. Les tarifs sont donnés à titre indicatif et restent à vérifier au moment de la réservation.",
     footer:
-      "Pensez à organiser votre trajet entre votre hébergement et le Couvent. Il n'y aura pas de navette générale à l'arrivée ou au départ du week-end. En revanche, le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
+      "Pensez à organiser votre trajet entre votre hébergement et le Couvent : le tableau de covoiturage, sur la page Accès & infos, permet de proposer ou de trouver une place en voiture. Il n'y aura pas de navette générale à l'arrivée ou au départ du week-end. En revanche, le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
     distances: {
       d3walk15: "3 min en voiture · 15 min à pied",
       d3walk20: "3 min en voiture · 20 min à pied",
@@ -293,7 +293,7 @@ const fr = {
       minimes: {
         type: "Hôtel · env. 300 € / nuit",
         description:
-          "L'adresse la plus haut de gamme de notre sélection. Un contingent de chambres y a été réservé pour nos invités.",
+          "L'adresse la plus haut de gamme de notre sélection, à réserver directement auprès de l'hôtel.",
         badge: "Idéal en couple ou en famille",
       },
       bastide: {
@@ -321,7 +321,7 @@ const fr = {
   informations: {
     title: "Accès & infos — Alexandra & Thomas",
     description:
-      "Tenue, météo, transports et parking pour le mariage d'Alexandra & Thomas les 25 et 26 juin 2027 au Couvent Notre-Dame des Prés.",
+      "Tenue, météo, transports, covoiturage et parking pour le mariage d'Alexandra & Thomas les 25 et 26 juin 2027 au Couvent Notre-Dame des Prés.",
     eyebrow: "Informations pratiques",
     heading: "Tout ce qu'il faut savoir",
     intro: "Quelques informations pour préparer sereinement votre week-end en Provence.",
@@ -342,20 +342,74 @@ const fr = {
       },
       plane: {
         title: "En avion",
-        text: "Les aéroports les plus pratiques sont Marseille-Provence et Nice Côte d'Azur. Depuis l'aéroport, nous vous recommandons de louer une voiture ou d'organiser un covoiturage avec d'autres invités.",
+        text: "Les aéroports les plus pratiques sont Marseille-Provence et Nice Côte d'Azur. Depuis l'aéroport, le plus simple est de louer une voiture, ou de rejoindre un autre invité grâce au tableau de covoiturage ci-dessous.",
       },
       train: {
         title: "En train",
-        text: "Les gares les plus pratiques sont Aix-en-Provence TGV et Manosque-Gréoux-les-Bains. Une voiture sera ensuite nécessaire pour rejoindre le Couvent. Nous faciliterons également la mise en relation des invités souhaitant covoiturer.",
+        text: "Les gares les plus pratiques sont Aix-en-Provence TGV et Manosque-Gréoux-les-Bains. Une voiture sera ensuite nécessaire pour rejoindre le Couvent : le tableau de covoiturage ci-dessous permet de trouver une place auprès d'un autre invité.",
       },
       car: {
         title: "En voiture et parking",
-        text: "Depuis l'A51, prenez la sortie Manosque puis comptez environ 25 minutes de route jusqu'à Reillanne. Un parking gratuit est disponible à l'entrée du Couvent.",
+        text: "Depuis l'A51, prenez la sortie Manosque puis comptez environ 25 minutes de route jusqu'à Reillanne. Un parking gratuit est disponible à l'entrée du Couvent. Si vous venez en voiture, pensez à inscrire votre trajet ci-dessous : d'autres invités pourront vous rejoindre.",
       },
     },
     footer: "Encore une question ? Vous trouverez probablement la réponse dans notre FAQ.",
     faqCta: "Voir les questions fréquentes",
     stayCta: "Voir les hébergements",
+  },
+  covoiturage: {
+    eyebrow: "Covoiturage",
+    heading: "Se retrouver sur la route",
+    intro:
+      "Beaucoup d'entre vous viendront en voiture ou en loueront une sur place. Inscrivez votre trajet en quelques secondes : les autres invités verront les places libres et pourront vous contacter directement.",
+    listHeading: "Les trajets proposés",
+    loading: "Chargement des trajets…",
+    empty:
+      "Aucun trajet n'est encore inscrit. Soyez les premiers : votre trajet apparaîtra aussitôt ici.",
+    seatsOne: "place libre",
+    seatsMany: "places libres",
+    seatsNone: "complet",
+    arrival: "Arrivée",
+    departure: "Retour",
+    departureUnknown: "non précisé",
+    whatsapp: "WhatsApp",
+    call: "Appeler",
+    formHeading: "Inscrire mon trajet",
+    formIntro:
+      "Les champs suivis d'une étoile sont indispensables ; le reste nous aide simplement à mieux vous situer.",
+    fields: {
+      name: "Nom et prénom",
+      phone: "Téléphone",
+      phoneHint: "Au format international, par exemple +33 6 12 34 56 78.",
+      whatsapp: "Joignable sur WhatsApp",
+      yes: "Oui",
+      no: "Non",
+      origin: "Lieu de départ",
+      originPlaceholder: "Paris, Lyon, aéroport de Marseille…",
+      destination: "Destination",
+      destinationPlaceholder: "Couvent Notre-Dame des Prés, Reillanne",
+      arrivalDate: "Date d'arrivée",
+      arrivalTime: "Heure approximative d'arrivée",
+      departureDate: "Date de départ",
+      departureTime: "Heure approximative de départ",
+      seats: "Places disponibles dans la voiture",
+      comment: "Commentaire",
+      commentPlaceholder: "Un détour possible, une étape en chemin, un coffre déjà bien rempli…",
+      optional: "facultatif",
+      choose: "Choisir",
+    },
+    consent:
+      "En publiant votre trajet, vous acceptez que votre nom, votre numéro et ces informations soient visibles par les autres invités sur cette page.",
+    submit: "Publier mon trajet",
+    submitting: "Publication…",
+    success: "Merci ! Votre trajet est en ligne, il apparaît juste au-dessus.",
+    again: "Inscrire un autre trajet",
+    invalid: "Merci de compléter les champs marqués d'une étoile.",
+    fallbackHeading: "Le tableau n'est pas encore ouvert",
+    fallbackText:
+      "Votre trajet n'a pas pu être publié pour l'instant. Copiez le récapitulatif ci-dessous et envoyez-le à Alexandra ou Thomas : ils l'ajouteront au tableau.",
+    copy: "Copier le récapitulatif",
+    copied: "Copié",
   },
   faq: {
     title: "Questions — Alexandra & Thomas",
@@ -365,6 +419,7 @@ const fr = {
     heading: "Questions fréquentes",
     intro: "Toutes les réponses aux principales questions concernant le week-end.",
     heroAlt: "Piscine du Couvent sous les grands arbres",
+    carpoolCta: "Ouvrir le tableau de covoiturage",
     footer:
       "Vous ne trouvez pas la réponse à votre question ? N'hésitez pas à contacter directement Alexandra ou Thomas.",
     items: [
@@ -378,7 +433,7 @@ const fr = {
       },
       {
         q: "Où séjourner ?",
-        a: "Les chambres du Couvent ont déjà toutes été attribuées. Nous avons sélectionné plusieurs hébergements à proximité, que vous retrouverez sur la page Hébergements. Nous vous recommandons de réserver assez tôt, le mois de juin étant très demandé en Provence.",
+        a: "Il n'y a pas d'hébergement disponible sur place au Couvent. Nous avons repéré plusieurs adresses à proximité, réunies sur la page Hébergements : ce sont des suggestions, sans aucune chambre retenue pour le mariage. Chacun réserve librement, directement auprès de l'établissement et en son nom. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
       },
       {
         q: "Où se garer ?",
@@ -390,7 +445,11 @@ const fr = {
       },
       {
         q: "Comment venir au Couvent et rentrer après la soirée ?",
-        a: "Chaque invité organise son trajet jusqu'au Couvent. Nous faciliterons le covoiturage en mettant en relation les personnes ayant des places disponibles avec celles qui en recherchent. Le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
+        a: "Chaque invité organise son trajet jusqu'au Couvent. Pour vous y aider, un tableau de covoiturage est ouvert sur la page Accès & infos : celles et ceux qui viennent en voiture ou qui en louent une y inscrivent leur trajet et le nombre de places libres, et vous pouvez les contacter directement. Le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
+      },
+      {
+        q: "Comment fonctionne le covoiturage entre invités ?",
+        a: "Sur la page Accès & infos, un formulaire vous permet d'inscrire votre trajet en quelques secondes : d'où vous partez, quand vous arrivez, quand vous repartez et combien de places restent libres dans la voiture. Tous les trajets inscrits s'affichent ensuite sur la même page, et chacun peut contacter directement la personne qui conduit, par téléphone ou par WhatsApp.",
       },
       {
         q: "Nous aimerions participer au cadeau de mariage. Comment faire ?",
@@ -650,15 +709,15 @@ const en: Translated<typeof fr> = {
     eyebrow: "Where to stay",
     heading: "Places to stay",
     intro:
-      "We recommend booking early, as June is a popular time to visit Provence. Here is our selection of places to stay close to the Couvent.",
+      "Here are the places we have found around the Couvent. They are suggestions: everyone books whichever suits them best. We recommend doing so early, as June is a popular time to visit Provence.",
     heroAlt: "Vaulted Couvent corridor with potted olive trees",
     listEyebrow: "Our recommendations",
     listHeading:
       "Ten places to stay, ranging from a short walk to around twenty minutes by car from the Couvent.",
     listNote:
-      "All rooms at the Couvent have already been allocated, so unfortunately there is no accommodation remaining on site. Prices are indicative and should be confirmed directly with each property when booking.",
+      "No rooms are being held for the wedding: each address below is simply a suggestion, to be booked directly and freely with the property, in your own name. There is no accommodation available on site at the Couvent. Prices are indicative and should be confirmed when booking.",
     footer:
-      "Please remember to arrange transport between your accommodation and the Couvent. There will not be a general shuttle service on arrival or departure. However, on Saturday night, transport back to selected nearby accommodation will be arranged.",
+      "Please remember to arrange transport between your accommodation and the Couvent: the ride-sharing board, on the Travel & info page, lets you offer or find a seat in a car. There will not be a general shuttle service on arrival or departure. However, on Saturday night, transport back to selected nearby accommodation will be arranged.",
     distances: {
       d3walk15: "3 min by car · 15 min on foot",
       d3walk20: "3 min by car · 20 min on foot",
@@ -699,8 +758,7 @@ const en: Translated<typeof fr> = {
       },
       minimes: {
         type: "Hotel · around €300 / night",
-        description:
-          "The most luxurious option on our list. A number of rooms have been reserved for our guests.",
+        description: "The most luxurious option on our list, to be booked directly with the hotel.",
         badge: "Great for couples & families",
       },
       bastide: {
@@ -728,7 +786,7 @@ const en: Translated<typeof fr> = {
   informations: {
     title: "Travel & info — Alexandra & Thomas",
     description:
-      "Dress code, weather, travel and parking for Alexandra & Thomas's wedding on 25 and 26 June 2027 at the Couvent Notre-Dame des Prés.",
+      "Dress code, weather, travel, ride-sharing and parking for Alexandra & Thomas's wedding on 25 and 26 June 2027 at the Couvent Notre-Dame des Prés.",
     eyebrow: "Practical information",
     heading: "Everything you need to know",
     intro: "A few useful details to help you plan your weekend in Provence.",
@@ -749,20 +807,73 @@ const en: Translated<typeof fr> = {
       },
       plane: {
         title: "By plane",
-        text: "The most convenient airports are Marseille-Provence and Nice Côte d'Azur. From the airport, we recommend hiring a car or arranging to share a ride with other guests.",
+        text: "The most convenient airports are Marseille-Provence and Nice Côte d'Azur. From the airport, the simplest option is to hire a car, or to join another guest through the ride-sharing board below.",
       },
       train: {
         title: "By train",
-        text: "The most convenient stations are Aix-en-Provence TGV and Manosque-Gréoux-les-Bains. You will need a car for the final part of the journey. We will also help connect guests who would like to share rides.",
+        text: "The most convenient stations are Aix-en-Provence TGV and Manosque-Gréoux-les-Bains. You will need a car for the final part of the journey: the ride-sharing board below lets you find a seat with another guest.",
       },
       car: {
         title: "By car and parking",
-        text: "From the A51 motorway, take the Manosque exit and allow approximately 25 minutes to reach Reillanne. Free parking is available at the entrance to the Couvent.",
+        text: "From the A51 motorway, take the Manosque exit and allow approximately 25 minutes to reach Reillanne. Free parking is available at the entrance to the Couvent. If you are driving, do post your journey below: other guests may be able to join you.",
       },
     },
     footer: "Still have a question? You'll probably find the answer in our FAQ.",
     faqCta: "Frequently asked questions",
     stayCta: "Where to stay",
+  },
+  covoiturage: {
+    eyebrow: "Ride-sharing",
+    heading: "Sharing the road",
+    intro:
+      "Many of you will be driving or hiring a car once here. Post your journey in a few seconds: other guests will see the free seats and can contact you directly.",
+    listHeading: "Journeys posted so far",
+    loading: "Loading journeys…",
+    empty: "No journey has been posted yet. Be the first: yours will appear here straight away.",
+    seatsOne: "free seat",
+    seatsMany: "free seats",
+    seatsNone: "full",
+    arrival: "Arriving",
+    departure: "Heading back",
+    departureUnknown: "not yet decided",
+    whatsapp: "WhatsApp",
+    call: "Call",
+    formHeading: "Post my journey",
+    formIntro:
+      "Fields marked with a star are required; the rest simply help other guests picture your journey.",
+    fields: {
+      name: "First and last name",
+      phone: "Phone",
+      phoneHint: "In international format, for example +33 6 12 34 56 78.",
+      whatsapp: "Reachable on WhatsApp",
+      yes: "Yes",
+      no: "No",
+      origin: "Setting off from",
+      originPlaceholder: "London, Paris, Marseille airport…",
+      destination: "Destination",
+      destinationPlaceholder: "Couvent Notre-Dame des Prés, Reillanne",
+      arrivalDate: "Arrival date",
+      arrivalTime: "Approximate arrival time",
+      departureDate: "Departure date",
+      departureTime: "Approximate departure time",
+      seats: "Seats available in the car",
+      comment: "Comment",
+      commentPlaceholder: "A possible detour, a stop along the way, a boot already rather full…",
+      optional: "optional",
+      choose: "Choose",
+    },
+    consent:
+      "By posting your journey, you agree that your name, your number and these details will be visible to other guests on this page.",
+    submit: "Post my journey",
+    submitting: "Posting…",
+    success: "Thank you! Your journey is online — it appears just above.",
+    again: "Post another journey",
+    invalid: "Please fill in the fields marked with a star.",
+    fallbackHeading: "The board is not open yet",
+    fallbackText:
+      "Your journey could not be posted just now. Copy the summary below and send it to Alexandra or Thomas, who will add it to the board.",
+    copy: "Copy the summary",
+    copied: "Copied",
   },
   faq: {
     title: "Questions — Alexandra & Thomas",
@@ -772,6 +883,7 @@ const en: Translated<typeof fr> = {
     heading: "Frequently asked questions",
     intro: "Answers to the main questions you may have about the weekend.",
     heroAlt: "Couvent pool beneath the tall trees",
+    carpoolCta: "Open the ride-sharing board",
     footer: "Still have a question? Feel free to contact Alexandra or Thomas directly.",
     items: [
       {
@@ -784,7 +896,7 @@ const en: Translated<typeof fr> = {
       },
       {
         q: "Where should I stay?",
-        a: "All rooms at the Couvent have already been allocated. We have selected several nearby places to stay, which you'll find on the Where to stay page. We recommend booking early, as June is a particularly popular time in Provence.",
+        a: "There is no accommodation available on site at the Couvent. We have found several places nearby, gathered on the Where to stay page: they are suggestions, with no rooms held for the wedding. Everyone books freely, directly with the property and in their own name. We recommend booking early, as June is a particularly popular time in Provence.",
       },
       {
         q: "Where can I park?",
@@ -796,7 +908,11 @@ const en: Translated<typeof fr> = {
       },
       {
         q: "How do I get to the Couvent and back after the celebration?",
-        a: "Guests should arrange their own transport to the Couvent. We'll help coordinate car-sharing by connecting guests who have spare seats with those looking for a lift. On Saturday night, transport will be arranged back to selected nearby accommodation.",
+        a: "Guests arrange their own way to the Couvent. To help, a ride-sharing board is open on the Travel & info page: anyone driving or hiring a car can post their journey and the number of free seats, and you can contact them directly. On Saturday night, transport will be arranged back to selected nearby accommodation.",
+      },
+      {
+        q: "How does ride-sharing between guests work?",
+        a: "On the Travel & info page, a short form lets you post your journey in a few seconds: where you are setting off from, when you arrive, when you leave and how many seats are free in the car. Every journey posted then appears on the same page, and anyone can contact the driver directly, by phone or on WhatsApp.",
       },
       {
         q: "We would like to contribute to the wedding gift. How can we do so?",

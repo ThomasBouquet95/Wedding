@@ -32,6 +32,54 @@ export type Database = {
         };
         Relationships: [];
       };
+      covoiturage: {
+        Row: {
+          arrival_date: string;
+          arrival_slot: number;
+          comment: string | null;
+          created_at: string;
+          departure_date: string | null;
+          departure_slot: number | null;
+          destination: string;
+          id: string;
+          name: string;
+          origin: string;
+          phone: string;
+          seats: number;
+          whatsapp: boolean;
+        };
+        Insert: {
+          arrival_date: string;
+          arrival_slot: number;
+          comment?: string | null;
+          created_at?: string;
+          departure_date?: string | null;
+          departure_slot?: number | null;
+          destination: string;
+          id?: string;
+          name: string;
+          origin: string;
+          phone: string;
+          seats?: number;
+          whatsapp?: boolean;
+        };
+        Update: {
+          arrival_date?: string;
+          arrival_slot?: number;
+          comment?: string | null;
+          created_at?: string;
+          departure_date?: string | null;
+          departure_slot?: number | null;
+          destination?: string;
+          id?: string;
+          name?: string;
+          origin?: string;
+          phone?: string;
+          seats?: number;
+          whatsapp?: boolean;
+        };
+        Relationships: [];
+      };
       rsvps: {
         Row: {
           attending: boolean;

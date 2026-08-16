@@ -1,7 +1,6 @@
 import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/react-start";
 
 import { renderErrorPage } from "./lib/error-page";
-import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
 const errorMiddleware = createMiddleware().server(async ({ next }) => {
   try {
@@ -25,7 +24,12 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
+// `attachSupabaseAuth` était enregistré ici par l'échafaudage du projet. Il
+// attache un jeton d'authentification aux appels de fonctions serveur — or le
+// site n'en compte aucune et n'a pas de connexion. Son seul effet était de
+// faire entrer `@supabase/supabase-js` dans le paquet envoyé au navigateur, à
+// chaque page et sur chaque téléphone. Le tableau de covoiturage interroge
+// l'API REST directement, il n'en a pas besoin non plus.
 export const startInstance = createStart(() => ({
-  functionMiddleware: [attachSupabaseAuth],
   requestMiddleware: [errorMiddleware, csrfMiddleware],
 }));
