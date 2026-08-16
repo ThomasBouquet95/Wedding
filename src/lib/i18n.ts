@@ -502,10 +502,6 @@ const fr = {
         a: "Sur la page Accès & infos, un formulaire vous permet d'inscrire votre trajet en quelques secondes : d'où vous partez, quand vous arrivez, quand vous repartez et combien de places restent libres dans la voiture. Tous les trajets inscrits s'affichent ensuite sur la même page, et chacun peut contacter directement la personne qui conduit, par téléphone ou par WhatsApp.",
       },
       {
-        q: "Nous aimerions participer au cadeau de mariage. Comment faire ?",
-        a: "Contactez directement Alexandra ou Thomas : ils vous transmettront toutes les informations.",
-      },
-      {
         q: "Quand les horaires définitifs seront-ils disponibles ?",
         a: "Le programme définitif et les dernières informations pratiques seront publiés sur ce site au printemps 2027.",
       },
@@ -1012,10 +1008,6 @@ const en: Translated<typeof fr> = {
       {
         q: "How does ride-sharing between guests work?",
         a: "On the Travel & info page, a short form lets you post your journey in a few seconds: where you are setting off from, when you arrive, when you leave and how many seats are free in the car. Every journey posted then appears on the same page, and anyone can contact the driver directly, by phone or on WhatsApp.",
-      },
-      {
-        q: "We would like to contribute to the wedding gift. How can we do so?",
-        a: "Please contact Alexandra or Thomas directly and they will share the details with you.",
       },
       {
         q: "When will the final schedule be available?",
