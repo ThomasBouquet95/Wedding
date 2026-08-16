@@ -12,8 +12,20 @@ export type TripInput = Database["public"]["Tables"]["covoiturage"]["Insert"];
  * l'authentification, le stockage et le temps réel, dont le site ne se sert
  * nulle part.
  */
-const REST_URL = import.meta.env["VITE_SUPABASE_URL"];
-const REST_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+/**
+ * Le projet Supabase du site. Les deux valeurs sont inscrites ici plutôt que
+ * confiées aux variables d'environnement de Vercel, qu'il faudrait redéfinir à
+ * chaque déploiement. La clé est de type « publishable » : elle est faite pour
+ * être exposée, part de toute façon dans le navigateur de chaque visiteur, et
+ * ne donne que ce que les règles RLS de la table autorisent — lire le tableau
+ * et y ajouter un trajet, rien d'autre. Une variable d'environnement, si elle
+ * est définie, reste prioritaire.
+ */
+const SUPABASE_URL = "https://arqifywkiigmhqayyizh.supabase.co";
+const SUPABASE_KEY = "sb_publishable_DHKWxj6jNNOpbbEtkr4ZkA_78-SYQIK";
+
+const REST_URL = import.meta.env["VITE_SUPABASE_URL"] || SUPABASE_URL;
+const REST_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || SUPABASE_KEY;
 
 /** Vrai si le projet Supabase est renseigné à la compilation. */
 export const boardConfigured = Boolean(REST_URL && REST_KEY);
