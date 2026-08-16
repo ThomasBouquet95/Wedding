@@ -103,6 +103,29 @@ export async function createTrip(trip: TripInput): Promise<void> {
 }
 
 /**
+ * Modification et suppression demandent `return=representation` : sans en-tête,
+ * PostgREST répond « 204 » aussi bien quand la ligne a été touchée que quand
+ * les règles RLS l'ont écartée. La liste renvoyée lève l'ambiguïté — vide,
+ * c'est que rien n'a bougé.
+ */
+async function mutate(id: string, init: RequestInit): Promise<void> {
+  const response = await rest(`?id=eq.${encodeURIComponent(id)}`, {
+    ...init,
+    headers: { Prefer: "return=representation", ...init.headers },
+  });
+  const rows = (await response.json()) as unknown[];
+  if (rows.length === 0) throw new Error("Aucune ligne modifiée.");
+}
+
+export async function updateTrip(id: string, trip: TripInput): Promise<void> {
+  await mutate(id, { method: "PATCH", body: JSON.stringify(trip) });
+}
+
+export async function deleteTrip(id: string): Promise<void> {
+  await mutate(id, { method: "DELETE" });
+}
+
+/**
  * Le récapitulatif de repli, proposé à la copie lorsque le tableau n'est pas
  * joignable : l'invité peut alors l'envoyer à Alexandra ou Thomas plutôt que
  * de perdre ce qu'il vient de saisir.
@@ -115,7 +138,7 @@ export function tripSummary(trip: TripInput, lang: Lang): string {
   const back = trip.departure_date
     ? `${dateLabel(trip.departure_date, lang)}${
         trip.departure_slot == null ? "" : `, ${slotLabel(trip.departure_slot, lang)}`
-      }`
+      }${trip.return_destination ? ` ${l ? "vers" : "to"} ${trip.return_destination}` : ""}`
     : l
       ? "non précisé"
       : "not yet decided";

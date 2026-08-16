@@ -45,6 +45,7 @@ export type Database = {
           name: string;
           origin: string;
           phone: string;
+          return_destination: string | null;
           seats: number;
           whatsapp: boolean;
         };
@@ -60,6 +61,7 @@ export type Database = {
           name: string;
           origin: string;
           phone: string;
+          return_destination?: string | null;
           seats?: number;
           whatsapp?: boolean;
         };
@@ -75,6 +77,7 @@ export type Database = {
           name?: string;
           origin?: string;
           phone?: string;
+          return_destination?: string | null;
           seats?: number;
           whatsapp?: boolean;
         };

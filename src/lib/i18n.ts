@@ -241,7 +241,7 @@ const fr = {
     eyebrow: "Hébergements",
     heading: "Où séjourner",
     intro:
-      "Voici les adresses que nous avons repérées autour du Couvent. Ce sont des suggestions : chacun réserve librement celle qui lui convient. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
+      "Voici les adresses que nous avons repérées autour du Couvent. Ce sont des suggestions : chacun réserve librement celle qui lui convient. Vous trouverez également de nombreuses locations sur Airbnb autour de Reillanne et de Forcalquier. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
     heroAlt: "Couloir voûté du Couvent avec des oliviers en pot",
     listEyebrow: "Nos adresses",
     listHeading:
@@ -293,7 +293,7 @@ const fr = {
       minimes: {
         type: "Hôtel · env. 300 € / nuit",
         description:
-          "L'adresse la plus haut de gamme de notre sélection, à réserver directement auprès de l'hôtel.",
+          "L'une des plus belles adresses des environs, à réserver directement auprès de l'hôtel.",
         badge: "Idéal en couple ou en famille",
       },
       bastide: {
@@ -336,13 +336,9 @@ const fr = {
         title: "Météo en juin",
         text: "À la fin du mois de juin, les journées sont généralement chaudes et ensoleillées en Provence, avec des températures plus douces en soirée.",
       },
-      languages: {
-        title: "Langues",
-        text: "Le week-end se déroulera en français et en anglais.",
-      },
       plane: {
         title: "En avion",
-        text: "Les aéroports les plus pratiques sont Marseille-Provence et Nice Côte d'Azur. Depuis l'aéroport, le plus simple est de louer une voiture, ou de rejoindre un autre invité grâce au tableau de covoiturage ci-dessous.",
+        text: "L'aéroport le plus pratique est Marseille-Provence. Depuis l'aéroport, le plus simple est de louer une voiture, ou de rejoindre un autre invité grâce au tableau de covoiturage ci-dessous.",
       },
       train: {
         title: "En train",
@@ -351,6 +347,41 @@ const fr = {
       car: {
         title: "En voiture et parking",
         text: "Depuis l'A51, prenez la sortie Manosque puis comptez environ 25 minutes de route jusqu'à Reillanne. Un parking gratuit est disponible à l'entrée du Couvent. Si vous venez en voiture, pensez à inscrire votre trajet ci-dessous : d'autres invités pourront vous rejoindre.",
+      },
+    },
+    routes: {
+      heading: "Selon d'où vous partez",
+      note: "Les durées sont données à titre indicatif, hors trafic. Dans tous les cas, une voiture reste nécessaire pour la dernière partie du trajet.",
+      best: "Conseillé",
+      modes: { car: "En voiture", plane: "En avion", train: "En train" },
+      /** Un texte vide = ce mode de transport n'est pas proposé pour ce départ. */
+      cities: {
+        zurich: {
+          name: "Zurich",
+          car: "Environ 7 h de route.",
+          plane: "Vol direct Zurich — Marseille, puis une voiture de location.",
+          train: "",
+        },
+        paris: {
+          name: "Paris",
+          car: "",
+          plane: "",
+          train:
+            "Train jusqu'à Aix-en-Provence TGV (4 h), puis 50 min de voiture de location. Ou jusqu'à Marseille (3 h), puis 1 h 20 de voiture.",
+        },
+        geneve: {
+          name: "Genève",
+          car: "Environ 4 h 20 jusqu'à Reillanne.",
+          plane: "Aucun vol direct.",
+          train: "Entre 3 h 40 et 4 h 20 jusqu'à Marseille, puis 1 h 20 de voiture de location.",
+        },
+        international: {
+          name: "Depuis l'étranger",
+          car: "",
+          plane:
+            "Le plus simple est de passer par Paris, puis Marseille, et de louer une voiture jusqu'à Reillanne.",
+          train: "",
+        },
       },
     },
     footer: "Encore une question ? Vous trouverez probablement la réponse dans notre FAQ.",
@@ -363,6 +394,8 @@ const fr = {
     intro:
       "Beaucoup d'entre vous viendront en voiture ou en loueront une sur place. Inscrivez votre trajet en quelques secondes : les autres invités verront les places libres et pourront vous contacter directement.",
     listHeading: "Les trajets proposés",
+    listNote:
+      "Chacun peut corriger ou retirer un trajet, le sien comme celui d'un autre en cas d'erreur.",
     loading: "Chargement des trajets…",
     empty:
       "Aucun trajet n'est encore inscrit. Soyez les premiers : votre trajet apparaîtra aussitôt ici.",
@@ -372,11 +405,23 @@ const fr = {
     arrival: "Arrivée",
     departure: "Retour",
     departureUnknown: "non précisé",
+    returnTo: "vers",
     whatsapp: "WhatsApp",
     call: "Appeler",
+    edit: "Modifier",
+    remove: "Supprimer",
+    confirmRemove: "Confirmer",
+    cancel: "Annuler",
     formHeading: "Inscrire mon trajet",
     formIntro:
       "Les champs suivis d'une étoile sont indispensables ; le reste nous aide simplement à mieux vous situer.",
+    editHeading: "Modifier ce trajet",
+    editIntro: "Corrigez ce qu'il faut, puis enregistrez.",
+    save: "Enregistrer les modifications",
+    saving: "Enregistrement…",
+    edited: "Le trajet a bien été modifié.",
+    removed: "Le trajet a bien été retiré du tableau.",
+    actionFailed: "L'opération n'a pas pu aboutir. Réessayez dans un instant.",
     fields: {
       name: "Nom et prénom",
       phone: "Téléphone",
@@ -392,6 +437,9 @@ const fr = {
       arrivalTime: "Heure approximative d'arrivée",
       departureDate: "Date de départ",
       departureTime: "Heure approximative de départ",
+      returnElsewhere: "Au retour, je vais ailleurs",
+      returnDestination: "Lieu d'arrivée au retour",
+      returnDestinationPlaceholder: "Aéroport de Marseille, gare d'Aix TGV…",
       seats: "Places disponibles dans la voiture",
       comment: "Commentaire",
       commentPlaceholder: "Un détour possible, une étape en chemin, un coffre déjà bien rempli…",
@@ -709,7 +757,7 @@ const en: Translated<typeof fr> = {
     eyebrow: "Where to stay",
     heading: "Places to stay",
     intro:
-      "Here are the places we have found around the Couvent. They are suggestions: everyone books whichever suits them best. We recommend doing so early, as June is a popular time to visit Provence.",
+      "Here are the places we have found around the Couvent. They are suggestions: everyone books whichever suits them best. You will also find plenty of Airbnb rentals around Reillanne and Forcalquier. We recommend doing so early, as June is a popular time to visit Provence.",
     heroAlt: "Vaulted Couvent corridor with potted olive trees",
     listEyebrow: "Our recommendations",
     listHeading:
@@ -758,7 +806,7 @@ const en: Translated<typeof fr> = {
       },
       minimes: {
         type: "Hotel · around €300 / night",
-        description: "The most luxurious option on our list, to be booked directly with the hotel.",
+        description: "One of the loveliest places nearby, to be booked directly with the hotel.",
         badge: "Great for couples & families",
       },
       bastide: {
@@ -801,13 +849,9 @@ const en: Translated<typeof fr> = {
         title: "Weather in June",
         text: "Late June in Provence is usually warm and sunny during the day, with milder temperatures in the evening.",
       },
-      languages: {
-        title: "Languages",
-        text: "The weekend will take place in both French and English.",
-      },
       plane: {
         title: "By plane",
-        text: "The most convenient airports are Marseille-Provence and Nice Côte d'Azur. From the airport, the simplest option is to hire a car, or to join another guest through the ride-sharing board below.",
+        text: "The most convenient airport is Marseille-Provence. From the airport, the simplest option is to rent a car, or to join another guest through the ride-sharing board below.",
       },
       train: {
         title: "By train",
@@ -818,6 +862,40 @@ const en: Translated<typeof fr> = {
         text: "From the A51 motorway, take the Manosque exit and allow approximately 25 minutes to reach Reillanne. Free parking is available at the entrance to the Couvent. If you are driving, do post your journey below: other guests may be able to join you.",
       },
     },
+    routes: {
+      heading: "Depending on where you set off from",
+      note: "Times are indicative and exclude traffic. In every case, a car is needed for the last part of the journey.",
+      best: "Recommended",
+      modes: { car: "By car", plane: "By plane", train: "By train" },
+      cities: {
+        zurich: {
+          name: "Zurich",
+          car: "Around 7 hours' drive.",
+          plane: "Direct Zurich — Marseille flight, then a rental car.",
+          train: "",
+        },
+        paris: {
+          name: "Paris",
+          car: "",
+          plane: "",
+          train:
+            "Train to Aix-en-Provence TGV (4 h), then a 50-minute drive in a rental car. Or to Marseille (3 h), then 1 h 20 by car.",
+        },
+        geneve: {
+          name: "Geneva",
+          car: "Around 4 h 20 to Reillanne.",
+          plane: "No direct flights.",
+          train: "Between 3 h 40 and 4 h 20 to Marseille, then 1 h 20 in a rental car.",
+        },
+        international: {
+          name: "From further afield",
+          car: "",
+          plane:
+            "The simplest route is via Paris, then Marseille, and a rental car on to Reillanne.",
+          train: "",
+        },
+      },
+    },
     footer: "Still have a question? You'll probably find the answer in our FAQ.",
     faqCta: "Frequently asked questions",
     stayCta: "Where to stay",
@@ -826,8 +904,10 @@ const en: Translated<typeof fr> = {
     eyebrow: "Ride-sharing",
     heading: "Sharing the road",
     intro:
-      "Many of you will be driving or hiring a car once here. Post your journey in a few seconds: other guests will see the free seats and can contact you directly.",
+      "Many of you will be driving or renting a car once here. Post your journey in a few seconds: other guests will see the free seats and can contact you directly.",
     listHeading: "Journeys posted so far",
+    listNote:
+      "Anyone can correct or remove a journey — their own, or someone else's if there is a mistake.",
     loading: "Loading journeys…",
     empty: "No journey has been posted yet. Be the first: yours will appear here straight away.",
     seatsOne: "free seat",
@@ -836,11 +916,23 @@ const en: Translated<typeof fr> = {
     arrival: "Arriving",
     departure: "Heading back",
     departureUnknown: "not yet decided",
+    returnTo: "to",
     whatsapp: "WhatsApp",
     call: "Call",
+    edit: "Edit",
+    remove: "Remove",
+    confirmRemove: "Confirm",
+    cancel: "Cancel",
     formHeading: "Post my journey",
     formIntro:
       "Fields marked with a star are required; the rest simply help other guests picture your journey.",
+    editHeading: "Edit this journey",
+    editIntro: "Change whatever needs changing, then save.",
+    save: "Save changes",
+    saving: "Saving…",
+    edited: "The journey has been updated.",
+    removed: "The journey has been removed from the board.",
+    actionFailed: "That did not go through. Please try again in a moment.",
     fields: {
       name: "First and last name",
       phone: "Phone",
@@ -856,6 +948,9 @@ const en: Translated<typeof fr> = {
       arrivalTime: "Approximate arrival time",
       departureDate: "Departure date",
       departureTime: "Approximate departure time",
+      returnElsewhere: "On the way back, I'm heading somewhere else",
+      returnDestination: "Where the return journey ends",
+      returnDestinationPlaceholder: "Marseille airport, Aix TGV station…",
       seats: "Seats available in the car",
       comment: "Comment",
       commentPlaceholder: "A possible detour, a stop along the way, a boot already rather full…",
@@ -908,7 +1003,7 @@ const en: Translated<typeof fr> = {
       },
       {
         q: "How do I get to the Couvent and back after the celebration?",
-        a: "Guests arrange their own way to the Couvent. To help, a ride-sharing board is open on the Travel & info page: anyone driving or hiring a car can post their journey and the number of free seats, and you can contact them directly. On Saturday night, transport will be arranged back to selected nearby accommodation.",
+        a: "Guests arrange their own way to the Couvent. To help, a ride-sharing board is open on the Travel & info page: anyone driving or renting a car can post their journey and the number of free seats, and you can contact them directly. On Saturday night, transport will be arranged back to selected nearby accommodation.",
       },
       {
         q: "How does ride-sharing between guests work?",

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SITE_URL } from "@/lib/site";
-import { Car, MessageCircle, Plane, Shirt, Sun, Train } from "lucide-react";
+import { Car, Plane, Shirt, Sun, Train } from "lucide-react";
 import bambouseraie from "@/assets/bambouseraie.webp";
 import { Covoiturage } from "@/components/covoiturage";
 import { PageHero } from "@/components/page-hero";
@@ -34,6 +34,24 @@ export const Route = createFileRoute("/informations")({
   component: Page,
 });
 
+/**
+ * Les villes de départ les plus fréquentes chez nos invités, et le mode de
+ * transport conseillé pour chacune. Seule cette recommandation vit ici : les
+ * libellés et les durées sont dans le dictionnaire.
+ */
+const routes = [
+  { id: "zurich", best: "plane" },
+  { id: "paris", best: "train" },
+  { id: "geneve", best: "car" },
+  { id: "international", best: "plane" },
+] as const;
+
+const modes = [
+  { id: "car", icon: Car },
+  { id: "plane", icon: Plane },
+  { id: "train", icon: Train },
+] as const;
+
 function Page() {
   const t = useT();
   const b = t.informations.blocks;
@@ -41,7 +59,6 @@ function Page() {
   const blocks = [
     { icon: Shirt, group: groups[0], ...b.dress },
     { icon: Sun, group: groups[0], ...b.weather },
-    { icon: MessageCircle, group: groups[0], ...b.languages },
     { icon: Plane, group: groups[1], ...b.plane },
     { icon: Train, group: groups[1], ...b.train },
     { icon: Car, group: groups[1], ...b.car },
@@ -89,6 +106,57 @@ function Page() {
             </div>
           </div>
         ))}
+
+        {/* Les itinéraires selon la ville de départ */}
+        <div className="mt-16 border-t border-border pt-16 md:mt-20 md:pt-20">
+          <Reveal className="max-w-2xl">
+            <h2 className="font-serif text-2xl leading-tight font-light text-ink">
+              {t.informations.routes.heading}
+            </h2>
+            <p className="mt-4 text-[0.95rem] leading-relaxed text-muted-foreground">
+              {t.informations.routes.note}
+            </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            {routes.map((r, i) => {
+              const city = t.informations.routes.cities[r.id];
+              return (
+                <Reveal
+                  key={r.id}
+                  delay={i * 70}
+                  className="border border-border bg-background p-7 sm:p-8"
+                >
+                  <h3 className="font-serif text-[1.35rem] leading-snug font-light text-ink">
+                    {city.name}
+                  </h3>
+                  <dl className="mt-5 space-y-5">
+                    {modes.map((m) =>
+                      city[m.id] ? (
+                        <div key={m.id}>
+                          <dt className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <m.icon className="size-4 shrink-0 text-olive" strokeWidth={1.2} />
+                            <span className="font-display text-[0.68rem] tracking-[0.2em] uppercase text-ink">
+                              {t.informations.routes.modes[m.id]}
+                            </span>
+                            {r.best === m.id ? (
+                              <span className="border border-olive/50 px-2 py-0.5 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
+                                {t.informations.routes.best}
+                              </span>
+                            ) : null}
+                          </dt>
+                          <dd className="mt-2 text-[0.92rem] leading-relaxed text-muted-foreground">
+                            {city[m.id]}
+                          </dd>
+                        </div>
+                      ) : null,
+                    )}
+                  </dl>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
       </section>
 
       {/* Le tableau de covoiturage entre invités */}
