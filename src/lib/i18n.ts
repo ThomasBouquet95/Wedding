@@ -433,7 +433,7 @@ const fr = {
       },
       {
         q: "Où séjourner ?",
-        a: "Il n'y a pas d'hébergement disponible sur place au Couvent. Nous avons repéré plusieurs adresses à proximité, réunies sur la page Hébergements : ce sont des suggestions, sans aucune chambre retenue pour le mariage. Chacun réserve librement, directement auprès de l'établissement et en son nom. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
+        a: "Nous avons repéré plusieurs adresses à proximité, réunies sur la page Hébergements : ce sont des suggestions, sans aucune chambre retenue pour le mariage. Chacun réserve librement, directement auprès de l'établissement et en son nom. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
       },
       {
         q: "Où se garer ?",
@@ -896,7 +896,7 @@ const en: Translated<typeof fr> = {
       },
       {
         q: "Where should I stay?",
-        a: "There is no accommodation available on site at the Couvent. We have found several places nearby, gathered on the Where to stay page: they are suggestions, with no rooms held for the wedding. Everyone books freely, directly with the property and in their own name. We recommend booking early, as June is a particularly popular time in Provence.",
+        a: "We have found several places nearby, gathered on the Where to stay page: they are suggestions, with no rooms held for the wedding. Everyone books freely, directly with the property and in their own name. We recommend booking early, as June is a particularly popular time in Provence.",
       },
       {
         q: "Where can I park?",
