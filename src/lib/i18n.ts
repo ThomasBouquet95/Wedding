@@ -143,7 +143,7 @@ const fr = {
         subtitle: "Soirée d'accueil",
         note: "Prenez le temps d'arriver et de vous installer avant de nous retrouver dans le parc du Couvent pour commencer le week-end tous ensemble.",
         events: [
-          { time: "À partir de 17h", label: "Arrivée et installation" },
+          { time: "À partir de 17h", label: "Arrivée" },
           { time: "18h", label: "Soirée d'accueil dans le parc du Couvent" },
         ],
       },
@@ -330,7 +330,7 @@ const fr = {
     blocks: {
       dress: {
         title: "Tenue",
-        text: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le vendredi soir et le dimanche, une tenue soignée conviendra parfaitement. Une partie du week-end se déroulera à l'extérieur : privilégiez donc des chaussures adaptées aux allées en gravier et prévoyez une étole ou une veste légère pour la soirée.",
+        text: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le dimanche, une tenue soignée conviendra parfaitement. Une partie du week-end se déroulera à l'extérieur : privilégiez donc des chaussures adaptées aux allées en gravier et prévoyez une étole ou une veste légère pour la soirée.",
       },
       weather: {
         title: "Météo en juin",
@@ -479,7 +479,7 @@ const fr = {
       },
       {
         q: "Quelle tenue prévoir ?",
-        a: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le vendredi soir et le dimanche, une tenue soignée conviendra parfaitement. Les allées étant en partie en gravier, évitez si possible les talons très fins. Une étole ou une veste légère pourra également être utile en soirée.",
+        a: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le dimanche, une tenue soignée conviendra parfaitement. Les allées étant en partie en gravier, évitez si possible les talons très fins. Une étole ou une veste légère pourra également être utile en soirée.",
       },
       {
         q: "Où séjourner ?",
@@ -654,7 +654,7 @@ const en: Translated<typeof fr> = {
         subtitle: "Welcome evening",
         note: "Take your time to arrive and settle in before joining us in the Couvent gardens to begin the weekend together.",
         events: [
-          { time: "From 5 pm", label: "Arrival and settling in" },
+          { time: "From 5 pm", label: "Arrival" },
           { time: "6 pm", label: "Welcome evening in the Couvent gardens" },
         ],
       },
@@ -841,7 +841,7 @@ const en: Translated<typeof fr> = {
     blocks: {
       dress: {
         title: "Dress code",
-        text: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Friday evening and Sunday, smart attire will be perfect. Part of the weekend will take place outdoors, so we recommend shoes that are comfortable on gravel paths, as well as a light jacket or wrap for the evening.",
+        text: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Sunday, smart attire will be perfect. Part of the weekend will take place outdoors, so we recommend shoes that are comfortable on gravel paths, as well as a light jacket or wrap for the evening.",
       },
       weather: {
         title: "Weather in June",
@@ -987,7 +987,7 @@ const en: Translated<typeof fr> = {
       },
       {
         q: "What should I wear?",
-        a: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Friday evening and Sunday, smart attire will be perfect. As some of the paths are gravel, we recommend avoiding very thin heels. A light jacket or wrap may also be useful in the evening.",
+        a: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Sunday, smart attire will be perfect. As some of the paths are gravel, we recommend avoiding very thin heels. A light jacket or wrap may also be useful in the evening.",
       },
       {
         q: "Where should I stay?",
