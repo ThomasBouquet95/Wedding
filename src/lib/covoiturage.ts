@@ -1,5 +1,11 @@
 import type { Lang } from "./i18n";
-import { joinTripFn, listTripsFn, removeTripFn, saveTripFn } from "./covoiturage.server";
+import {
+  joinTripFn,
+  listTripsFn,
+  removeTripFn,
+  saveTripFn,
+  updatePassengerFn,
+} from "./covoiturage.server";
 
 export type { Trip, TripInput } from "./covoiturage-types";
 import type { Trip, TripInput } from "./covoiturage-types";
@@ -31,6 +37,16 @@ export async function deleteTrip(id: string): Promise<void> {
 /** Monter dans une voiture : le nom rejoint la liste, une place libre part. */
 export async function joinTrip(id: string, name: string): Promise<void> {
   await joinTripFn({ data: { id, name } });
+}
+
+/** Corriger le nom d'un passager. */
+export async function renamePassenger(id: string, from: string, to: string): Promise<void> {
+  await updatePassengerFn({ data: { id, from, to } });
+}
+
+/** Retirer un passager : sa place redevient libre. */
+export async function removePassenger(id: string, from: string): Promise<void> {
+  await updatePassengerFn({ data: { id, from, to: null } });
 }
 
 /**

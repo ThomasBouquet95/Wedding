@@ -117,6 +117,41 @@ export const joinTripFn = createServerFn({ method: "POST" })
     });
   });
 
+/**
+ * Corriger ou retirer un passager.
+ *
+ * Le nom d'origine sert de clé plutôt qu'un rang dans la liste : entre
+ * l'affichage et le clic, un autre invité a pu s'inscrire et décaler les
+ * rangs. Retirer quelqu'un rend sa place ; le renommer n'y touche pas.
+ */
+export const updatePassengerFn = createServerFn({ method: "POST" })
+  .validator((data: { id: string; from: string; to: string | null }) => data)
+  .handler(async ({ data }) => {
+    const rows = await listRows<Fields>(TABLE_COVOITURAGE);
+    const row = rows.find((r) => r.id === data.id);
+    if (!row) throw new Error("Ce trajet n'existe plus.");
+
+    const list = text(row.fields[F.passengers])
+      .split(",")
+      .map((n) => n.trim())
+      .filter(Boolean);
+    const at = list.findIndex((n) => n.toLowerCase() === data.from.trim().toLowerCase());
+    if (at === -1) throw new Error("Ce passager n'est plus dans la liste.");
+
+    const fields: Record<string, unknown> = {};
+    if (data.to === null) {
+      list.splice(at, 1);
+      // La place rendue redevient libre.
+      fields[F.seats] = (num(row.fields[F.seats]) ?? 0) + 1;
+    } else {
+      const to = data.to.trim();
+      if (!to) throw new Error("Le nom ne peut pas être vide.");
+      list[at] = to;
+    }
+    fields[F.passengers] = list.join(", ") || null;
+    await updateRow(TABLE_COVOITURAGE, data.id, fields);
+  });
+
 export const removeTripFn = createServerFn({ method: "POST" })
   .validator((data: { id: string }) => data)
   .handler(async ({ data }) => {

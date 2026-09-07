@@ -1,5 +1,15 @@
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, MessageCircle, Pencil, Phone, Trash2, UserPlus, Users } from "lucide-react";
+import {
+  Check,
+  Copy,
+  MessageCircle,
+  Pencil,
+  Phone,
+  Trash2,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { useLang, useT } from "@/lib/i18n";
 import {
@@ -8,6 +18,8 @@ import {
   deleteTrip,
   fetchTrips,
   joinTrip,
+  removePassenger,
+  renamePassenger,
   slotLabel,
   SLOTS,
   tripSummary,
@@ -36,7 +48,6 @@ const buttonClass =
 // Les actions d'une carte. Elles sont posées sur une grille de deux colonnes :
 // sur un iPhone SE, quatre boutons étirés sur toute la largeur mangeaient un
 // écran entier à eux seuls.
-const cardActionsClass = "grid grid-cols-2 gap-3";
 const cardActionClass =
   "inline-flex min-h-11 items-center justify-center gap-2 border border-border px-3 py-2 font-display text-[0.66rem] tracking-[0.14em] uppercase text-ink transition-colors hover:border-olive hover:text-olive sm:px-4 sm:text-[0.68rem] sm:tracking-[0.18em]";
 
@@ -186,6 +197,18 @@ export function Covoiturage() {
     }
   }
 
+  async function passenger(trip: Trip, from: string, to: string | null) {
+    setNotice(null);
+    try {
+      if (to === null) await removePassenger(trip.id, from);
+      else await renamePassenger(trip.id, from, to);
+      setTrips(await fetchTrips());
+      setNotice(to === null ? c.passengerRemoved : c.passengerRenamed);
+    } catch {
+      setNotice(c.actionFailed);
+    }
+  }
+
   async function remove(trip: Trip) {
     setNotice(null);
     try {
@@ -265,6 +288,11 @@ export function Covoiturage() {
             <Reveal>
               <h3 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
                 {c.listHeading}
+                {trips?.length ? (
+                  <span className="ml-2 font-sans normal-case tracking-normal text-muted-foreground">
+                    · {trips.length} {trips.length > 1 ? c.tripsCountMany : c.tripsCount}
+                  </span>
+                ) : null}
               </h3>
               {trips && trips.length > 0 ? (
                 <p className="mt-3 text-[0.85rem] leading-relaxed text-muted-foreground">
@@ -293,19 +321,33 @@ export function Covoiturage() {
               // trois colonnes de pavés obligeaient à balayer l'écran en
               // zigzag. Une ligne par trajet, les mêmes données toujours à la
               // même place.
-              <ul className="mt-6 divide-y divide-border border-y border-border">
-                {trips.map((trip, i) => (
-                  <TripRow
-                    key={trip.id}
-                    trip={trip}
-                    delay={i * 60}
-                    active={editingId === trip.id}
-                    onEdit={() => startEdit(trip)}
-                    onRemove={() => remove(trip)}
-                    onJoin={(name) => join(trip, name)}
-                  />
-                ))}
-              </ul>
+              <>
+                {/* Un en-tête de colonnes, sur écran large seulement : il dit
+                    ce qu'on lit sans avoir à le deviner ligne après ligne. */}
+                <div
+                  aria-hidden="true"
+                  className={`mt-6 hidden border-b border-border pb-2 font-display text-[0.6rem] tracking-[0.18em] uppercase text-olive sm:grid ${rowGrid}`}
+                >
+                  <span>{c.colTrip}</span>
+                  <span>{c.colWhen}</span>
+                  <span>{c.colContact}</span>
+                  <span />
+                </div>
+                <ul className="divide-y divide-border border-b border-border sm:border-t-0">
+                  {trips.map((trip, i) => (
+                    <TripRow
+                      key={trip.id}
+                      trip={trip}
+                      delay={i * 60}
+                      active={editingId === trip.id}
+                      onEdit={() => startEdit(trip)}
+                      onRemove={() => remove(trip)}
+                      onJoin={(name) => join(trip, name)}
+                      onPassenger={(from, to) => passenger(trip, from, to)}
+                    />
+                  ))}
+                </ul>
+              </>
             )}
           </div>
         ) : null}
@@ -754,8 +796,108 @@ function Todo({ label }: { label: string }) {
   );
 }
 
+/** L'ossature commune à l'en-tête et aux lignes de la liste. */
+const rowGrid = "grid gap-x-6 gap-y-3 sm:grid-cols-[minmax(0,1fr)_13rem_15rem_auto] sm:items-start";
 const actionClass =
   "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 px-3 py-2 font-display text-[0.68rem] tracking-[0.12em] whitespace-nowrap uppercase transition-colors";
+
+/**
+ * Un passager, en pastille. Un clic sur le nom le corrige, la croix le retire
+ * — et rend sa place. Tout le monde peut le faire : c'est le principe de ce
+ * tableau, et une coquille dans un prénom doit pouvoir se rattraper.
+ */
+function Passenger({
+  name,
+  onRename,
+  onRemove,
+}: {
+  name: string;
+  onRename: (to: string) => Promise<void>;
+  onRemove: () => Promise<void>;
+}) {
+  const c = useT().covoiturage;
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(name);
+  const [busy, setBusy] = useState(false);
+  // Cliquer la coche fait d'abord perdre le focus au champ. Si la sortie de
+  // champ refermait le formulaire, le clic arriverait dans le vide — d'où un
+  // enregistrement unique, déclenché par le premier des deux.
+  const settled = useRef(false);
+
+  async function commit() {
+    if (settled.current) return;
+    settled.current = true;
+    const to = draft.trim();
+    setEditing(false);
+    if (!to || to === name) return;
+    setBusy(true);
+    await onRename(to);
+    setBusy(false);
+  }
+
+  if (editing) {
+    return (
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void commit();
+        }}
+        className="inline-flex items-center gap-1"
+      >
+        <input
+          type="text"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onBlur={() => void commit()}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") {
+              settled.current = true;
+              setEditing(false);
+            }
+          }}
+          maxLength={80}
+          autoFocus
+          aria-label={c.passengerRename}
+          className="min-h-8 w-28 border-b border-olive bg-transparent px-1 text-[0.8rem] text-ink focus:outline-none"
+        />
+        <button
+          type="submit"
+          disabled={busy}
+          aria-label={c.passengerSave}
+          className="inline-flex min-h-8 items-center px-1 text-olive disabled:opacity-50"
+        >
+          <Check className="size-3.5" strokeWidth={1.6} />
+        </button>
+      </form>
+    );
+  }
+
+  return (
+    <span className="inline-flex items-center gap-1 border border-border bg-sand/40 pl-2 text-[0.8rem] text-ink">
+      <button
+        type="button"
+        onClick={() => {
+          setDraft(name);
+          settled.current = false;
+          setEditing(true);
+        }}
+        title={c.passengerRename}
+        className="min-h-8 transition-colors hover:text-olive"
+      >
+        {name}
+      </button>
+      <button
+        type="button"
+        onClick={() => void onRemove()}
+        aria-label={`${c.passengerRemove} ${name}`}
+        title={c.passengerRemove}
+        className="inline-flex min-h-8 items-center px-1.5 text-muted-foreground transition-colors hover:text-clay"
+      >
+        <X className="size-3" strokeWidth={1.6} />
+      </button>
+    </span>
+  );
+}
 
 /**
  * Un trajet, sur une ligne.
@@ -772,6 +914,7 @@ function TripRow({
   onEdit,
   onRemove,
   onJoin,
+  onPassenger,
 }: {
   trip: Trip;
   delay: number;
@@ -779,6 +922,7 @@ function TripRow({
   onEdit: () => void;
   onRemove: () => void;
   onJoin: (name: string) => Promise<void>;
+  onPassenger: (from: string, to: string | null) => Promise<void>;
 }) {
   const t = useT();
   const lang = useLang();
@@ -792,6 +936,10 @@ function TripRow({
   const [joinName, setJoinName] = useState("");
   const [busy, setBusy] = useState(false);
   const full = trip.seats <= 0;
+  const people = (trip.passengers ?? "")
+    .split(",")
+    .map((n) => n.trim())
+    .filter(Boolean);
 
   const line = (date: string | null, slot: number | null, suffix?: string) =>
     date
@@ -802,9 +950,11 @@ function TripRow({
     <Reveal
       as="li"
       delay={delay}
-      className={`px-1 py-4 transition-colors duration-500 ${active ? "bg-sand/40" : ""}`}
+      className={`${rowGrid} px-1 py-4 transition-colors duration-500 ${
+        active ? "bg-sand/40" : "hover:bg-sand/20"
+      }`}
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-5">
+      <>
         {/* Reste-t-il de la place, et pour aller où. Le nom et la pastille
                partagent une ligne — sur un téléphone, chaque ligne économisée
                compte — et se replient si la largeur manque. */}
@@ -820,10 +970,20 @@ function TripRow({
             <span className="mx-1.5 text-olive">→</span>
             {trip.destination}
           </p>
-          {trip.passengers ? (
-            <p className="mt-1 text-[0.8rem] leading-snug text-muted-foreground">
-              <span className="text-olive">{c.passengers}</span> {trip.passengers}
-            </p>
+          {people.length ? (
+            <div className="mt-2 flex flex-wrap items-center gap-1.5">
+              <span className="font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
+                {c.passengers}
+              </span>
+              {people.map((who) => (
+                <Passenger
+                  key={who}
+                  name={who}
+                  onRename={(to) => onPassenger(who, to)}
+                  onRemove={() => onPassenger(who, null)}
+                />
+              ))}
+            </div>
           ) : null}
           {trip.comment ? (
             <p className="mt-1 text-[0.8rem] leading-snug text-muted-foreground italic">
@@ -832,8 +992,8 @@ function TripRow({
           ) : null}
         </div>
 
-        {/* 3. Quand. */}
-        <div className="shrink-0 text-[0.82rem] leading-snug text-muted-foreground sm:w-56">
+        {/* Quand. */}
+        <div className="text-[0.82rem] leading-snug text-muted-foreground">
           <p>
             <span className="mr-1.5 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
               {c.arrival}
@@ -870,7 +1030,7 @@ function TripRow({
 
         {/* 4. Comment le joindre. Le numéro en clair — personne ne devrait
                avoir à cliquer pour le lire. */}
-        <div className="shrink-0 sm:w-[15rem]">
+        <div>
           <a
             href={tel}
             aria-label={`${c.call} ${trip.name}`}
@@ -941,7 +1101,7 @@ function TripRow({
         </div>
 
         {/* Corriger ou retirer : discret, en bout de ligne. */}
-        <div className="flex shrink-0 items-center gap-3 font-display text-[0.62rem] tracking-[0.14em] uppercase sm:flex-col sm:items-end sm:gap-2">
+        <div className="flex items-center gap-3 font-display text-[0.62rem] tracking-[0.14em] uppercase sm:flex-col sm:items-end sm:gap-2">
           <button
             type="button"
             onClick={onEdit}
@@ -978,7 +1138,7 @@ function TripRow({
             </button>
           )}
         </div>
-      </div>
+      </>
     </Reveal>
   );
 }
