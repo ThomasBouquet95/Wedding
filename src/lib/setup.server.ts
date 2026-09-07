@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { TABLE_COVOITURAGE, TABLE_SEJOURS } from "./airtable.server";
+import { COVOITURAGE_FIELDS, SEJOURS_FIELDS } from "./airtable-schema";
 
 /**
  * Création des deux tables Airtable, déclenchée depuis la page de diagnostic.
@@ -18,34 +19,6 @@ import { TABLE_COVOITURAGE, TABLE_SEJOURS } from "./airtable.server";
  * de suivre un champ nouvellement introduit dans le site sans repartir de
  * zéro, et sans toucher aux lignes déjà saisies.
  */
-type Field = { name: string; type: string; options?: Record<string, unknown> };
-
-const DATE_ISO = { dateFormat: { name: "iso" } };
-const ENTIER = { precision: 0 };
-const CASE = { icon: "check", color: "greenBright" };
-
-const COVOITURAGE: Field[] = [
-  { name: "Nom", type: "singleLineText" },
-  { name: "Téléphone", type: "singleLineText" },
-  { name: "WhatsApp", type: "checkbox", options: CASE },
-  { name: "Départ", type: "singleLineText" },
-  { name: "Destination", type: "singleLineText" },
-  { name: "Date d'arrivée", type: "date", options: DATE_ISO },
-  { name: "Heure d'arrivée", type: "number", options: ENTIER },
-  { name: "Date de départ", type: "date", options: DATE_ISO },
-  { name: "Heure de départ", type: "number", options: ENTIER },
-  { name: "Retour vers", type: "singleLineText" },
-  { name: "Places aller", type: "number", options: ENTIER },
-  { name: "Places retour", type: "number", options: ENTIER },
-  { name: "Commentaire", type: "multilineText" },
-  { name: "Passagers", type: "multilineText" },
-];
-
-const SEJOURS: Field[] = [
-  { name: "Noms", type: "singleLineText" },
-  { name: "Hébergement", type: "singleLineText" },
-  { name: "Personnes", type: "number", options: ENTIER },
-];
 
 type Result = {
   table: string;
@@ -94,8 +67,8 @@ export const setupTablesFn = createServerFn({ method: "POST" }).handler(
 
     const results: Result[] = [];
     for (const [name, fields] of [
-      [TABLE_COVOITURAGE, COVOITURAGE],
-      [TABLE_SEJOURS, SEJOURS],
+      [TABLE_COVOITURAGE, COVOITURAGE_FIELDS],
+      [TABLE_SEJOURS, SEJOURS_FIELDS],
     ] as const) {
       const table = existing.find((t) => t.name === name);
 

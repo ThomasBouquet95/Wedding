@@ -98,7 +98,8 @@ function Page() {
                     <th className="border-b border-border py-2 pr-4">Table</th>
                     <th className="border-b border-border py-2 pr-4">HTTP</th>
                     <th className="border-b border-border py-2 pr-4">Réponse</th>
-                    <th className="border-b border-border py-2">Lignes lues</th>
+                    <th className="border-b border-border py-2 pr-4">Lignes lues</th>
+                    <th className="border-b border-border py-2">Colonnes manquantes</th>
                   </tr>
                 </thead>
                 <tbody className="text-muted-foreground">
@@ -113,7 +114,14 @@ function Page() {
                       >
                         {t.code === "OK" ? "✅ OK" : `❌ ${t.code}`}
                       </td>
-                      <td className="border-b border-border/60 py-3">{t.rows ?? "—"}</td>
+                      <td className="border-b border-border/60 py-3 pr-4">{t.rows ?? "—"}</td>
+                      <td className="border-b border-border/60 py-3">
+                        {t.missing.length ? (
+                          <span className="text-clay">{t.missing.join(", ")}</span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -188,6 +196,12 @@ function Page() {
               <li>
                 <strong className="text-ink">NOT_AUTHORIZED</strong> — le jeton manque d'une
                 autorisation : il lui faut `data.records:read` et `data.records:write`.
+              </li>
+              <li>
+                <strong className="text-ink">Colonnes manquantes</strong> — la table existe mais le
+                site attend des colonnes qu'elle n'a pas. Cliquez sur « Créer les tables manquantes
+                » ci-dessous : elles seront ajoutées sans toucher aux lignes déjà saisies. Tant
+                qu'elles manquent, les données correspondantes ne sont pas enregistrées.
               </li>
             </ul>
           </div>
