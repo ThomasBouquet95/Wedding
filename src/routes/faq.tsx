@@ -102,25 +102,27 @@ function Page() {
                     open === i ? "grid-rows-[1fr] pb-7 opacity-100" : "grid-rows-[0fr] opacity-0",
                   )}
                 >
-                  <p className="max-w-xl overflow-hidden text-[0.95rem] leading-relaxed text-muted-foreground">
-                    {f.a}
-                  </p>
+                  <div className="max-w-xl overflow-hidden">
+                    <p className="text-[0.95rem] leading-relaxed text-muted-foreground">{f.a}</p>
+                    {/* `cta` vide = pas de lien ; la clé reste présente pour
+                        que les deux langues aient la même forme. */}
+                    {f.cta ? (
+                      <Link
+                        to="/informations"
+                        hash="covoiturage"
+                        className="mt-5 inline-flex min-h-11 items-center border border-olive/50 px-5 py-2.5 font-display text-[0.7rem] tracking-[0.18em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
+                      >
+                        {f.cta}
+                      </Link>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             </Reveal>
           ))}
 
           <Reveal className="mt-14 text-center">
-            <Link
-              to="/informations"
-              hash="covoiturage"
-              className="inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.22em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
-            >
-              {t.faq.carpoolCta}
-            </Link>
-            <p className="mt-10 text-[0.9rem] leading-relaxed text-muted-foreground">
-              {t.faq.footer}
-            </p>
+            <p className="text-[0.9rem] leading-relaxed text-muted-foreground">{t.faq.footer}</p>
           </Reveal>
         </div>
       </section>

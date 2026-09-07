@@ -151,9 +151,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Jost:wght@300;400;500&family=Karla:wght@300;400;500&display=swap",
       },
-      // `BASE_URL` vaut "/" à la racine : le favicon suit le sous-chemin sur
-      // lequel le site est servi.
-      { rel: "icon", href: `${import.meta.env.BASE_URL}favicon.ico`, type: "image/x-icon" },
+      // `BASE_URL` vaut "/" à la racine : les icônes suivent le sous-chemin sur
+      // lequel le site est servi. Le rameau d'olivier, recadré au plus près de
+      // l'aquarelle — à 16 px, chaque pixel de marge perdue compte.
+      { rel: "icon", href: `${import.meta.env.BASE_URL}favicon.ico`, sizes: "any" },
+      { rel: "icon", href: `${import.meta.env.BASE_URL}favicon-32.png`, type: "image/png" },
+      // Sans fond, iOS pose du noir derrière l'icône sur l'écran d'accueil :
+      // celle-ci est aplatie sur le crème du site.
+      { rel: "apple-touch-icon", href: `${import.meta.env.BASE_URL}apple-touch-icon.png` },
       { rel: "alternate", hrefLang: "fr", href: SITE_URL + "/" },
       { rel: "alternate", hrefLang: "en", href: SITE_URL + "/?lang=en" },
     ],

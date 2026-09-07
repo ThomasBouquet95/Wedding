@@ -145,6 +145,7 @@ const fr = {
         events: [
           { time: "À partir de 17h", label: "Arrivée" },
           { time: "18h", label: "Soirée d'accueil dans le parc du Couvent" },
+          { time: "20h", label: "Dîner servi à table" },
         ],
       },
       {
@@ -250,6 +251,12 @@ const fr = {
       "Aucune chambre n'est retenue pour le mariage : chaque adresse ci-dessous est une simple suggestion, à réserver directement et librement auprès de l'établissement, en votre nom. Il n'y a pas d'hébergement disponible sur place au Couvent. Les tarifs sont donnés à titre indicatif et restent à vérifier au moment de la réservation.",
     footer:
       "Pensez à organiser votre trajet entre votre hébergement et le Couvent : le tableau de covoiturage, sur la page Accès & infos, permet de proposer ou de trouver une place en voiture. Il n'y aura pas de navette générale à l'arrivée ou au départ du week-end. En revanche, le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
+    moreEyebrow: "Élargir la recherche",
+    moreHeading: "D'autres adresses autour de Reillanne",
+    moreText:
+      "Notre sélection n'a rien d'exhaustif. Si aucune de ces adresses ne convient, ces deux recherches sont déjà centrées sur Reillanne et ses environs.",
+    moreBooking: "Chercher sur Booking",
+    moreAirbnb: "Chercher sur Airbnb",
     distances: {
       d3walk15: "3 min en voiture · 15 min à pied",
       d3walk20: "3 min en voiture · 20 min à pied",
@@ -330,7 +337,7 @@ const fr = {
     blocks: {
       dress: {
         title: "Tenue",
-        text: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le vendredi soir, le mot d'ordre est « pique-nique chic ». Une partie du week-end se déroulera à l'extérieur : privilégiez donc des chaussures adaptées aux allées en gravier et prévoyez une étole ou une veste légère pour la soirée.",
+        text: "Le vendredi soir, le mot d'ordre est « pique-nique chic ». Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Une partie du week-end se déroulera à l'extérieur : privilégiez donc des chaussures adaptées aux allées en gravier et prévoyez une étole ou une veste légère pour la soirée.",
       },
       weather: {
         title: "Météo en juin",
@@ -509,40 +516,47 @@ const fr = {
     heading: "Questions fréquentes",
     intro: "Toutes les réponses aux principales questions concernant le week-end.",
     heroAlt: "Piscine du Couvent sous les grands arbres",
-    carpoolCta: "Ouvrir le tableau de covoiturage",
     footer:
       "Vous ne trouvez pas la réponse à votre question ? N'hésitez pas à contacter directement Alexandra ou Thomas.",
     items: [
       {
         q: "À quelle heure faut-il arriver ?",
-        a: "Le vendredi, vous pourrez arriver à partir de 17h. Nous nous retrouverons à partir de 18h pour commencer les festivités. Le samedi, merci de prévoir d'être sur place environ 20 minutes avant le début de la cérémonie, prévue vers 16h.",
+        cta: "",
+        a: "Le vendredi, vous pourrez arriver à partir de 17h et nous nous retrouverons dans le parc à partir de 18h. Le dîner sera servi à table à 20h. Le samedi, merci de prévoir d'être sur place environ 20 minutes avant le début de la cérémonie, prévue vers 16h.",
       },
       {
         q: "Quelle tenue prévoir ?",
-        a: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le vendredi soir, le mot d'ordre est « pique-nique chic ». Les allées étant en partie en gravier, évitez si possible les talons très fins. Une étole ou une veste légère pourra également être utile en soirée.",
+        cta: "",
+        a: "Le vendredi soir, le mot d'ordre est « pique-nique chic ». Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Les allées étant en partie en gravier, évitez si possible les talons très fins. Une étole ou une veste légère pourra également être utile en soirée.",
       },
       {
         q: "Où séjourner ?",
+        cta: "",
         a: "Nous avons repéré plusieurs adresses à proximité, réunies sur la page Hébergements : ce sont des suggestions, sans aucune chambre retenue pour le mariage. Chacun réserve librement, directement auprès de l'établissement et en son nom. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
       },
       {
         q: "Où se garer ?",
+        cta: "",
         a: "Un parking gratuit sera disponible à l'entrée du Couvent.",
       },
       {
         q: "Puis-je venir accompagné(e) ?",
+        cta: "",
         a: "Votre invitation indique le nombre de personnes pour lesquelles elle est prévue. En cas de doute, contactez directement Alexandra ou Thomas.",
       },
       {
         q: "Comment venir au Couvent et rentrer après la soirée ?",
+        cta: "Ouvrir le tableau de covoiturage",
         a: "Chaque invité organise son trajet jusqu'au Couvent. Pour vous y aider, un tableau de covoiturage est ouvert sur la page Accès & infos : celles et ceux qui viennent en voiture ou qui en louent une y inscrivent leur trajet et le nombre de places libres, et vous pouvez les contacter directement. Le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
       },
       {
         q: "Comment fonctionne le covoiturage entre invités ?",
+        cta: "Ouvrir le tableau de covoiturage",
         a: "Sur la page Accès & infos, un formulaire vous permet d'inscrire votre trajet en quelques secondes : d'où vous partez, quand vous arrivez, quand vous repartez et combien de places restent libres dans la voiture. Tous les trajets inscrits s'affichent ensuite sur la même page, et chacun peut contacter directement la personne qui conduit, par téléphone ou par WhatsApp.",
       },
       {
         q: "Quand les horaires définitifs seront-ils disponibles ?",
+        cta: "",
         a: "Le programme définitif et les dernières informations pratiques seront publiés sur ce site au printemps 2027.",
       },
     ],
@@ -696,6 +710,7 @@ const en: Translated<typeof fr> = {
         events: [
           { time: "From 5 pm", label: "Arrival" },
           { time: "6 pm", label: "Welcome evening in the Couvent gardens" },
+          { time: "8 pm", label: "Dinner served at the table" },
         ],
       },
       {
@@ -804,6 +819,12 @@ const en: Translated<typeof fr> = {
       "No rooms are being held for the wedding: each address below is simply a suggestion, to be booked directly and freely with the property, in your own name. There is no accommodation available on site at the Couvent. Prices are indicative and should be confirmed when booking.",
     footer:
       "Please remember to arrange transport between your accommodation and the Couvent: the ride-sharing board, on the Travel & info page, lets you offer or find a seat in a car. There will not be a general shuttle service on arrival or departure. However, on Saturday night, transport back to selected nearby accommodation will be arranged.",
+    moreEyebrow: "Widen the search",
+    moreHeading: "Other places around Reillanne",
+    moreText:
+      "Our list is far from exhaustive. If none of these suits, these two searches are already centred on Reillanne and the surrounding villages.",
+    moreBooking: "Search on Booking",
+    moreAirbnb: "Search on Airbnb",
     distances: {
       d3walk15: "3 min by car · 15 min on foot",
       d3walk20: "3 min by car · 20 min on foot",
@@ -881,7 +902,7 @@ const en: Translated<typeof fr> = {
     blocks: {
       dress: {
         title: "Dress code",
-        text: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Friday evening, the dress code is picnic chic. Part of the weekend will take place outdoors, so we recommend shoes that are comfortable on gravel paths, as well as a light jacket or wrap for the evening.",
+        text: "For Friday evening, the dress code is picnic chic. For Saturday, we invite you to dress elegantly: long dresses and suits. Part of the weekend will take place outdoors, so we recommend shoes that are comfortable on gravel paths, as well as a light jacket or wrap for the evening.",
       },
       weather: {
         title: "Weather in June",
@@ -1058,39 +1079,46 @@ const en: Translated<typeof fr> = {
     heading: "Frequently asked questions",
     intro: "Answers to the main questions you may have about the weekend.",
     heroAlt: "Couvent pool beneath the tall trees",
-    carpoolCta: "Open the ride-sharing board",
     footer: "Still have a question? Feel free to contact Alexandra or Thomas directly.",
     items: [
       {
         q: "What time should I arrive?",
-        a: "On Friday, you can arrive from 5 pm. We'll get together from 6 pm to start the celebrations. On Saturday, please plan to arrive around 20 minutes before the ceremony, which is currently scheduled for approximately 4 pm.",
+        cta: "",
+        a: "On Friday, you can arrive from 5 pm, and we'll gather in the gardens from 6 pm. Dinner is served at the table at 8 pm. On Saturday, please plan to arrive around 20 minutes before the ceremony, which is currently scheduled for approximately 4 pm.",
       },
       {
         q: "What should I wear?",
-        a: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Friday evening, the dress code is picnic chic. As some of the paths are gravel, we recommend avoiding very thin heels. A light jacket or wrap may also be useful in the evening.",
+        cta: "",
+        a: "For Friday evening, the dress code is picnic chic. For Saturday, we invite you to dress elegantly: long dresses and suits. As some of the paths are gravel, we recommend avoiding very thin heels. A light jacket or wrap may also be useful in the evening.",
       },
       {
         q: "Where should I stay?",
+        cta: "",
         a: "We have found several places nearby, gathered on the Where to stay page: they are suggestions, with no rooms held for the wedding. Everyone books freely, directly with the property and in their own name. We recommend booking early, as June is a particularly popular time in Provence.",
       },
       {
         q: "Where can I park?",
+        cta: "",
         a: "Free parking will be available at the entrance to the Couvent.",
       },
       {
         q: "May I bring a guest?",
+        cta: "",
         a: "Your invitation indicates the number of guests included. If you're unsure, please contact Alexandra or Thomas directly.",
       },
       {
         q: "How do I get to the Couvent and back after the celebration?",
+        cta: "Open the ride-sharing board",
         a: "Guests arrange their own way to the Couvent. To help, a ride-sharing board is open on the Travel & info page: anyone driving or renting a car can post their journey and the number of free seats, and you can contact them directly. On Saturday night, transport will be arranged back to selected nearby accommodation.",
       },
       {
         q: "How does ride-sharing between guests work?",
+        cta: "Open the ride-sharing board",
         a: "On the Travel & info page, a short form lets you post your journey in a few seconds: where you are setting off from, when you arrive, when you leave and how many seats are free in the car. Every journey posted then appears on the same page, and anyone can contact the driver directly, by phone or on WhatsApp.",
       },
       {
         q: "When will the final schedule be available?",
+        cta: "",
         a: "The final schedule and any remaining practical information will be published on this website in spring 2027.",
       },
     ],

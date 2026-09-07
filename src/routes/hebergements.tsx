@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ExternalLink } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 import couloir from "@/assets/couloir.webp";
 import { PageHero } from "@/components/page-hero";
@@ -33,6 +34,16 @@ export const Route = createFileRoute("/hebergements")({
   },
   component: Page,
 });
+
+/**
+ * Recherches pré-remplies sur Reillanne, du vendredi 25 au dimanche 27 juin
+ * 2027. Booking attend `checkin`/`checkout` en ISO ; Airbnb prend les mêmes
+ * dates dans son chemin de recherche.
+ */
+const BOOKING_URL =
+  "https://www.booking.com/searchresults.fr.html?ss=Reillanne&checkin=2027-06-25&checkout=2027-06-27&group_adults=2&no_rooms=1";
+const AIRBNB_URL =
+  "https://www.airbnb.fr/s/Reillanne--France/homes?checkin=2027-06-25&checkout=2027-06-27&adults=2";
 
 function Page() {
   const t = useT();
@@ -102,6 +113,40 @@ function Page() {
             {h.footer}
           </p>
         </Reveal>
+      </section>
+
+      {/* Élargir la recherche. Les deux liens portent déjà Reillanne et une
+          fenêtre de dates sur le week-end : l'invité arrive sur des résultats
+          utiles plutôt que sur une page d'accueil à re-remplir. */}
+      <section className="border-t border-border bg-sage-soft/30">
+        <div className="container-narrow py-16 text-center sm:py-20">
+          <Reveal>
+            <p className="eyebrow">{h.moreEyebrow}</p>
+            <h2 className="mt-5 font-serif text-2xl leading-snug font-light text-ink sm:text-[1.8rem]">
+              {h.moreHeading}
+            </h2>
+            <p className="mx-auto mt-5 max-w-xl text-[0.92rem] leading-relaxed text-muted-foreground">
+              {h.moreText}
+            </p>
+            <div className="mt-9 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              {[
+                { label: h.moreBooking, href: BOOKING_URL },
+                { label: h.moreAirbnb, href: AIRBNB_URL },
+              ].map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 border border-olive/50 px-6 py-3 font-display text-[0.75rem] tracking-[0.2em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground sm:w-auto sm:px-7 sm:text-[0.68rem] sm:tracking-[0.24em]"
+                >
+                  {link.label}
+                  <ExternalLink className="size-3.5" strokeWidth={1.3} />
+                </a>
+              ))}
+            </div>
+          </Reveal>
+        </div>
       </section>
     </>
   );
