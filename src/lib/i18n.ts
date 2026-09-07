@@ -251,12 +251,18 @@ const fr = {
       "Aucune chambre n'est retenue pour le mariage : chaque adresse ci-dessous est une simple suggestion, à réserver directement et librement auprès de l'établissement, en votre nom. Il n'y a pas d'hébergement disponible sur place au Couvent. Les tarifs sont donnés à titre indicatif et restent à vérifier au moment de la réservation.",
     footer:
       "Pensez à organiser votre trajet entre votre hébergement et le Couvent : le tableau de covoiturage, sur la page Accès & infos, permet de proposer ou de trouver une place en voiture. Il n'y aura pas de navette générale à l'arrivée ou au départ du week-end. En revanche, le samedi soir, un service de retour sera organisé vers certains des hébergements les plus proches.",
-    moreEyebrow: "Élargir la recherche",
-    moreHeading: "D'autres adresses autour de Reillanne",
-    moreText:
-      "Notre sélection n'a rien d'exhaustif. Si aucune de ces adresses ne convient, ces deux recherches sont déjà centrées sur Reillanne et ses environs.",
-    moreBooking: "Chercher sur Booking",
-    moreAirbnb: "Chercher sur Airbnb",
+    more: {
+      eyebrow: "Élargir la recherche",
+      cta: "Ouvrir la recherche",
+      booking: {
+        name: "Booking.com",
+        text: "Hôtels, chambres d'hôtes et maisons encore disponibles autour de Reillanne pour le week-end.",
+      },
+      airbnb: {
+        name: "Airbnb",
+        text: "Locations entières et chambres chez l'habitant dans les villages alentour, pour les mêmes dates.",
+      },
+    },
     distances: {
       d3walk15: "3 min en voiture · 15 min à pied",
       d3walk20: "3 min en voiture · 20 min à pied",
@@ -819,12 +825,18 @@ const en: Translated<typeof fr> = {
       "No rooms are being held for the wedding: each address below is simply a suggestion, to be booked directly and freely with the property, in your own name. There is no accommodation available on site at the Couvent. Prices are indicative and should be confirmed when booking.",
     footer:
       "Please remember to arrange transport between your accommodation and the Couvent: the ride-sharing board, on the Travel & info page, lets you offer or find a seat in a car. There will not be a general shuttle service on arrival or departure. However, on Saturday night, transport back to selected nearby accommodation will be arranged.",
-    moreEyebrow: "Widen the search",
-    moreHeading: "Other places around Reillanne",
-    moreText:
-      "Our list is far from exhaustive. If none of these suits, these two searches are already centred on Reillanne and the surrounding villages.",
-    moreBooking: "Search on Booking",
-    moreAirbnb: "Search on Airbnb",
+    more: {
+      eyebrow: "Widen the search",
+      cta: "Open the search",
+      booking: {
+        name: "Booking.com",
+        text: "Hotels, guesthouses and homes still available around Reillanne for the weekend.",
+      },
+      airbnb: {
+        name: "Airbnb",
+        text: "Whole homes and rooms in the surrounding villages, for the same dates.",
+      },
+    },
     distances: {
       d3walk15: "3 min by car · 15 min on foot",
       d3walk20: "3 min by car · 20 min on foot",

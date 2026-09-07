@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { diagnoseFn } from "@/lib/diagnostic.server";
+import { setupTablesFn } from "@/lib/setup.server";
 
 /**
  * Un bilan de santé de la liaison Airtable, à l'usage des mariés.
@@ -19,16 +20,39 @@ export const Route = createFileRoute("/diagnostic")({
 });
 
 type Report = Awaited<ReturnType<typeof diagnoseFn>>;
+type Setup = Awaited<ReturnType<typeof setupTablesFn>>;
 
 function Page() {
   const [report, setReport] = useState<Report | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [setup, setSetup] = useState<Setup | null>(null);
+  const [working, setWorking] = useState(false);
 
-  useEffect(() => {
+  function load() {
     diagnoseFn()
       .then(setReport)
       .catch((e: unknown) => setError(e instanceof Error ? e.message : String(e)));
-  }, []);
+  }
+
+  useEffect(load, []);
+
+  async function createTables() {
+    setWorking(true);
+    setSetup(null);
+    try {
+      const result = await setupTablesFn();
+      setSetup(result);
+      load();
+    } catch (e) {
+      setSetup({
+        ok: false,
+        message: e instanceof Error ? e.message : String(e),
+        results: [],
+      });
+    } finally {
+      setWorking(false);
+    }
+  }
 
   const ok = (v: boolean) => (v ? "✅" : "❌");
 
@@ -95,6 +119,49 @@ function Page() {
                 </tbody>
               </table>
             </div>
+          </div>
+
+          {/* Créer les tables depuis ici : seize colonnes dont les noms doivent
+              correspondre au caractère près, le site est mieux placé qu'une
+              saisie à la main. Sans effet si elles existent déjà. */}
+          <div className="border-t border-border pt-6">
+            <h2 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
+              Poser les tables
+            </h2>
+            <p className="mt-3 text-[0.88rem] leading-relaxed text-muted-foreground">
+              Crée les tables manquantes avec exactement les colonnes que le site attend. Une table
+              déjà présente est laissée intacte. Le jeton doit avoir la permission «
+              schema.bases:write ».
+            </p>
+            <button
+              type="button"
+              onClick={createTables}
+              disabled={working}
+              className="mt-5 inline-flex min-h-11 items-center border border-olive/50 px-6 py-3 font-display text-[0.72rem] tracking-[0.2em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground disabled:opacity-50"
+            >
+              {working ? "Création…" : "Créer les tables manquantes"}
+            </button>
+
+            {setup ? (
+              <div
+                className={`mt-5 border-l-2 px-4 py-3 text-[0.88rem] ${
+                  setup.ok
+                    ? "border-olive bg-sage-soft/50 text-ink"
+                    : "border-clay bg-clay-soft text-clay"
+                }`}
+              >
+                <p>{setup.message}</p>
+                {setup.results.length ? (
+                  <ul className="mt-2 space-y-1">
+                    {setup.results.map((r) => (
+                      <li key={r.table}>
+                        <strong>{r.table}</strong> — {r.état} ({r.detail})
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            ) : null}
           </div>
 
           <div className="border-t border-border pt-6 text-[0.85rem] leading-relaxed text-muted-foreground">
