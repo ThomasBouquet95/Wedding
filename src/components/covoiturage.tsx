@@ -7,14 +7,11 @@ import {
   dateLabel,
   deleteTrip,
   fetchTrips,
-  NO_EXTRAS,
-  probeExtras,
   slotLabel,
   SLOTS,
   tripSummary,
   updateTrip,
   whatsappHref,
-  type Extras,
   type Trip,
   type TripInput,
 } from "@/lib/covoiturage";
@@ -116,7 +113,6 @@ export function Covoiturage() {
   const [notice, setNotice] = useState<string | null>(null);
   const [summary, setSummary] = useState("");
   const [copied, setCopied] = useState(false);
-  const [extras, setExtras] = useState<Extras>(NO_EXTRAS);
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -128,9 +124,6 @@ export function Covoiturage() {
         setTrips([]);
         setBoardOpen(false);
       });
-    // On demande à la base quelles colonnes facultatives elle connaît, et on
-    // n'affiche que les champs correspondants.
-    probeExtras().then((e) => alive && setExtras(e));
     return () => {
       alive = false;
     };
@@ -194,15 +187,9 @@ export function Covoiturage() {
       departure_slot: form.departureDate && form.departureSlot ? Number(form.departureSlot) : null,
       seats: Number(form.seats),
       comment: form.comment.trim() || null,
+      return_destination: form.returnElsewhere ? form.returnDestination.trim() || null : null,
+      seats_return: form.departureDate && form.seatsReturn ? Number(form.seatsReturn) : null,
     };
-
-    // Les colonnes facultatives ne sont jointes que si la base les connaît :
-    // PostgREST rejette tout envoi mentionnant une colonne absente, même à
-    // vide, et plus personne ne pourrait alors s'inscrire.
-    if (extras.returnDestination)
-      trip.return_destination = form.returnElsewhere ? form.returnDestination.trim() || null : null;
-    if (extras.returnSeats)
-      trip.seats_return = form.departureDate && form.seatsReturn ? Number(form.seatsReturn) : null;
 
     setStatus("sending");
     setNotice(null);
@@ -462,32 +449,28 @@ export function Covoiturage() {
                 </Field>
 
                 {/* Le retour ne ramène pas toujours au point de départ : on
-                    repart souvent vers un aéroport ou une gare. La question
-                    n'apparaît que si la base connaît la colonne. */}
-                {extras.returnDestination ? (
-                  <>
-                    <Choice
-                      legend={c.fields.returnElsewhere}
-                      yes={c.fields.yes}
-                      no={c.fields.no}
-                      value={form.returnElsewhere}
-                      onChange={(v) => set("returnElsewhere", v)}
-                    />
-                    {form.returnElsewhere ? (
-                      <div className="sm:col-span-2">
-                        <Field label={c.fields.returnDestination}>
-                          <input
-                            type="text"
-                            value={form.returnDestination}
-                            onChange={(e) => set("returnDestination", e.target.value)}
-                            maxLength={120}
-                            placeholder={c.fields.returnDestinationPlaceholder}
-                            className={fieldClass}
-                          />
-                        </Field>
-                      </div>
-                    ) : null}
-                  </>
+                    repart souvent vers un aéroport ou une gare. */}
+                <Choice
+                  legend={c.fields.returnElsewhere}
+                  yes={c.fields.yes}
+                  no={c.fields.no}
+                  value={form.returnElsewhere}
+                  onChange={(v) => set("returnElsewhere", v)}
+                />
+
+                {form.returnElsewhere ? (
+                  <div className="sm:col-span-2">
+                    <Field label={c.fields.returnDestination}>
+                      <input
+                        type="text"
+                        value={form.returnDestination}
+                        onChange={(e) => set("returnDestination", e.target.value)}
+                        maxLength={120}
+                        placeholder={c.fields.returnDestinationPlaceholder}
+                        className={fieldClass}
+                      />
+                    </Field>
+                  </div>
                 ) : null}
 
                 <Field label={c.fields.seats}>
@@ -505,8 +488,8 @@ export function Covoiturage() {
                 </Field>
 
                 {/* Une voiture pleine à l'arrivée peut repartir à moitié vide.
-                    La question ne se pose qu'une date de retour donnée. */}
-                {extras.returnSeats && form.departureDate ? (
+                    La question ne se pose qu'une fois la date de retour donnée. */}
+                {form.departureDate ? (
                   <Field label={c.fields.seatsReturn} optional={c.fields.optional}>
                     <select
                       value={form.seatsReturn}

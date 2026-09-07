@@ -1,26 +1,31 @@
-import type { Database } from "@/integrations/supabase/types";
 import type { Lang } from "./i18n";
-import { hasColumn, rest } from "./supabase-rest";
+import { listTripsFn, removeTripFn, saveTripFn } from "./covoiturage.server";
 
-export type Trip = Database["public"]["Tables"]["covoiturage"]["Row"];
-export type TripInput = Database["public"]["Tables"]["covoiturage"]["Insert"];
+export type { Trip, TripInput } from "./covoiturage-types";
+import type { Trip, TripInput } from "./covoiturage-types";
 
 /**
- * Les colonnes facultatives, ajoutées après coup. La base peut être en retard
- * d'une migration sur le site ; plutôt que de refuser les inscriptions —
- * PostgREST rejette tout envoi mentionnant une colonne absente, même à vide —
- * on demande à la base ce qu'elle connaît et on masque le reste.
+ * Le tableau de covoiturage, vu du navigateur.
+ *
+ * Les quatre opérations passent par des fonctions serveur : Airtable n'a pas
+ * de clé publique bridée par des règles par ligne, son jeton ouvre toute la
+ * base. Il reste donc côté serveur — voir `airtable.server.ts`.
  */
-export type Extras = { returnDestination: boolean; returnSeats: boolean };
 
-export const NO_EXTRAS: Extras = { returnDestination: false, returnSeats: false };
+export async function fetchTrips(): Promise<Trip[]> {
+  return listTripsFn();
+}
 
-export async function probeExtras(): Promise<Extras> {
-  const [returnDestination, returnSeats] = await Promise.all([
-    hasColumn("covoiturage", "return_destination"),
-    hasColumn("covoiturage", "seats_return"),
-  ]);
-  return { returnDestination, returnSeats };
+export async function createTrip(trip: TripInput): Promise<void> {
+  await saveTripFn({ data: { id: null, trip } });
+}
+
+export async function updateTrip(id: string, trip: TripInput): Promise<void> {
+  await saveTripFn({ data: { id, trip } });
+}
+
+export async function deleteTrip(id: string): Promise<void> {
+  await removeTripFn({ data: { id } });
 }
 
 /**
@@ -72,38 +77,6 @@ export function whatsappHref(phone: string): string | null {
   return digits.length >= 8 && digits.length <= 15 ? `https://wa.me/${digits}` : null;
 }
 
-export async function fetchTrips(): Promise<Trip[]> {
-  const response = await rest("covoiturage", "?select=*&order=arrival_date.asc,arrival_slot.asc");
-  return (await response.json()) as Trip[];
-}
-
-export async function createTrip(trip: TripInput): Promise<void> {
-  await rest("covoiturage", "", { method: "POST", body: JSON.stringify(trip) });
-}
-
-/**
- * Modification et suppression demandent `return=representation` : sans en-tête,
- * PostgREST répond « 204 » aussi bien quand la ligne a été touchée que quand
- * les règles RLS l'ont écartée. La liste renvoyée lève l'ambiguïté — vide,
- * c'est que rien n'a bougé.
- */
-async function mutate(id: string, init: RequestInit): Promise<void> {
-  const response = await rest("covoiturage", `?id=eq.${encodeURIComponent(id)}`, {
-    ...init,
-    headers: { Prefer: "return=representation", ...init.headers },
-  });
-  const rows = (await response.json()) as unknown[];
-  if (rows.length === 0) throw new Error("Aucune ligne modifiée.");
-}
-
-export async function updateTrip(id: string, trip: TripInput): Promise<void> {
-  await mutate(id, { method: "PATCH", body: JSON.stringify(trip) });
-}
-
-export async function deleteTrip(id: string): Promise<void> {
-  await mutate(id, { method: "DELETE" });
-}
-
 /**
  * Le récapitulatif de repli, proposé à la copie lorsque le tableau n'est pas
  * joignable : l'invité peut alors l'envoyer à Alexandra ou Thomas plutôt que
@@ -113,7 +86,7 @@ export function tripSummary(trip: TripInput, lang: Lang): string {
   const l = lang === "fr";
   // Le français fait précéder le deux-points d'une espace insécable, pas
   // l'anglais.
-  const s = l ? " : " : ": ";
+  const s = l ? " : " : ": ";
   const back = trip.departure_date
     ? `${dateLabel(trip.departure_date, lang)}${
         trip.departure_slot == null ? "" : `, ${slotLabel(trip.departure_slot, lang)}`

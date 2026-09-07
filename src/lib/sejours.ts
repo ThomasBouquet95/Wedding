@@ -1,4 +1,4 @@
-import { hasTable, rest } from "./supabase-rest";
+import { saveSejourFn, sejoursOpenFn } from "./sejours.server";
 import { stayNames } from "./hebergements";
 
 /**
@@ -22,12 +22,13 @@ export const UNKNOWN = "__inconnu__";
 export const accommodationChoices: readonly string[] = stayNames;
 
 export async function createSejour(sejour: SejourInput): Promise<void> {
-  await rest("sejours", "", { method: "POST", body: JSON.stringify(sejour) });
+  await saveSejourFn({ data: sejour });
 }
 
-/** La table n'existe peut-être pas encore ; inutile alors de solliciter les invités. */
+/** Si Airtable n'est pas configuré, inutile de solliciter les invités : leur
+ *  réponse n'irait nulle part. */
 export function sejoursOpen(): Promise<boolean> {
-  return hasTable("sejours");
+  return sejoursOpenFn();
 }
 
 /* ------------------------------------------------------------------ *

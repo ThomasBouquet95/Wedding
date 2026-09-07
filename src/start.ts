@@ -24,12 +24,9 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
-// `attachSupabaseAuth` était enregistré ici par l'échafaudage du projet. Il
-// attache un jeton d'authentification aux appels de fonctions serveur — or le
-// site n'en compte aucune et n'a pas de connexion. Son seul effet était de
-// faire entrer `@supabase/supabase-js` dans le paquet envoyé au navigateur, à
-// chaque page et sur chaque téléphone. Le tableau de covoiturage interroge
-// l'API REST directement, il n'en a pas besoin non plus.
+// Le site n'a pas de connexion : aucun intergiciel de fonction serveur n'est
+// nécessaire. Le jeton Airtable est lu directement par les fonctions serveur,
+// depuis l'environnement, et ne transite jamais par le navigateur.
 export const startInstance = createStart(() => ({
   requestMiddleware: [errorMiddleware, csrfMiddleware],
 }));
