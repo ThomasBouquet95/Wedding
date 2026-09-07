@@ -13,8 +13,10 @@ import { TABLE_COVOITURAGE, TABLE_SEJOURS } from "./airtable.server";
  * permission `schema.bases:write` en plus de `data.records:read` et
  * `data.records:write`. À défaut, Airtable refuse et le message le dit.
  *
- * Relancer l'opération ne casse rien : une table déjà présente est signalée
- * comme telle et laissée intacte.
+ * Relancer l'opération ne casse rien : une table déjà présente n'est jamais
+ * refaite, seules ses colonnes manquantes sont ajoutées. C'est ce qui permet
+ * de suivre un champ nouvellement introduit dans le site sans repartir de
+ * zéro, et sans toucher aux lignes déjà saisies.
  */
 type Field = { name: string; type: string; options?: Record<string, unknown> };
 
@@ -36,6 +38,7 @@ const COVOITURAGE: Field[] = [
   { name: "Places aller", type: "number", options: ENTIER },
   { name: "Places retour", type: "number", options: ENTIER },
   { name: "Commentaire", type: "multilineText" },
+  { name: "Passagers", type: "multilineText" },
 ];
 
 const SEJOURS: Field[] = [
@@ -44,7 +47,11 @@ const SEJOURS: Field[] = [
   { name: "Personnes", type: "number", options: ENTIER },
 ];
 
-type Result = { table: string; état: "créée" | "existait déjà" | "échec"; detail: string };
+type Result = {
+  table: string;
+  état: "créée" | "complétée" | "à jour" | "échec";
+  detail: string;
+};
 
 /** Type de retour explicite : sans lui, TypeScript figerait chaque message en
  *  littéral et la page de diagnostic ne pourrait plus en afficher d'autre. */
@@ -67,11 +74,12 @@ export const setupTablesFn = createServerFn({ method: "POST" }).handler(
     const headers = { Authorization: `Bearer ${token}`, "content-type": "application/json" };
 
     // Ce qui existe déjà, pour ne rien écraser.
-    let existing: string[] = [];
+    type Existing = { id: string; name: string; fields: { name: string }[] };
+    let existing: Existing[] = [];
     const listed = await fetch(`${host}/v0/meta/bases/${base}/tables`, { headers });
     if (listed.ok) {
-      const body = (await listed.json()) as { tables?: { name: string }[] };
-      existing = (body.tables ?? []).map((t) => t.name);
+      const body = (await listed.json()) as { tables?: Existing[] };
+      existing = body.tables ?? [];
     } else {
       const text = await listed.text();
       return {
@@ -89,25 +97,49 @@ export const setupTablesFn = createServerFn({ method: "POST" }).handler(
       [TABLE_COVOITURAGE, COVOITURAGE],
       [TABLE_SEJOURS, SEJOURS],
     ] as const) {
-      if (existing.includes(name)) {
-        results.push({ table: name, état: "existait déjà", detail: "laissée intacte" });
+      const table = existing.find((t) => t.name === name);
+
+      // Table absente : on la crée d'un bloc.
+      if (!table) {
+        const response = await fetch(`${host}/v0/meta/bases/${base}/tables`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({ name, fields }),
+        });
+        const detail = response.ok
+          ? `${fields.length} colonnes`
+          : `${response.status} ${(await response.text()).slice(0, 200)}`;
+        results.push({ table: name, état: response.ok ? "créée" : "échec", detail });
         continue;
       }
-      const response = await fetch(`${host}/v0/meta/bases/${base}/tables`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ name, fields }),
-      });
-      if (response.ok) {
-        results.push({ table: name, état: "créée", detail: `${fields.length} colonnes` });
-      } else {
-        const text = await response.text();
-        results.push({
-          table: name,
-          état: "échec",
-          detail: `${response.status} ${text.slice(0, 200)}`,
-        });
+
+      // Table présente : on n'y ajoute que les colonnes manquantes. Une table
+      // créée avant l'arrivée d'un nouveau champ se met ainsi à jour sans être
+      // refaite, et rien de ce qu'elle contient n'est touché.
+      const present = new Set(table.fields.map((f) => f.name));
+      const missing = fields.filter((f) => !present.has(f.name));
+      if (missing.length === 0) {
+        results.push({ table: name, état: "à jour", detail: `${fields.length} colonnes` });
+        continue;
       }
+      const added: string[] = [];
+      const failed: string[] = [];
+      for (const field of missing) {
+        const response = await fetch(`${host}/v0/meta/bases/${base}/tables/${table.id}/fields`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(field),
+        });
+        if (response.ok) added.push(field.name);
+        else failed.push(`${field.name} (${response.status})`);
+      }
+      results.push({
+        table: name,
+        état: failed.length ? "échec" : "complétée",
+        detail: failed.length
+          ? `ajoutées : ${added.join(", ") || "aucune"} — en échec : ${failed.join(", ")}`
+          : `colonnes ajoutées : ${added.join(", ")}`,
+      });
     }
 
     const ok = results.every((r) => r.état !== "échec");

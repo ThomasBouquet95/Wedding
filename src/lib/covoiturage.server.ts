@@ -24,6 +24,7 @@ const F = {
   seats: "Places aller",
   seatsReturn: "Places retour",
   comment: "Commentaire",
+  passengers: "Passagers",
 } as const;
 
 type Fields = Partial<Record<(typeof F)[keyof typeof F], unknown>>;
@@ -47,6 +48,7 @@ function toTrip(row: { id: string; fields: Fields }): Trip {
     seats: num(row.fields[F.seats]) ?? 0,
     seats_return: num(row.fields[F.seatsReturn]),
     comment: text(row.fields[F.comment]) || null,
+    passengers: text(row.fields[F.passengers]) || null,
   };
 }
 
@@ -66,6 +68,7 @@ function toFields(trip: TripInput): Record<string, unknown> {
     [F.seats]: trip.seats,
     [F.seatsReturn]: trip.seats_return,
     [F.comment]: trip.comment || null,
+    [F.passengers]: trip.passengers || null,
   };
 }
 
@@ -82,6 +85,36 @@ export const saveTripFn = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     if (data.id) await updateRow(TABLE_COVOITURAGE, data.id, toFields(data.trip));
     else await createRow(TABLE_COVOITURAGE, toFields(data.trip));
+  });
+
+/**
+ * Monter dans une voiture : le nom s'ajoute à la liste des passagers et une
+ * place libre disparaît. La lecture précède l'écriture — deux invités peuvent
+ * cliquer à quelques secondes d'intervalle, et il faut partir de l'état réel
+ * plutôt que de celui affiché par leur navigateur.
+ */
+export const joinTripFn = createServerFn({ method: "POST" })
+  .validator((data: { id: string; name: string }) => data)
+  .handler(async ({ data }) => {
+    const rows = await listRows<Fields>(TABLE_COVOITURAGE);
+    const row = rows.find((r) => r.id === data.id);
+    if (!row) throw new Error("Ce trajet n'existe plus.");
+
+    const seats = num(row.fields[F.seats]) ?? 0;
+    if (seats <= 0) throw new Error("Cette voiture est complète.");
+
+    const already = text(row.fields[F.passengers]);
+    const name = data.name.trim();
+    const list = already
+      .split(",")
+      .map((n) => n.trim())
+      .filter(Boolean);
+    if (!list.some((n) => n.toLowerCase() === name.toLowerCase())) list.push(name);
+
+    await updateRow(TABLE_COVOITURAGE, data.id, {
+      [F.passengers]: list.join(", "),
+      [F.seats]: Math.max(0, seats - 1),
+    });
   });
 
 export const removeTripFn = createServerFn({ method: "POST" })

@@ -19,6 +19,8 @@ export type Trip = {
   seats: number;
   seats_return: number | null;
   comment: string | null;
+  /** Qui monte avec le conducteur. Texte libre : chacun peut s'y ajouter. */
+  passengers: string | null;
 };
 
 /** Un trajet à enregistrer : même chose sans l'identifiant. */

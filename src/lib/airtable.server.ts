@@ -68,15 +68,39 @@ export async function listRows<T>(
 }
 
 /**
- * `typecast` laisse Airtable convertir ce qui peut l'être — un texte vers une
- * date, un nombre vers un choix — plutôt que de refuser l'écriture pour une
- * question de forme.
+ * La base peut être en retard d'une colonne sur le site — une migration
+ * ajoutée ici mais pas encore posée là-bas. Airtable refuse alors toute
+ * l'écriture, en nommant la colonne fautive dans son message. On la retire et
+ * on réessaie : mieux vaut enregistrer un trajet sans son champ le plus récent
+ * que de le perdre entièrement.
  */
+function unknownField(message: string): string | null {
+  const match = /Unknown field name(?:s)?: "?([^"\n]+)"?/i.exec(message);
+  return match ? (match[1] ?? "").trim() : null;
+}
+
+async function write(
+  path: string,
+  method: "POST" | "PATCH",
+  fields: Record<string, unknown>,
+): Promise<void> {
+  // `typecast` laisse Airtable convertir ce qui peut l'être — un texte vers une
+  // date, un nombre vers un choix — plutôt que de refuser pour une question de
+  // forme.
+  const body = (f: Record<string, unknown>) => JSON.stringify({ fields: f, typecast: true });
+  try {
+    await call(path, { method, body: body(fields) });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "";
+    const missing = unknownField(message);
+    if (!missing || !(missing in fields)) throw error;
+    const { [missing]: _drop, ...rest } = fields;
+    await call(path, { method, body: body(rest) });
+  }
+}
+
 export async function createRow(table: string, fields: Record<string, unknown>): Promise<void> {
-  await call(encodeURIComponent(table), {
-    method: "POST",
-    body: JSON.stringify({ fields, typecast: true }),
-  });
+  await write(encodeURIComponent(table), "POST", fields);
 }
 
 export async function updateRow(
@@ -84,10 +108,7 @@ export async function updateRow(
   id: string,
   fields: Record<string, unknown>,
 ): Promise<void> {
-  await call(`${encodeURIComponent(table)}/${id}`, {
-    method: "PATCH",
-    body: JSON.stringify({ fields, typecast: true }),
-  });
+  await write(`${encodeURIComponent(table)}/${id}`, "PATCH", fields);
 }
 
 export async function deleteRow(table: string, id: string): Promise<void> {

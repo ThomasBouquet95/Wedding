@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Check, Copy, MessageCircle, Pencil, Phone, Trash2, Users } from "lucide-react";
+import { Check, Copy, MessageCircle, Pencil, Phone, Trash2, UserPlus, Users } from "lucide-react";
 import { Reveal } from "@/components/reveal";
 import { useLang, useT } from "@/lib/i18n";
 import {
@@ -7,6 +7,7 @@ import {
   dateLabel,
   deleteTrip,
   fetchTrips,
+  joinTrip,
   slotLabel,
   SLOTS,
   tripSummary,
@@ -48,6 +49,7 @@ type FormState = {
   seats: string;
   seatsReturn: string;
   comment: string;
+  passengers: string;
 };
 
 const emptyForm: FormState = {
@@ -62,9 +64,10 @@ const emptyForm: FormState = {
   departureSlot: "",
   returnElsewhere: false,
   returnDestination: "",
-  seats: "1",
+  seats: "",
   seatsReturn: "",
   comment: "",
+  passengers: "",
 };
 
 function formFromTrip(trip: Trip): FormState {
@@ -83,6 +86,7 @@ function formFromTrip(trip: Trip): FormState {
     seats: String(trip.seats),
     seatsReturn: trip.seats_return == null ? "" : String(trip.seats_return),
     comment: trip.comment ?? "",
+    passengers: trip.passengers ?? "",
   };
 }
 
@@ -107,9 +111,9 @@ export function Covoiturage() {
   const [boardOpen, setBoardOpen] = useState(true);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [status, setStatus] = useState<"idle" | "sending" | "done" | "invalid" | "fallback">(
-    "idle",
-  );
+  const [status, setStatus] = useState<
+    "idle" | "sending" | "done" | "invalid" | "badPhone" | "fallback"
+  >("idle");
   const [notice, setNotice] = useState<string | null>(null);
   const [summary, setSummary] = useState("");
   const [copied, setCopied] = useState(false);
@@ -135,7 +139,7 @@ export function Covoiturage() {
   // Les champs indispensables encore vides. Ils ne se colorent qu'après une
   // première tentative d'envoi : souligner en terre cuite un formulaire vierge
   // reviendrait à gronder quelqu'un qui n'a pas encore commencé.
-  const REQUIRED = ["name", "phone", "origin", "destination", "arrivalDate"] as const;
+  const REQUIRED = ["name", "phone", "origin", "destination", "arrivalDate", "seats"] as const;
   const missing = REQUIRED.filter((k) => !form[k].trim());
   const flagged = (key: (typeof REQUIRED)[number]) => status === "invalid" && missing.includes(key);
 
@@ -156,6 +160,18 @@ export function Covoiturage() {
     setStatus("idle");
   }
 
+  async function join(trip: Trip, name: string) {
+    setNotice(null);
+    try {
+      await joinTrip(trip.id, name);
+      setTrips(await fetchTrips());
+      setNotice(c.joined);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "";
+      setNotice(/complète|full/i.test(message) ? c.joinFull : c.actionFailed);
+    }
+  }
+
   async function remove(trip: Trip) {
     setNotice(null);
     try {
@@ -168,10 +184,18 @@ export function Covoiturage() {
     }
   }
 
+  // Un numéro sans indicatif ne sert à personne : ni WhatsApp, ni un appel
+  // depuis un téléphone étranger. On exige donc « + » suivi du pays.
+  const phoneOk = /^\+[1-9]\d[\d\s.-]{5,}$/.test(form.phone.trim());
+
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (missing.length > 0) {
       setStatus("invalid");
+      return;
+    }
+    if (!phoneOk) {
+      setStatus("badPhone");
       return;
     }
 
@@ -187,6 +211,7 @@ export function Covoiturage() {
       departure_slot: form.departureDate && form.departureSlot ? Number(form.departureSlot) : null,
       seats: Number(form.seats),
       comment: form.comment.trim() || null,
+      passengers: form.passengers.trim() || null,
       return_destination: form.returnElsewhere ? form.returnDestination.trim() || null : null,
       seats_return: form.departureDate && form.seatsReturn ? Number(form.seatsReturn) : null,
     };
@@ -283,6 +308,7 @@ export function Covoiturage() {
                     active={editingId === trip.id}
                     onEdit={() => startEdit(trip)}
                     onRemove={() => remove(trip)}
+                    onJoin={(name) => join(trip, name)}
                   />
                 ))}
               </div>
@@ -341,7 +367,7 @@ export function Covoiturage() {
                   label={c.fields.phone}
                   required
                   hint={c.fields.phoneHint}
-                  todo={flagged("phone")}
+                  todo={flagged("phone") || status === "badPhone"}
                   todoLabel={c.toComplete}
                 >
                   <input
@@ -352,6 +378,7 @@ export function Covoiturage() {
                     inputMode="tel"
                     maxLength={40}
                     placeholder="+33 6 12 34 56 78"
+                    pattern="\\+[0-9 .-]{8,}"
                     className={fieldClass}
                   />
                 </Field>
@@ -473,12 +500,20 @@ export function Covoiturage() {
                   </div>
                 ) : null}
 
-                <Field label={c.fields.seats}>
+                {/* Sans valeur pré-cochée : c'est le renseignement qui rend
+                    la liste utile, on ne peut pas le deviner à sa place. */}
+                <Field
+                  label={c.fields.seats}
+                  required
+                  todo={flagged("seats")}
+                  todoLabel={c.toComplete}
+                >
                   <select
                     value={form.seats}
                     onChange={(e) => set("seats", e.target.value)}
                     className={fieldClass}
                   >
+                    <option value="">— {c.fields.seatsChoose} —</option>
                     {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
                       <option key={n} value={n}>
                         {n}
@@ -523,12 +558,12 @@ export function Covoiturage() {
                   <p className="max-w-2xl text-[0.82rem] leading-relaxed text-muted-foreground">
                     {c.consent}
                   </p>
-                  {status === "invalid" ? (
+                  {status === "invalid" || status === "badPhone" ? (
                     <p
                       role="alert"
                       className="mt-4 border-l-2 border-clay bg-clay-soft px-4 py-3 text-[0.88rem] text-clay"
                     >
-                      {c.invalid}
+                      {status === "badPhone" ? c.invalidPhone : c.invalid}
                     </p>
                   ) : null}
                   <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -670,13 +705,19 @@ function Field({
   );
 }
 
-/** Le nombre de places d'un sens du trajet. */
-function Seats({ count }: { count: number }) {
+/** Le nombre de places libres, lisible d'un coup d'œil. */
+function Seats({ count, note }: { count: number; note?: string | undefined }) {
   const c = useT().covoiturage;
+  const full = count <= 0;
   return (
-    <span className="inline-flex items-center gap-1.5 border border-olive/40 px-2 py-0.5 font-display text-[0.62rem] tracking-[0.14em] uppercase text-olive">
-      <Users className="size-3" strokeWidth={1.4} />
-      {count === 0 ? c.seatsNone : `${count} ${count > 1 ? c.seatsMany : c.seatsOne}`}
+    <span
+      className={`inline-flex shrink-0 self-start items-center gap-1.5 px-2.5 py-1 font-display text-[0.68rem] tracking-[0.1em] uppercase ${
+        full ? "border border-clay/50 bg-clay-soft text-clay" : "bg-olive text-primary-foreground"
+      }`}
+    >
+      <Users className="size-3.5" strokeWidth={1.5} />
+      {full ? c.seatsNone : `${count} ${count > 1 ? c.seatsMany : c.seatsOne}`}
+      {note ? <span className="font-sans normal-case opacity-80">· {note}</span> : null}
     </span>
   );
 }
@@ -690,18 +731,29 @@ function Todo({ label }: { label: string }) {
   );
 }
 
+const actionClass =
+  "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 px-3 py-2 font-display text-[0.68rem] tracking-[0.12em] uppercase transition-colors";
+
+/**
+ * Un trajet, en une carte volontairement dense : le nom et les places libres
+ * sur la même ligne, l'itinéraire et les dates chacun sur une seule, le
+ * numéro affiché en clair. Un invité doit pouvoir balayer la liste et savoir
+ * en un regard s'il reste de la place et qui appeler.
+ */
 function TripCard({
   trip,
   delay,
   active,
   onEdit,
   onRemove,
+  onJoin,
 }: {
   trip: Trip;
   delay: number;
   active: boolean;
   onEdit: () => void;
   onRemove: () => void;
+  onJoin: (name: string) => Promise<void>;
 }) {
   const t = useT();
   const lang = useLang();
@@ -710,54 +762,62 @@ function TripCard({
   // Une suppression est irréversible et le bouton est petit : le premier clic
   // ne fait qu'armer le second.
   const [confirming, setConfirming] = useState(false);
+  const [joining, setJoining] = useState(false);
+  const [joinName, setJoinName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const full = trip.seats <= 0;
+
+  const dates = [
+    `${dateLabel(trip.arrival_date, lang)} · ${slotLabel(trip.arrival_slot, lang)}`,
+    trip.departure_date
+      ? `${dateLabel(trip.departure_date, lang)}${
+          trip.departure_slot == null ? "" : ` · ${slotLabel(trip.departure_slot, lang)}`
+        }`
+      : null,
+  ];
 
   return (
     <Reveal
       delay={delay}
-      className={`flex flex-col border bg-background p-6 transition-colors duration-500 sm:p-8 ${
-        active ? "border-olive bg-sand/30" : "border-border hover:bg-sand/25"
+      className={`flex flex-col border bg-background p-5 transition-colors duration-500 sm:p-6 ${
+        active ? "border-olive bg-sand/30" : "border-border"
       }`}
     >
-      <h4 className="font-serif text-[1.35rem] leading-snug font-light text-ink">{trip.name}</h4>
+      {/* La disponibilité en tête : c'est ce qu'on cherche en parcourant la
+          liste. Sur sa propre ligne, elle ne comprime plus le nom. */}
+      <Seats
+        count={trip.seats}
+        note={trip.seats_return == null ? undefined : `${trip.seats_return} ${c.seatsReturnShort}`}
+      />
+      <h4 className="mt-3 font-serif text-[1.3rem] leading-tight font-light text-ink">
+        {trip.name}
+      </h4>
 
-      <p className="mt-3 text-[0.95rem] leading-relaxed text-ink">
+      {/* L'itinéraire, sur une ligne. */}
+      <p className="mt-2 text-[0.9rem] leading-snug text-ink">
         {trip.origin}
-        <span className="mx-2 text-olive">→</span>
+        <span className="mx-1.5 text-olive">→</span>
         {trip.destination}
       </p>
 
-      {/* Aller et retour se lisent en vis-à-vis, chacun avec ses places : une
-          voiture pleine à l'arrivée peut repartir à moitié vide. */}
-      <dl className="mt-5 space-y-3 text-[0.88rem] text-muted-foreground">
-        <div>
-          <dt className="font-display text-[0.62rem] tracking-[0.2em] uppercase text-olive">
+      {/* Aller et retour, une ligne chacun. */}
+      <dl className="mt-3 space-y-1 text-[0.82rem] text-muted-foreground">
+        <div className="flex gap-2">
+          <dt className="w-[3.4rem] shrink-0 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
             {c.arrival}
           </dt>
-          <dd className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-            <span>
-              {dateLabel(trip.arrival_date, lang)} · {slotLabel(trip.arrival_slot, lang)}
-            </span>
-            <Seats count={trip.seats} />
-          </dd>
+          <dd>{dates[0]}</dd>
         </div>
-        <div>
-          <dt className="font-display text-[0.62rem] tracking-[0.2em] uppercase text-olive">
+        <div className="flex gap-2">
+          <dt className="w-[3.4rem] shrink-0 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
             {c.departure}
           </dt>
-          <dd className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-            {trip.departure_date ? (
-              <>
-                <span>
-                  {dateLabel(trip.departure_date, lang)}
-                  {trip.departure_slot == null ? "" : ` · ${slotLabel(trip.departure_slot, lang)}`}
-                  {trip.return_destination ? ` ${c.returnTo} ${trip.return_destination}` : ""}
-                </span>
-                {trip.seats_return == null ? (
-                  <Todo label={c.toComplete} />
-                ) : (
-                  <Seats count={trip.seats_return} />
-                )}
-              </>
+          <dd className="flex flex-wrap items-center gap-x-2 gap-y-1">
+            {dates[1] ? (
+              <span>
+                {dates[1]}
+                {trip.return_destination ? ` ${c.returnTo} ${trip.return_destination}` : ""}
+              </span>
             ) : (
               <>
                 <span className="text-clay">{c.departureUnknown}</span>
@@ -766,66 +826,132 @@ function TripCard({
             )}
           </dd>
         </div>
+        {trip.passengers ? (
+          <div className="flex gap-2">
+            <dt className="w-[3.4rem] shrink-0 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
+              {c.passengers}
+            </dt>
+            <dd>{trip.passengers}</dd>
+          </div>
+        ) : null}
       </dl>
 
       {trip.comment ? (
-        <p className="mt-5 border-l border-border pl-4 text-[0.88rem] leading-relaxed text-muted-foreground italic">
+        <p className="mt-3 text-[0.82rem] leading-snug text-muted-foreground italic">
           {trip.comment}
         </p>
       ) : null}
 
-      <div className={`mt-auto pt-7 ${cardActionsClass}`}>
-        <a
-          href={`tel:${trip.phone.replace(/\s/g, "")}`}
-          className={`${cardActionClass} border-olive/40`}
-        >
-          <Phone className="size-3.5" strokeWidth={1.3} />
-          {c.call}
-        </a>
+      {/* Le numéro en clair : personne ne devrait avoir à cliquer pour le lire. */}
+      <a
+        href={`tel:${trip.phone.replace(/\s/g, "")}`}
+        className="mt-4 inline-block font-display text-[0.95rem] tracking-[0.04em] text-ink underline decoration-olive/40 decoration-1 underline-offset-4 transition-colors hover:text-olive"
+      >
+        {trip.phone}
+      </a>
+
+      {/* WhatsApp d'abord : c'est par là que passent la plupart des invités. */}
+      <div className="mt-auto flex gap-2 pt-4">
         {wa ? (
           <a
             href={wa}
             target="_blank"
             rel="noreferrer noopener"
-            className={`${cardActionClass} border-olive/40`}
+            className={`${actionClass} bg-olive text-primary-foreground hover:bg-olive-deep`}
           >
-            <MessageCircle className="size-3.5" strokeWidth={1.3} />
+            <MessageCircle className="size-3.5" strokeWidth={1.5} />
             {c.whatsapp}
           </a>
         ) : null}
+        <a
+          href={`tel:${trip.phone.replace(/\s/g, "")}`}
+          className={`${actionClass} border border-olive/40 text-ink hover:border-olive hover:text-olive`}
+        >
+          <Phone className="size-3.5" strokeWidth={1.5} />
+          {c.call}
+        </a>
       </div>
 
-      {/* En attente de confirmation, « Modifier » cède sa place : la grille
-          garde ainsi ses deux colonnes et le choix reste binaire. */}
-      <div className={`mt-3 ${cardActionsClass}`}>
+      {/* Monter dans la voiture. Le champ n'apparaît qu'au clic : une carte
+          n'a pas à porter un formulaire en permanence. */}
+      {joining ? (
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (!joinName.trim()) return;
+            setBusy(true);
+            await onJoin(joinName.trim());
+            setBusy(false);
+            setJoining(false);
+            setJoinName("");
+          }}
+          className="mt-2 flex gap-2"
+        >
+          <input
+            type="text"
+            value={joinName}
+            onChange={(e) => setJoinName(e.target.value)}
+            placeholder={c.joinName}
+            maxLength={80}
+            autoFocus
+            className="min-h-11 min-w-0 flex-1 border-b border-border bg-transparent px-1 text-[0.9rem] text-ink placeholder:text-muted-foreground/55 focus:border-olive focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className={`${actionClass} flex-none border border-olive/40 px-4 text-ink hover:border-olive hover:text-olive disabled:opacity-50`}
+          >
+            {c.joinConfirm}
+          </button>
+        </form>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setJoining(true)}
+          disabled={full}
+          className={`${actionClass} mt-2 border border-dashed border-olive/40 text-olive hover:bg-sage-soft/60 disabled:cursor-not-allowed disabled:border-border disabled:text-muted-foreground/60`}
+        >
+          <UserPlus className="size-3.5" strokeWidth={1.5} />
+          {full ? c.seatsNone : c.join}
+        </button>
+      )}
+
+      {/* Corriger ou retirer : discret, en pied de carte. */}
+      <div className="mt-4 flex items-center justify-end gap-4 border-t border-border/60 pt-3 font-display text-[0.62rem] tracking-[0.14em] uppercase">
+        <button
+          type="button"
+          onClick={onEdit}
+          className="inline-flex min-h-8 items-center gap-1.5 text-muted-foreground transition-colors hover:text-ink"
+        >
+          <Pencil className="size-3" strokeWidth={1.5} />
+          {c.edit}
+        </button>
         {confirming ? (
           <>
             <button
               type="button"
-              onClick={() => {
-                setConfirming(false);
-                onRemove();
-              }}
-              className={`${cardActionClass} border-olive bg-olive text-primary-foreground hover:text-primary-foreground`}
+              onClick={onRemove}
+              className="inline-flex min-h-8 items-center text-clay transition-opacity hover:opacity-70"
             >
-              <Trash2 className="size-3.5" strokeWidth={1.3} />
               {c.confirmRemove}
             </button>
-            <button type="button" onClick={() => setConfirming(false)} className={cardActionClass}>
+            <button
+              type="button"
+              onClick={() => setConfirming(false)}
+              className="inline-flex min-h-8 items-center text-muted-foreground transition-colors hover:text-ink"
+            >
               {c.cancel}
             </button>
           </>
         ) : (
-          <>
-            <button type="button" onClick={onEdit} className={cardActionClass}>
-              <Pencil className="size-3.5" strokeWidth={1.3} />
-              {c.edit}
-            </button>
-            <button type="button" onClick={() => setConfirming(true)} className={cardActionClass}>
-              <Trash2 className="size-3.5" strokeWidth={1.3} />
-              {c.remove}
-            </button>
-          </>
+          <button
+            type="button"
+            onClick={() => setConfirming(true)}
+            className="inline-flex min-h-8 items-center gap-1.5 text-muted-foreground transition-colors hover:text-clay"
+          >
+            <Trash2 className="size-3" strokeWidth={1.5} />
+            {c.remove}
+          </button>
         )}
       </div>
     </Reveal>

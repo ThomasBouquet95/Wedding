@@ -1,5 +1,5 @@
 import type { Lang } from "./i18n";
-import { listTripsFn, removeTripFn, saveTripFn } from "./covoiturage.server";
+import { joinTripFn, listTripsFn, removeTripFn, saveTripFn } from "./covoiturage.server";
 
 export type { Trip, TripInput } from "./covoiturage-types";
 import type { Trip, TripInput } from "./covoiturage-types";
@@ -26,6 +26,11 @@ export async function updateTrip(id: string, trip: TripInput): Promise<void> {
 
 export async function deleteTrip(id: string): Promise<void> {
   await removeTripFn({ data: { id } });
+}
+
+/** Monter dans une voiture : le nom rejoint la liste, une place libre part. */
+export async function joinTrip(id: string, name: string): Promise<void> {
+  await joinTripFn({ data: { id, name } });
 }
 
 /**
