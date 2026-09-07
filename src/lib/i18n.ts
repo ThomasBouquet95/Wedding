@@ -271,6 +271,7 @@ const fr = {
       d17: "17 min en voiture",
       d20: "20 min en voiture",
       d21: "21 min en voiture",
+      d25: "25 min en voiture",
     },
     /** `badge` vide = pas de mention ; la clé reste présente pour que les deux
      *  langues aient exactement la même forme. */
@@ -327,6 +328,12 @@ const fr = {
         type: "Chambre d'hôtes · env. 50 € / nuit",
         description: "L'option la plus économique de notre sélection.",
         badge: "",
+      },
+      ribiera: {
+        type: "Hôtel · à partir de 280 € / nuit",
+        description:
+          "Un domaine de douze hectares à Niozelles, près de Forcalquier, avec spa, golf et restaurant gastronomique.",
+        badge: "Idéal en couple",
       },
     },
   },
@@ -441,6 +448,9 @@ const fr = {
     remove: "Supprimer",
     confirmRemove: "Confirmer",
     cancel: "Annuler",
+    formOpen: "Inscrire mon trajet",
+    formOpenNote: "Vous conduisez et il reste des places ? Deux minutes suffisent.",
+    formClose: "Replier le formulaire",
     formHeading: "Inscrire mon trajet",
     formIntro:
       "Les champs suivis d'une étoile sont indispensables ; le reste nous aide simplement à mieux vous situer.",
@@ -855,6 +865,7 @@ const en: Translated<typeof fr> = {
       d17: "17 min by car",
       d20: "20 min by car",
       d21: "21 min by car",
+      d25: "25 min by car",
     },
     items: {
       paradis: {
@@ -908,6 +919,12 @@ const en: Translated<typeof fr> = {
         type: "Guest house · around €50 / night",
         description: "The most affordable option on our list.",
         badge: "",
+      },
+      ribiera: {
+        type: "Hotel · from €280 / night",
+        description:
+          "A twelve-hectare estate at Niozelles, near Forcalquier, with a spa, a golf course and a fine-dining restaurant.",
+        badge: "Great for couples",
       },
     },
   },
@@ -1020,6 +1037,9 @@ const en: Translated<typeof fr> = {
     remove: "Remove",
     confirmRemove: "Confirm",
     cancel: "Cancel",
+    formOpen: "Post my journey",
+    formOpenNote: "Driving down with spare seats? It only takes two minutes.",
+    formClose: "Close the form",
     formHeading: "Post my journey",
     formIntro:
       "Fields marked with a star are required; the rest simply help other guests picture your journey.",

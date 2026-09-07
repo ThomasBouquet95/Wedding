@@ -18,6 +18,7 @@ export const stays = [
   { id: "prairies", name: "Les Prairies de l'Encrême", stars: "3★", distance: "d20" },
   { id: "provence", name: "Provence Au Cœur", stars: "4★", distance: "d20" },
   { id: "villa", name: "Villa Saint Marc", stars: "3★", distance: "d21" },
+  { id: "ribiera", name: "Domaine Ribiera", stars: "5★", distance: "d25" },
 ] as const;
 
 export const stayNames: readonly string[] = stays.map((s) => s.name);

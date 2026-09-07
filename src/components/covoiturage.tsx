@@ -3,6 +3,7 @@ import {
   Check,
   Copy,
   MessageCircle,
+  Plus,
   Pencil,
   Phone,
   Trash2,
@@ -136,13 +137,17 @@ export function Covoiturage() {
   const [boardOpen, setBoardOpen] = useState(true);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [status, setStatus] = useState<
-    "idle" | "sending" | "done" | "invalid" | "badPhone" | "fallback"
-  >("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "invalid" | "badPhone" | "fallback">(
+    "idle",
+  );
+  // Le formulaire est replié à l'arrivée : on vient d'abord voir les trajets
+  // des autres, et douze champs déployés repoussaient la liste hors de l'écran.
+  const [formOpen, setFormOpen] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [summary, setSummary] = useState("");
   const [copied, setCopied] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let alive = true;
@@ -168,21 +173,32 @@ export function Covoiturage() {
   const missing = REQUIRED.filter((k) => !form[k].trim());
   const flagged = (key: (typeof REQUIRED)[number]) => status === "invalid" && missing.includes(key);
 
+  function openForm() {
+    setFormOpen(true);
+    // Le dépliement et le défilement doivent se suivre : sans l'attente d'un
+    // rendu, la cible n'existe pas encore et le navigateur ne bouge pas.
+    requestAnimationFrame(() =>
+      formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+    );
+  }
+
+  function closeForm() {
+    setFormOpen(false);
+    setForm(emptyForm);
+    setEditingId(null);
+    setStatus("idle");
+  }
+
   function startEdit(trip: Trip) {
     setForm(formFromTrip(trip));
     setEditingId(trip.id);
     setStatus("idle");
     setNotice(null);
+    setFormOpen(true);
     // Sur téléphone la carte et le formulaire sont à plusieurs écrans l'un de
     // l'autre : sans ce défilement, le clic sur « Modifier » semblerait sans
     // effet.
     formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function cancelEdit() {
-    setForm(emptyForm);
-    setEditingId(null);
-    setStatus("idle");
   }
 
   async function join(trip: Trip, name: string) {
@@ -214,7 +230,7 @@ export function Covoiturage() {
     try {
       await deleteTrip(trip.id);
       setTrips(await fetchTrips());
-      if (editingId === trip.id) cancelEdit();
+      if (editingId === trip.id) closeForm();
       setNotice(c.removed);
     } catch {
       setNotice(c.actionFailed);
@@ -262,10 +278,17 @@ export function Covoiturage() {
       else await createTrip(trip);
       setTrips(await fetchTrips());
       setBoardOpen(true);
-      setNotice(editingId ? c.edited : null);
+      // La confirmation s'affiche au-dessus de la liste, et non dans le
+      // formulaire : on veut voir du même coup d'œil le message et le trajet
+      // qui vient d'y apparaître. D'où le repli et le défilement.
+      setNotice(editingId ? c.edited : c.success);
       setForm(emptyForm);
       setEditingId(null);
-      setStatus("done");
+      setFormOpen(false);
+      setStatus("idle");
+      requestAnimationFrame(() =>
+        listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+      );
     } catch {
       setSummary(tripSummary(trip, lang));
       setStatus("fallback");
@@ -284,7 +307,7 @@ export function Covoiturage() {
         </Reveal>
 
         {boardOpen ? (
-          <div className="mt-16">
+          <div ref={listRef} className="mt-16 scroll-mt-24">
             <Reveal>
               <h3 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
                 {c.listHeading}
@@ -302,7 +325,10 @@ export function Covoiturage() {
             </Reveal>
 
             {notice ? (
-              <p role="status" className="mt-5 text-[0.9rem] text-ink">
+              <p
+                role="status"
+                className="mt-5 border-l-2 border-olive bg-sage-soft/60 px-4 py-3 text-[0.9rem] text-ink"
+              >
                 {notice}
               </p>
             ) : null}
@@ -352,35 +378,33 @@ export function Covoiturage() {
           </div>
         ) : null}
 
-        {/* Le formulaire, en saisie comme en correction. Le `ref` est porté par
-            une enveloppe : `Reveal` ne transmet pas les siens. */}
-        <div ref={formRef} className="mt-16 scroll-mt-24">
-          <Reveal className="border border-border bg-background p-8 sm:p-12">
-            <h3 className="font-serif text-2xl leading-snug font-light text-ink">
-              {editing ? c.editHeading : c.formHeading}
-            </h3>
-            <p className="mt-3 max-w-xl text-[0.9rem] leading-relaxed text-muted-foreground">
-              {editing ? c.editIntro : c.formIntro}
-            </p>
-
-            {status === "done" ? (
-              <div className="mt-8">
-                <p className="text-[0.95rem] leading-relaxed text-ink">{notice ?? c.success}</p>
+        {/* Le formulaire, en saisie comme en correction. Replié par défaut :
+            douze champs ne méritent pas d'occuper la page en permanence alors
+            qu'on vient d'abord consulter les trajets. Le `ref` est porté par
+            une enveloppe, `Reveal` ne transmettant pas les siens. */}
+        <div ref={formRef} className="mt-12 scroll-mt-24">
+          {formOpen ? (
+            <div className="border border-border bg-background p-6 sm:p-8">
+              <div className="flex flex-wrap items-baseline justify-between gap-4">
+                <h3 className="font-serif text-[1.6rem] leading-snug font-light text-ink">
+                  {editing ? c.editHeading : c.formHeading}
+                </h3>
                 <button
                   type="button"
-                  onClick={() => {
-                    setNotice(null);
-                    setStatus("idle");
-                  }}
-                  className={`${buttonClass} mt-6`}
+                  onClick={closeForm}
+                  className="inline-flex min-h-8 items-center gap-1.5 font-display text-[0.64rem] tracking-[0.14em] uppercase text-muted-foreground transition-colors hover:text-ink"
                 >
-                  {c.again}
+                  <X className="size-3" strokeWidth={1.6} />
+                  {c.formClose}
                 </button>
               </div>
-            ) : (
+              <p className="mt-2 max-w-xl text-[0.88rem] leading-relaxed text-muted-foreground">
+                {editing ? c.editIntro : c.formIntro}
+              </p>
+
               <form
                 onSubmit={submit}
-                className="mt-9 grid gap-x-10 gap-y-7 sm:grid-cols-2"
+                className="mt-7 grid gap-x-8 gap-y-5 sm:grid-cols-2"
                 noValidate
               >
                 <Field
@@ -644,7 +668,7 @@ export function Covoiturage() {
                     {editing ? (
                       <button
                         type="button"
-                        onClick={cancelEdit}
+                        onClick={closeForm}
                         className={`${buttonClass} border-border`}
                       >
                         {c.cancel}
@@ -653,37 +677,55 @@ export function Covoiturage() {
                   </div>
                 </div>
               </form>
-            )}
 
-            {status === "fallback" ? (
-              <div className="mt-10 border-t border-border pt-8">
-                <h4 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
-                  {c.fallbackHeading}
-                </h4>
-                <p className="mt-3 max-w-xl text-[0.9rem] leading-relaxed text-muted-foreground">
-                  {c.fallbackText}
-                </p>
-                <pre className="mt-5 overflow-x-auto border border-border bg-sand/30 p-5 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap text-ink">
-                  {summary}
-                </pre>
-                <button
-                  type="button"
-                  onClick={() => {
-                    void navigator.clipboard?.writeText(summary);
-                    setCopied(true);
-                  }}
-                  className={`${buttonClass} mt-5`}
-                >
-                  {copied ? (
-                    <Check className="size-4" strokeWidth={1.3} />
-                  ) : (
-                    <Copy className="size-4" strokeWidth={1.3} />
-                  )}
-                  {copied ? c.copied : c.copy}
-                </button>
-              </div>
-            ) : null}
-          </Reveal>
+              {status === "fallback" ? (
+                <div className="mt-10 border-t border-border pt-8">
+                  <h4 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
+                    {c.fallbackHeading}
+                  </h4>
+                  <p className="mt-3 max-w-xl text-[0.9rem] leading-relaxed text-muted-foreground">
+                    {c.fallbackText}
+                  </p>
+                  <pre className="mt-5 overflow-x-auto border border-border bg-sand/30 p-5 font-sans text-[0.85rem] leading-relaxed whitespace-pre-wrap text-ink">
+                    {summary}
+                  </pre>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void navigator.clipboard?.writeText(summary);
+                      setCopied(true);
+                    }}
+                    className={`${buttonClass} mt-5`}
+                  >
+                    {copied ? (
+                      <Check className="size-4" strokeWidth={1.3} />
+                    ) : (
+                      <Copy className="size-4" strokeWidth={1.3} />
+                    )}
+                    {copied ? c.copied : c.copy}
+                  </button>
+                </div>
+              ) : null}
+            </div>
+          ) : (
+            // Replié, le formulaire ne pèse qu'une ligne — mais une ligne qui
+            // dit clairement ce qu'elle ouvre.
+            <button
+              type="button"
+              onClick={openForm}
+              className="flex w-full items-center justify-between gap-5 border border-olive/40 bg-background px-6 py-5 text-left transition-colors hover:border-olive sm:px-8"
+            >
+              <span>
+                <span className="font-serif text-[1.35rem] leading-snug font-light text-ink">
+                  {c.formOpen}
+                </span>
+                <span className="mt-1 block max-w-xl text-[0.85rem] leading-relaxed text-muted-foreground">
+                  {c.formOpenNote}
+                </span>
+              </span>
+              <Plus className="size-5 shrink-0 text-olive" strokeWidth={1.2} />
+            </button>
+          )}
         </div>
       </div>
     </section>
