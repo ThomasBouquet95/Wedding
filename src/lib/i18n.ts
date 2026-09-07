@@ -152,7 +152,9 @@ const fr = {
         subtitle: "Le grand jour",
         note: "La cérémonie aura lieu dans le parc du Couvent, suivie du dîner et de la soirée dans la cour du Couvent. Pour cette journée, nous vous invitons à porter une tenue élégante : robe longue et costume.",
         events: [
-          { time: "16h", label: "Cérémonie dans le parc" },
+          { time: "16h30", label: "Arrivée des invités au Couvent" },
+          { time: "17h", label: "Cérémonie dans le parc" },
+          { time: "18h", label: "Cocktail" },
           { time: "20h", label: "Dîner dans la cour du Couvent, suivi de la soirée" },
         ],
       },
@@ -541,7 +543,7 @@ const fr = {
         q: "À quelle heure faut-il arriver ?",
         cta: "",
         ctaTo: "",
-        a: "Le vendredi, nous vous retrouvons à partir de 17h dans le parc du Couvent pour la soirée d'accueil, et le dîner sera servi à table à 20h. Le samedi, merci de prévoir d'être sur place environ 20 minutes avant le début de la cérémonie, prévue vers 16h.",
+        a: "Le vendredi, nous vous retrouvons à partir de 17h dans le parc du Couvent pour la soirée d'accueil, et le dîner sera servi à table à 20h. Le samedi, l'accueil des invités se fera à partir de 16h30, pour une cérémonie à 17h, suivie du cocktail à 18h et du dîner à 20h.",
       },
       {
         q: "Quelle tenue prévoir ?",
@@ -743,7 +745,9 @@ const en: Translated<typeof fr> = {
         subtitle: "The big day",
         note: "The ceremony will take place in the Couvent gardens, followed by dinner and the evening celebration in the Couvent courtyard. For Saturday, we invite you to dress elegantly: long dresses and suits.",
         events: [
-          { time: "4 pm", label: "Ceremony in the gardens" },
+          { time: "4.30 pm", label: "Guests arrive at the Couvent" },
+          { time: "5 pm", label: "Ceremony in the gardens" },
+          { time: "6 pm", label: "Drinks reception" },
           {
             time: "8 pm",
             label: "Dinner in the Couvent courtyard, followed by the evening celebration",
@@ -1129,7 +1133,7 @@ const en: Translated<typeof fr> = {
         q: "What time should I arrive?",
         cta: "",
         ctaTo: "",
-        a: "On Friday, we gather from 5 pm in the Couvent gardens for the welcome evening, and dinner is served at the table at 8 pm. On Saturday, please plan to arrive around 20 minutes before the ceremony, which is currently scheduled for approximately 4 pm.",
+        a: "On Friday, we gather from 5 pm in the Couvent gardens for the welcome evening, and dinner is served at the table at 8 pm. On Saturday, guests arrive from 4.30 pm for a 5 pm ceremony, followed by the drinks reception at 6 pm and dinner at 8 pm.",
       },
       {
         q: "What should I wear?",
