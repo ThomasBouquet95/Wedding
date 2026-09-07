@@ -55,14 +55,18 @@ export function slotLabel(start: number, lang: Lang): string {
   return `${h(start)} — ${h(end)}`;
 }
 
-/** « samedi 26 juin » / « Saturday 26 June ». */
-export function dateLabel(iso: string, lang: Lang): string {
+/**
+ * « samedi 26 juin » / « Saturday 26 June », ou sa forme abrégée
+ * « sam. 26 juin » quand la place manque — dans la liste des trajets, chaque
+ * ligne gagnée compte sur un téléphone.
+ */
+export function dateLabel(iso: string, lang: Lang, short = false): string {
   const date = new Date(`${iso}T12:00:00`);
   if (Number.isNaN(date.getTime())) return iso;
   return date.toLocaleDateString(lang === "fr" ? "fr-FR" : "en-GB", {
-    weekday: "long",
+    weekday: short ? "short" : "long",
     day: "numeric",
-    month: "long",
+    month: short ? "short" : "long",
   });
 }
 

@@ -16,6 +16,7 @@ import {
   type Trip,
   type TripInput,
 } from "@/lib/covoiturage";
+import { INDICATIFS, joinPhone, OTHER_CODE, splitPhone } from "@/lib/indicatifs";
 
 const DESTINATION = "Couvent Notre-Dame des Prés, Reillanne";
 
@@ -23,6 +24,11 @@ const DESTINATION = "Couvent Notre-Dame des Prés, Reillanne";
 // Les `select` natifs se contentent sinon d'une quarantaine de pixels.
 const fieldClass =
   "mt-2 min-h-11 w-full border-0 border-b border-border bg-transparent py-2.5 text-[0.95rem] text-ink placeholder:text-muted-foreground/55 focus:border-olive focus:outline-none";
+// La même allure, sans `mt-2 w-full` : à l'intérieur d'une rangée souple, une
+// largeur de 100 % couplée à `shrink-0` ferait tout prendre au premier champ
+// et ne laisserait rien au suivant.
+const fieldInline =
+  "min-h-11 border-0 border-b border-border bg-transparent py-2.5 text-[0.95rem] text-ink placeholder:text-muted-foreground/55 focus:border-olive focus:outline-none";
 const labelClass = "font-display text-[0.68rem] tracking-[0.22em] uppercase text-olive";
 const labelTodoClass = "font-display text-[0.68rem] tracking-[0.22em] uppercase text-clay";
 const buttonClass =
@@ -36,6 +42,8 @@ const cardActionClass =
 
 type FormState = {
   name: string;
+  phoneCode: string;
+  phoneOther: string;
   phone: string;
   whatsapp: boolean;
   origin: string;
@@ -54,6 +62,8 @@ type FormState = {
 
 const emptyForm: FormState = {
   name: "",
+  phoneCode: "+33",
+  phoneOther: "",
   phone: "",
   whatsapp: true,
   origin: "",
@@ -71,9 +81,13 @@ const emptyForm: FormState = {
 };
 
 function formFromTrip(trip: Trip): FormState {
+  const { code, local } = splitPhone(trip.phone);
+  const known = INDICATIFS.some((i) => i.code === code);
   return {
     name: trip.name,
-    phone: trip.phone,
+    phoneCode: known ? code : OTHER_CODE,
+    phoneOther: known ? "" : code,
+    phone: local,
     whatsapp: trip.whatsapp,
     origin: trip.origin,
     destination: trip.destination,
@@ -184,9 +198,11 @@ export function Covoiturage() {
     }
   }
 
-  // Un numéro sans indicatif ne sert à personne : ni WhatsApp, ni un appel
-  // depuis un téléphone étranger. On exige donc « + » suivi du pays.
-  const phoneOk = /^\+[1-9]\d[\d\s.-]{5,}$/.test(form.phone.trim());
+  // L'indicatif vient d'une liste, le numéro du champ : il ne peut plus
+  // s'oublier. Reste à vérifier qu'il y a bien assez de chiffres.
+  const dialCode = form.phoneCode === OTHER_CODE ? form.phoneOther.trim() : form.phoneCode;
+  const fullPhone = joinPhone(dialCode, form.phone);
+  const phoneOk = /^\+[1-9]\d{0,3}$/.test(dialCode) && form.phone.replace(/\D/g, "").length >= 6;
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -201,7 +217,7 @@ export function Covoiturage() {
 
     const trip: TripInput = {
       name: form.name.trim(),
-      phone: form.phone.trim(),
+      phone: fullPhone,
       whatsapp: form.whatsapp,
       origin: form.origin.trim(),
       destination: form.destination.trim(),
@@ -244,29 +260,6 @@ export function Covoiturage() {
           <p className="mt-5 text-[0.95rem] leading-relaxed text-muted-foreground">{c.intro}</p>
         </Reveal>
 
-        {/* Les trois temps du covoiturage, énoncés avant la liste : sans eux,
-            l'invité arrivait sur un tableau et un formulaire sans savoir
-            lequel des deux le concernait. */}
-        <Reveal className="mt-12 border-t border-border/70 pt-10">
-          <h3 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
-            {c.howHeading}
-          </h3>
-        </Reveal>
-
-        <div className="mt-8 grid gap-8 border-b border-border/70 pb-10 sm:grid-cols-3 sm:gap-10">
-          {c.steps.map((step, i) => (
-            <Reveal key={step.n} delay={i * 90}>
-              <p className="font-display text-[0.66rem] tracking-[0.24em] text-olive">{step.n}</p>
-              <h3 className="mt-4 font-serif text-[1.2rem] leading-snug font-light text-ink">
-                {step.title}
-              </h3>
-              <p className="mt-3 text-[0.88rem] leading-relaxed text-muted-foreground">
-                {step.text}
-              </p>
-            </Reveal>
-          ))}
-        </div>
-
         {boardOpen ? (
           <div className="mt-16">
             <Reveal>
@@ -295,13 +288,14 @@ export function Covoiturage() {
                 </p>
               </Reveal>
             ) : (
-              // Des cartes bordées une à une, séparées par un écart, plutôt que
-              // la grille à filets de la page Hébergements : le nombre de
-              // trajets est quelconque, et une dernière rangée incomplète y
-              // laisserait des cases grises.
-              <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              // Une liste de lignes, et non une grille de cartes : on parcourt
+              // des trajets pour en comparer les horaires et les places, et
+              // trois colonnes de pavés obligeaient à balayer l'écran en
+              // zigzag. Une ligne par trajet, les mêmes données toujours à la
+              // même place.
+              <ul className="mt-6 divide-y divide-border border-y border-border">
                 {trips.map((trip, i) => (
-                  <TripCard
+                  <TripRow
                     key={trip.id}
                     trip={trip}
                     delay={i * 60}
@@ -311,7 +305,7 @@ export function Covoiturage() {
                     onJoin={(name) => join(trip, name)}
                   />
                 ))}
-              </div>
+              </ul>
             )}
           </div>
         ) : null}
@@ -363,6 +357,9 @@ export function Covoiturage() {
                   />
                 </Field>
 
+                {/* L'indicatif d'abord, choisi dans une liste : c'est ce qui
+                    empêche de l'oublier. Le champ ne reçoit ensuite que le
+                    numéro local. */}
                 <Field
                   label={c.fields.phone}
                   required
@@ -370,17 +367,43 @@ export function Covoiturage() {
                   todo={flagged("phone") || status === "badPhone"}
                   todoLabel={c.toComplete}
                 >
-                  <input
-                    type="tel"
-                    value={form.phone}
-                    onChange={(e) => set("phone", e.target.value)}
-                    autoComplete="tel"
-                    inputMode="tel"
-                    maxLength={40}
-                    placeholder="+33 6 12 34 56 78"
-                    pattern="\\+[0-9 .-]{8,}"
-                    className={fieldClass}
-                  />
+                  <div className="mt-2 flex gap-3">
+                    <select
+                      value={form.phoneCode}
+                      onChange={(e) => set("phoneCode", e.target.value)}
+                      aria-label={c.fields.phoneCountry}
+                      className={`${fieldInline} w-[8.5rem] shrink-0`}
+                    >
+                      {INDICATIFS.map((i) => (
+                        <option key={i.code} value={i.code}>
+                          {i.label}
+                        </option>
+                      ))}
+                      <option value={OTHER_CODE}>{c.fields.phoneOther}</option>
+                    </select>
+                    {form.phoneCode === OTHER_CODE ? (
+                      <input
+                        type="tel"
+                        value={form.phoneOther}
+                        onChange={(e) => set("phoneOther", e.target.value)}
+                        aria-label={c.fields.phoneOther}
+                        maxLength={5}
+                        placeholder="+000"
+                        className={`${fieldInline} w-16 shrink-0`}
+                      />
+                    ) : null}
+                    <input
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => set("phone", e.target.value)}
+                      aria-label={c.fields.phoneNumber}
+                      autoComplete="tel-national"
+                      inputMode="tel"
+                      maxLength={24}
+                      placeholder="6 12 34 56 78"
+                      className={`${fieldInline} min-w-0 flex-1`}
+                    />
+                  </div>
                 </Field>
 
                 <Choice
@@ -732,15 +755,17 @@ function Todo({ label }: { label: string }) {
 }
 
 const actionClass =
-  "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 px-3 py-2 font-display text-[0.68rem] tracking-[0.12em] uppercase transition-colors";
+  "inline-flex min-h-11 flex-1 items-center justify-center gap-1.5 px-3 py-2 font-display text-[0.68rem] tracking-[0.12em] whitespace-nowrap uppercase transition-colors";
 
 /**
- * Un trajet, en une carte volontairement dense : le nom et les places libres
- * sur la même ligne, l'itinéraire et les dates chacun sur une seule, le
- * numéro affiché en clair. Un invité doit pouvoir balayer la liste et savoir
- * en un regard s'il reste de la place et qui appeler.
+ * Un trajet, sur une ligne.
+ *
+ * On parcourt cette liste pour comparer des horaires et des places : les
+ * mêmes données doivent donc tomber toujours au même endroit. D'où quatre
+ * zones fixes — disponibilité, qui et par où, quand, comment joindre — qui
+ * s'empilent sur téléphone et s'alignent dès l'écran large.
  */
-function TripCard({
+function TripRow({
   trip,
   delay,
   active,
@@ -759,6 +784,7 @@ function TripCard({
   const lang = useLang();
   const c = t.covoiturage;
   const wa = trip.whatsapp ? whatsappHref(trip.phone) : null;
+  const tel = `tel:${trip.phone.replace(/\s/g, "")}`;
   // Une suppression est irréversible et le bouton est petit : le premier clic
   // ne fait qu'armer le second.
   const [confirming, setConfirming] = useState(false);
@@ -767,192 +793,191 @@ function TripCard({
   const [busy, setBusy] = useState(false);
   const full = trip.seats <= 0;
 
-  const dates = [
-    `${dateLabel(trip.arrival_date, lang)} · ${slotLabel(trip.arrival_slot, lang)}`,
-    trip.departure_date
-      ? `${dateLabel(trip.departure_date, lang)}${
-          trip.departure_slot == null ? "" : ` · ${slotLabel(trip.departure_slot, lang)}`
-        }`
-      : null,
-  ];
+  const line = (date: string | null, slot: number | null, suffix?: string) =>
+    date
+      ? `${dateLabel(date, lang, true)}${slot == null ? "" : ` · ${slotLabel(slot, lang)}`}${suffix ?? ""}`
+      : null;
 
   return (
     <Reveal
+      as="li"
       delay={delay}
-      className={`flex flex-col border bg-background p-5 transition-colors duration-500 sm:p-6 ${
-        active ? "border-olive bg-sand/30" : "border-border"
-      }`}
+      className={`px-1 py-4 transition-colors duration-500 ${active ? "bg-sand/40" : ""}`}
     >
-      {/* La disponibilité en tête : c'est ce qu'on cherche en parcourant la
-          liste. Sur sa propre ligne, elle ne comprime plus le nom. */}
-      <Seats
-        count={trip.seats}
-        note={trip.seats_return == null ? undefined : `${trip.seats_return} ${c.seatsReturnShort}`}
-      />
-      <h4 className="mt-3 font-serif text-[1.3rem] leading-tight font-light text-ink">
-        {trip.name}
-      </h4>
-
-      {/* L'itinéraire, sur une ligne. */}
-      <p className="mt-2 text-[0.9rem] leading-snug text-ink">
-        {trip.origin}
-        <span className="mx-1.5 text-olive">→</span>
-        {trip.destination}
-      </p>
-
-      {/* Aller et retour, une ligne chacun. */}
-      <dl className="mt-3 space-y-1 text-[0.82rem] text-muted-foreground">
-        <div className="flex gap-2">
-          <dt className="w-[3.4rem] shrink-0 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
-            {c.arrival}
-          </dt>
-          <dd>{dates[0]}</dd>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-5">
+        {/* Reste-t-il de la place, et pour aller où. Le nom et la pastille
+               partagent une ligne — sur un téléphone, chaque ligne économisée
+               compte — et se replient si la largeur manque. */}
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <p className="font-serif text-[1.15rem] leading-tight font-light text-ink">
+              {trip.name}
+            </p>
+            <Seats count={trip.seats} />
+          </div>
+          <p className="mt-1 text-[0.85rem] leading-snug text-muted-foreground">
+            {trip.origin}
+            <span className="mx-1.5 text-olive">→</span>
+            {trip.destination}
+          </p>
+          {trip.passengers ? (
+            <p className="mt-1 text-[0.8rem] leading-snug text-muted-foreground">
+              <span className="text-olive">{c.passengers}</span> {trip.passengers}
+            </p>
+          ) : null}
+          {trip.comment ? (
+            <p className="mt-1 text-[0.8rem] leading-snug text-muted-foreground italic">
+              {trip.comment}
+            </p>
+          ) : null}
         </div>
-        <div className="flex gap-2">
-          <dt className="w-[3.4rem] shrink-0 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
-            {c.departure}
-          </dt>
-          <dd className="flex flex-wrap items-center gap-x-2 gap-y-1">
-            {dates[1] ? (
-              <span>
-                {dates[1]}
-                {trip.return_destination ? ` ${c.returnTo} ${trip.return_destination}` : ""}
-              </span>
+
+        {/* 3. Quand. */}
+        <div className="shrink-0 text-[0.82rem] leading-snug text-muted-foreground sm:w-56">
+          <p>
+            <span className="mr-1.5 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
+              {c.arrival}
+            </span>
+            {line(trip.arrival_date, trip.arrival_slot)}
+          </p>
+          <p className="mt-0.5 flex flex-wrap items-center gap-x-1.5">
+            <span className="font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
+              {c.departure}
+            </span>
+            {trip.departure_date ? (
+              <>
+                <span>
+                  {line(
+                    trip.departure_date,
+                    trip.departure_slot,
+                    trip.return_destination ? ` ${c.returnTo} ${trip.return_destination}` : "",
+                  )}
+                </span>
+                {trip.seats_return == null ? null : (
+                  <span className="text-olive">
+                    · {trip.seats_return} {trip.seats_return > 1 ? c.seatsMany : c.seatsOne}
+                  </span>
+                )}
+              </>
             ) : (
               <>
                 <span className="text-clay">{c.departureUnknown}</span>
                 <Todo label={c.toComplete} />
               </>
             )}
-          </dd>
+          </p>
         </div>
-        {trip.passengers ? (
-          <div className="flex gap-2">
-            <dt className="w-[3.4rem] shrink-0 font-display text-[0.6rem] tracking-[0.16em] uppercase text-olive">
-              {c.passengers}
-            </dt>
-            <dd>{trip.passengers}</dd>
-          </div>
-        ) : null}
-      </dl>
 
-      {trip.comment ? (
-        <p className="mt-3 text-[0.82rem] leading-snug text-muted-foreground italic">
-          {trip.comment}
-        </p>
-      ) : null}
-
-      {/* Le numéro en clair : personne ne devrait avoir à cliquer pour le lire. */}
-      <a
-        href={`tel:${trip.phone.replace(/\s/g, "")}`}
-        className="mt-4 inline-block font-display text-[0.95rem] tracking-[0.04em] text-ink underline decoration-olive/40 decoration-1 underline-offset-4 transition-colors hover:text-olive"
-      >
-        {trip.phone}
-      </a>
-
-      {/* WhatsApp d'abord : c'est par là que passent la plupart des invités. */}
-      <div className="mt-auto flex gap-2 pt-4">
-        {wa ? (
+        {/* 4. Comment le joindre. Le numéro en clair — personne ne devrait
+               avoir à cliquer pour le lire. */}
+        <div className="shrink-0 sm:w-[15rem]">
           <a
-            href={wa}
-            target="_blank"
-            rel="noreferrer noopener"
-            className={`${actionClass} bg-olive text-primary-foreground hover:bg-olive-deep`}
+            href={tel}
+            aria-label={`${c.call} ${trip.name}`}
+            className="inline-flex items-center gap-1.5 font-display text-[0.9rem] tracking-[0.03em] text-ink underline decoration-olive/40 decoration-1 underline-offset-4 transition-colors hover:text-olive"
           >
-            <MessageCircle className="size-3.5" strokeWidth={1.5} />
-            {c.whatsapp}
+            <Phone className="size-3.5 shrink-0 text-olive" strokeWidth={1.5} />
+            {trip.phone}
           </a>
-        ) : null}
-        <a
-          href={`tel:${trip.phone.replace(/\s/g, "")}`}
-          className={`${actionClass} border border-olive/40 text-ink hover:border-olive hover:text-olive`}
-        >
-          <Phone className="size-3.5" strokeWidth={1.5} />
-          {c.call}
-        </a>
-      </div>
 
-      {/* Monter dans la voiture. Le champ n'apparaît qu'au clic : une carte
-          n'a pas à porter un formulaire en permanence. */}
-      {joining ? (
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            if (!joinName.trim()) return;
-            setBusy(true);
-            await onJoin(joinName.trim());
-            setBusy(false);
-            setJoining(false);
-            setJoinName("");
-          }}
-          className="mt-2 flex gap-2"
-        >
-          <input
-            type="text"
-            value={joinName}
-            onChange={(e) => setJoinName(e.target.value)}
-            placeholder={c.joinName}
-            maxLength={80}
-            autoFocus
-            className="min-h-11 min-w-0 flex-1 border-b border-border bg-transparent px-1 text-[0.9rem] text-ink placeholder:text-muted-foreground/55 focus:border-olive focus:outline-none"
-          />
-          <button
-            type="submit"
-            disabled={busy}
-            className={`${actionClass} flex-none border border-olive/40 px-4 text-ink hover:border-olive hover:text-olive disabled:opacity-50`}
-          >
-            {c.joinConfirm}
-          </button>
-        </form>
-      ) : (
-        <button
-          type="button"
-          onClick={() => setJoining(true)}
-          disabled={full}
-          className={`${actionClass} mt-2 border border-dashed border-olive/40 text-olive hover:bg-sage-soft/60 disabled:cursor-not-allowed disabled:border-border disabled:text-muted-foreground/60`}
-        >
-          <UserPlus className="size-3.5" strokeWidth={1.5} />
-          {full ? c.seatsNone : c.join}
-        </button>
-      )}
+          {/* Monter dans la voiture. Le champ n'apparaît qu'au clic : une ligne
+              n'a pas à porter un formulaire en permanence. */}
+          <div className="mt-2 flex gap-2">
+            {wa ? (
+              <a
+                href={wa}
+                target="_blank"
+                rel="noreferrer noopener"
+                className={`${actionClass} bg-olive text-primary-foreground hover:bg-olive-deep`}
+              >
+                <MessageCircle className="size-3.5" strokeWidth={1.5} />
+                {c.whatsapp}
+              </a>
+            ) : null}
+            {joining ? null : (
+              <button
+                type="button"
+                onClick={() => setJoining(true)}
+                disabled={full}
+                className={`${actionClass} border border-dashed border-olive/40 text-olive hover:bg-sage-soft/60 disabled:cursor-not-allowed disabled:border-border disabled:text-muted-foreground/60`}
+              >
+                <UserPlus className="size-3.5" strokeWidth={1.5} />
+                {full ? c.seatsNone : c.join}
+              </button>
+            )}
+          </div>
 
-      {/* Corriger ou retirer : discret, en pied de carte. */}
-      <div className="mt-4 flex items-center justify-end gap-4 border-t border-border/60 pt-3 font-display text-[0.62rem] tracking-[0.14em] uppercase">
-        <button
-          type="button"
-          onClick={onEdit}
-          className="inline-flex min-h-8 items-center gap-1.5 text-muted-foreground transition-colors hover:text-ink"
-        >
-          <Pencil className="size-3" strokeWidth={1.5} />
-          {c.edit}
-        </button>
-        {confirming ? (
-          <>
-            <button
-              type="button"
-              onClick={onRemove}
-              className="inline-flex min-h-8 items-center text-clay transition-opacity hover:opacity-70"
+          {joining ? (
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                if (!joinName.trim()) return;
+                setBusy(true);
+                await onJoin(joinName.trim());
+                setBusy(false);
+                setJoining(false);
+                setJoinName("");
+              }}
+              className="mt-2 flex gap-2"
             >
-              {c.confirmRemove}
-            </button>
-            <button
-              type="button"
-              onClick={() => setConfirming(false)}
-              className="inline-flex min-h-8 items-center text-muted-foreground transition-colors hover:text-ink"
-            >
-              {c.cancel}
-            </button>
-          </>
-        ) : (
+              <input
+                type="text"
+                value={joinName}
+                onChange={(e) => setJoinName(e.target.value)}
+                placeholder={c.joinName}
+                maxLength={80}
+                autoFocus
+                className="min-h-11 min-w-0 flex-1 border-b border-border bg-transparent px-1 text-[0.85rem] text-ink placeholder:text-muted-foreground/55 focus:border-olive focus:outline-none"
+              />
+              <button
+                type="submit"
+                disabled={busy}
+                className={`${actionClass} flex-none border border-olive/40 px-3 text-ink hover:border-olive hover:text-olive disabled:opacity-50`}
+              >
+                {c.joinConfirm}
+              </button>
+            </form>
+          ) : null}
+        </div>
+
+        {/* Corriger ou retirer : discret, en bout de ligne. */}
+        <div className="flex shrink-0 items-center gap-3 font-display text-[0.62rem] tracking-[0.14em] uppercase sm:flex-col sm:items-end sm:gap-2">
           <button
             type="button"
-            onClick={() => setConfirming(true)}
-            className="inline-flex min-h-8 items-center gap-1.5 text-muted-foreground transition-colors hover:text-clay"
+            onClick={onEdit}
+            className="inline-flex min-h-8 items-center gap-1.5 text-muted-foreground transition-colors hover:text-ink"
           >
-            <Trash2 className="size-3" strokeWidth={1.5} />
-            {c.remove}
+            <Pencil className="size-3" strokeWidth={1.5} />
+            {c.edit}
           </button>
-        )}
+          {confirming ? (
+            <>
+              <button
+                type="button"
+                onClick={onRemove}
+                className="inline-flex min-h-8 items-center text-clay transition-opacity hover:opacity-70"
+              >
+                {c.confirmRemove}
+              </button>
+              <button
+                type="button"
+                onClick={() => setConfirming(false)}
+                className="inline-flex min-h-8 items-center text-muted-foreground transition-colors hover:text-ink"
+              >
+                {c.cancel}
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setConfirming(true)}
+              className="inline-flex min-h-8 items-center gap-1.5 text-muted-foreground transition-colors hover:text-clay"
+            >
+              <Trash2 className="size-3" strokeWidth={1.5} />
+              {c.remove}
+            </button>
+          )}
+        </div>
       </div>
     </Reveal>
   );

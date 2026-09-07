@@ -405,24 +405,6 @@ const fr = {
     heading: "Proposer ou trouver une place en voiture",
     intro:
       "Il n'y aura pas de navette à l'arrivée ni au départ du week-end : chacun organise son trajet. Ce tableau est là pour vous permettre de vous regrouper — celles et ceux qui conduisent y annoncent leurs places libres, les autres viennent y chercher la leur.",
-    howHeading: "Comment ça marche",
-    steps: [
-      {
-        n: "01",
-        title: "Vous venez en voiture",
-        text: "Remplissez le formulaire en bas de page : d'où vous partez, quand vous arrivez, quand vous repartez et combien de places restent libres. Comptez une minute.",
-      },
-      {
-        n: "02",
-        title: "Vous cherchez une place",
-        text: "Parcourez les trajets ci-dessous et repérez ceux qui partent près de chez vous ou passent par votre gare ou votre aéroport.",
-      },
-      {
-        n: "03",
-        title: "Vous vous arrangez entre vous",
-        text: "Appelez la personne qui conduit ou écrivez-lui sur WhatsApp, directement depuis sa carte. Rien ne passe par nous : c'est plus rapide.",
-      },
-    ],
     listHeading: "Les trajets proposés",
     listNote:
       "Chacun peut corriger ou retirer un trajet, le sien comme celui d'un autre en cas d'erreur.",
@@ -432,7 +414,6 @@ const fr = {
     seatsOne: "place libre",
     seatsMany: "places libres",
     seatsNone: "Complet",
-    seatsReturnShort: "au retour",
     passengers: "Avec",
     join: "Je monte",
     joinName: "Votre nom",
@@ -463,8 +444,10 @@ const fr = {
     fields: {
       name: "Nom et prénom",
       phone: "Téléphone",
-      phoneHint:
-        "Au format international, indicatif pays compris : +33 6 12 34 56 78, +41 79 123 45 67, +44 7700 900123.",
+      phoneCountry: "Indicatif",
+      phoneNumber: "Numéro de téléphone",
+      phoneOther: "Autre indicatif",
+      phoneHint: "Choisissez le pays, puis saisissez le numéro sans le zéro initial.",
       whatsapp: "Joignable sur WhatsApp",
       yes: "Oui",
       no: "Non",
@@ -494,7 +477,7 @@ const fr = {
     success: "Merci ! Votre trajet est en ligne, il apparaît juste au-dessus.",
     again: "Inscrire un autre trajet",
     invalid: "Il reste un ou deux champs à compléter, signalés en terre cuite.",
-    invalidPhone: "Le numéro doit commencer par « + » et l'indicatif du pays, par exemple +33.",
+    invalidPhone: "Le numéro semble incomplet : vérifiez l'indicatif et les chiffres.",
     fallbackHeading: "Le tableau n'est pas encore ouvert",
     fallbackText:
       "Votre trajet n'a pas pu être publié pour l'instant. Copiez le récapitulatif ci-dessous et envoyez-le à Alexandra ou Thomas : ils l'ajouteront au tableau.",
@@ -992,24 +975,6 @@ const en: Translated<typeof fr> = {
     heading: "Offer or find a seat in a car",
     intro:
       "There is no shuttle at the start or the end of the weekend: everyone makes their own way. This board is here so you can travel together — whoever is driving posts their free seats, and anyone looking for a lift comes here to find one.",
-    howHeading: "How it works",
-    steps: [
-      {
-        n: "01",
-        title: "You are driving",
-        text: "Fill in the form at the bottom of the page: where you set off from, when you arrive, when you leave and how many seats are free. It takes a minute.",
-      },
-      {
-        n: "02",
-        title: "You are looking for a seat",
-        text: "Look through the journeys below and spot the ones setting off near you, or passing through your station or airport.",
-      },
-      {
-        n: "03",
-        title: "You sort it out between you",
-        text: "Call the driver or message them on WhatsApp, straight from their card. Nothing goes through us — it is quicker that way.",
-      },
-    ],
     listHeading: "Journeys posted so far",
     listNote:
       "Anyone can correct or remove a journey — their own, or someone else's if there is a mistake.",
@@ -1018,7 +983,6 @@ const en: Translated<typeof fr> = {
     seatsOne: "seat free",
     seatsMany: "seats free",
     seatsNone: "Full",
-    seatsReturnShort: "on the way back",
     passengers: "With",
     join: "Count me in",
     joinName: "Your name",
@@ -1049,8 +1013,10 @@ const en: Translated<typeof fr> = {
     fields: {
       name: "First and last name",
       phone: "Phone",
-      phoneHint:
-        "In international format, country code included: +33 6 12 34 56 78, +41 79 123 45 67, +44 7700 900123.",
+      phoneCountry: "Country code",
+      phoneNumber: "Phone number",
+      phoneOther: "Other code",
+      phoneHint: "Pick the country, then type the number without its leading zero.",
       whatsapp: "Reachable on WhatsApp",
       yes: "Yes",
       no: "No",
@@ -1080,7 +1046,7 @@ const en: Translated<typeof fr> = {
     success: "Thank you! Your journey is online — it appears just above.",
     again: "Post another journey",
     invalid: "One or two fields still need filling in — they are marked in terracotta.",
-    invalidPhone: "The number must start with « + » and the country code, for example +33.",
+    invalidPhone: "The number looks incomplete: check the country code and the digits.",
     fallbackHeading: "The board is not open yet",
     fallbackText:
       "Your journey could not be posted just now. Copy the summary below and send it to Alexandra or Thomas, who will add it to the board.",

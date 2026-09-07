@@ -25,6 +25,38 @@ export const airtableReady = Boolean(TOKEN && BASE);
 
 export type AirtableRecord<T> = { id: string; createdTime: string; fields: T };
 
+/**
+ * Une erreur d'Airtable, décodée. Le corps de la réponse est du JSON : le lire
+ * comme tel plutôt que d'y chercher des motifs à l'expression régulière évite
+ * de buter sur ses échappements — c'est ainsi qu'un nom de colonne entre
+ * guillemets s'est un jour réduit à un antislash, et que le repli censé
+ * retirer la colonne absente ne s'est jamais déclenché.
+ */
+export class AirtableError extends Error {
+  constructor(
+    readonly status: number,
+    readonly type: string,
+    readonly detail: string,
+  ) {
+    super(`Airtable ${status} ${type} : ${detail}`);
+    this.name = "AirtableError";
+  }
+}
+
+function decode(status: number, body: string): AirtableError {
+  try {
+    const parsed = JSON.parse(body) as { error?: { type?: string; message?: string } | string };
+    if (typeof parsed.error === "string") return new AirtableError(status, parsed.error, body);
+    return new AirtableError(
+      status,
+      parsed.error?.type ?? "ERREUR",
+      parsed.error?.message ?? body.slice(0, 200),
+    );
+  } catch {
+    return new AirtableError(status, "ERREUR", body.slice(0, 200));
+  }
+}
+
 async function call(path: string, init?: RequestInit): Promise<unknown> {
   if (!airtableReady) throw new Error("Airtable n'est pas configuré.");
   const host = process.env["AIRTABLE_HOST"] || "https://api.airtable.com";
@@ -37,7 +69,7 @@ async function call(path: string, init?: RequestInit): Promise<unknown> {
     },
   });
   const body = await response.text();
-  if (!response.ok) throw new Error(`Airtable ${response.status} : ${body}`);
+  if (!response.ok) throw decode(response.status, body);
   return body ? JSON.parse(body) : null;
 }
 
@@ -70,13 +102,20 @@ export async function listRows<T>(
 /**
  * La base peut être en retard d'une colonne sur le site — une migration
  * ajoutée ici mais pas encore posée là-bas. Airtable refuse alors toute
- * l'écriture, en nommant la colonne fautive dans son message. On la retire et
- * on réessaie : mieux vaut enregistrer un trajet sans son champ le plus récent
- * que de le perdre entièrement.
+ * l'écriture en nommant la colonne fautive. On la retire et on réessaie,
+ * autant de fois qu'il en manque : mieux vaut enregistrer un trajet sans son
+ * champ le plus récent que de le perdre entièrement.
  */
-function unknownField(message: string): string | null {
-  const match = /Unknown field name(?:s)?: "?([^"\n]+)"?/i.exec(message);
-  return match ? (match[1] ?? "").trim() : null;
+function unknownField(error: unknown, fields: Record<string, unknown>): string | null {
+  if (!(error instanceof AirtableError) || error.type !== "UNKNOWN_FIELD_NAME") return null;
+  // « Unknown field name: "Passagers" » — le nom est entre guillemets, et le
+  // message est déjà décodé.
+  const quoted = /"([^"]+)"/.exec(error.detail);
+  const name = quoted?.[1] ?? null;
+  if (name && name in fields) return name;
+  // Certaines réponses ne citent pas le nom : on retombe sur une comparaison
+  // directe avec les clés envoyées.
+  return Object.keys(fields).find((k) => error.detail.includes(k)) ?? null;
 }
 
 async function write(
@@ -87,16 +126,18 @@ async function write(
   // `typecast` laisse Airtable convertir ce qui peut l'être — un texte vers une
   // date, un nombre vers un choix — plutôt que de refuser pour une question de
   // forme.
-  const body = (f: Record<string, unknown>) => JSON.stringify({ fields: f, typecast: true });
-  try {
-    await call(path, { method, body: body(fields) });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "";
-    const missing = unknownField(message);
-    if (!missing || !(missing in fields)) throw error;
-    const { [missing]: _drop, ...rest } = fields;
-    await call(path, { method, body: body(rest) });
+  const payload = { ...fields };
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      await call(path, { method, body: JSON.stringify({ fields: payload, typecast: true }) });
+      return;
+    } catch (error) {
+      const missing = unknownField(error, payload);
+      if (!missing) throw error;
+      delete payload[missing];
+    }
   }
+  throw new Error("Airtable refuse trop de colonnes : la table n'est pas à jour.");
 }
 
 export async function createRow(table: string, fields: Record<string, unknown>): Promise<void> {
