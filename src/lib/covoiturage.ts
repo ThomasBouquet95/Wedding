@@ -1,47 +1,26 @@
 import type { Database } from "@/integrations/supabase/types";
 import type { Lang } from "./i18n";
+import { hasColumn, rest } from "./supabase-rest";
 
 export type Trip = Database["public"]["Tables"]["covoiturage"]["Row"];
 export type TripInput = Database["public"]["Tables"]["covoiturage"]["Insert"];
 
 /**
- * Le tableau n'a besoin que de deux requêtes — lire la liste, ajouter une
- * ligne — et l'API REST de Supabase les accepte en HTTP simple. On s'adresse
- * donc directement à elle plutôt que d'embarquer `@supabase/supabase-js`, qui
- * pèse une bonne centaine de kilo-octets compressés et emporte avec lui
- * l'authentification, le stockage et le temps réel, dont le site ne se sert
- * nulle part.
+ * Les colonnes facultatives, ajoutées après coup. La base peut être en retard
+ * d'une migration sur le site ; plutôt que de refuser les inscriptions —
+ * PostgREST rejette tout envoi mentionnant une colonne absente, même à vide —
+ * on demande à la base ce qu'elle connaît et on masque le reste.
  */
-/**
- * Le projet Supabase du site. Les deux valeurs sont inscrites ici plutôt que
- * confiées aux variables d'environnement de Vercel, qu'il faudrait redéfinir à
- * chaque déploiement. La clé est de type « publishable » : elle est faite pour
- * être exposée, part de toute façon dans le navigateur de chaque visiteur, et
- * ne donne que ce que les règles RLS de la table autorisent — lire le tableau
- * et y ajouter un trajet, rien d'autre. Une variable d'environnement, si elle
- * est définie, reste prioritaire.
- */
-const SUPABASE_URL = "https://arqifywkiigmhqayyizh.supabase.co";
-const SUPABASE_KEY = "sb_publishable_DHKWxj6jNNOpbbEtkr4ZkA_78-SYQIK";
+export type Extras = { returnDestination: boolean; returnSeats: boolean };
 
-const REST_URL = import.meta.env["VITE_SUPABASE_URL"] || SUPABASE_URL;
-const REST_KEY = import.meta.env["VITE_SUPABASE_PUBLISHABLE_KEY"] || SUPABASE_KEY;
+export const NO_EXTRAS: Extras = { returnDestination: false, returnSeats: false };
 
-/** Vrai si le projet Supabase est renseigné à la compilation. */
-export const boardConfigured = Boolean(REST_URL && REST_KEY);
-
-async function rest(path: string, init?: RequestInit): Promise<Response> {
-  if (!boardConfigured) throw new Error("Supabase n'est pas configuré.");
-  const response = await fetch(`${REST_URL}/rest/v1/covoiturage${path}`, {
-    ...init,
-    headers: {
-      apikey: REST_KEY,
-      "content-type": "application/json",
-      ...init?.headers,
-    },
-  });
-  if (!response.ok) throw new Error(`${response.status} ${await response.text()}`);
-  return response;
+export async function probeExtras(): Promise<Extras> {
+  const [returnDestination, returnSeats] = await Promise.all([
+    hasColumn("covoiturage", "return_destination"),
+    hasColumn("covoiturage", "seats_return"),
+  ]);
+  return { returnDestination, returnSeats };
 }
 
 /**
@@ -93,39 +72,13 @@ export function whatsappHref(phone: string): string | null {
   return digits.length >= 8 && digits.length <= 15 ? `https://wa.me/${digits}` : null;
 }
 
-/**
- * Les colonnes facultatives, ajoutées après coup. La base peut être en retard
- * d'une migration sur le site ; plutôt que de refuser les inscriptions —
- * PostgREST rejette tout envoi mentionnant une colonne absente, même à vide —
- * on demande à la base ce qu'elle connaît et on masque le reste.
- */
-export type Extras = { returnDestination: boolean; returnSeats: boolean };
-
-export const NO_EXTRAS: Extras = { returnDestination: false, returnSeats: false };
-
-export async function probeExtras(): Promise<Extras> {
-  const known = async (column: string) => {
-    try {
-      await rest(`?select=${column}&limit=0`);
-      return true;
-    } catch {
-      return false;
-    }
-  };
-  const [returnDestination, returnSeats] = await Promise.all([
-    known("return_destination"),
-    known("seats_return"),
-  ]);
-  return { returnDestination, returnSeats };
-}
-
 export async function fetchTrips(): Promise<Trip[]> {
-  const response = await rest("?select=*&order=arrival_date.asc,arrival_slot.asc");
+  const response = await rest("covoiturage", "?select=*&order=arrival_date.asc,arrival_slot.asc");
   return (await response.json()) as Trip[];
 }
 
 export async function createTrip(trip: TripInput): Promise<void> {
-  await rest("", { method: "POST", body: JSON.stringify(trip) });
+  await rest("covoiturage", "", { method: "POST", body: JSON.stringify(trip) });
 }
 
 /**
@@ -135,7 +88,7 @@ export async function createTrip(trip: TripInput): Promise<void> {
  * c'est que rien n'a bougé.
  */
 async function mutate(id: string, init: RequestInit): Promise<void> {
-  const response = await rest(`?id=eq.${encodeURIComponent(id)}`, {
+  const response = await rest("covoiturage", `?id=eq.${encodeURIComponent(id)}`, {
     ...init,
     headers: { Prefer: "return=representation", ...init.headers },
   });

@@ -5,6 +5,7 @@ import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
 import { translations, useT } from "@/lib/i18n";
+import { stays } from "@/lib/hebergements";
 
 export const Route = createFileRoute("/hebergements")({
   head: ({ match }) => {
@@ -32,24 +33,6 @@ export const Route = createFileRoute("/hebergements")({
   },
   component: Page,
 });
-
-/**
- * Les adresses repérées autour du Couvent, de la plus proche à la plus
- * éloignée. Ne restent ici que ce qui ne se traduit pas — nom, étoiles — et
- * les clés du dictionnaire pour la distance et le descriptif.
- */
-const stays = [
-  { id: "paradis", name: "Domaine Paradis", stars: "3★", distance: "d3walk15", highlight: true },
-  { id: "pradaous", name: "Domaine des Pradaous", distance: "d3walk20", highlight: true },
-  { id: "moulin", name: "Le Moulin des Prédelles", stars: "3★", distance: "d6" },
-  { id: "louParadou", name: "Lou Paradou", stars: "3★", distance: "d7" },
-  { id: "merveilles", name: "Le Sens des Merveilles", distance: "d15" },
-  { id: "minimes", name: "Le Couvent des Minimes", stars: "5★", distance: "d17" },
-  { id: "bastide", name: "La Bastide Saint-Georges", stars: "4★", distance: "d20" },
-  { id: "prairies", name: "Les Prairies de l'Encrême", stars: "3★", distance: "d20" },
-  { id: "provence", name: "Provence Au Cœur", stars: "4★", distance: "d20" },
-  { id: "villa", name: "Villa Saint Marc", stars: "3★", distance: "d21" },
-] as const;
 
 function Page() {
   const t = useT();

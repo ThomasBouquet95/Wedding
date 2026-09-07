@@ -14,6 +14,7 @@ import type { ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { SejourInvite } from "@/components/sejour-invite";
 import { SITE_URL, OG_IMAGE } from "@/lib/site";
 import { useLang, useT, type Lang } from "@/lib/i18n";
 
@@ -194,6 +195,7 @@ function RootComponent() {
         <Outlet />
       </main>
       <SiteFooter />
+      <SejourInvite />
     </QueryClientProvider>
   );
 }

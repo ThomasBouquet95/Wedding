@@ -232,8 +232,31 @@ export function Covoiturage() {
           <p className="mt-5 text-[0.95rem] leading-relaxed text-muted-foreground">{c.intro}</p>
         </Reveal>
 
+        {/* Les trois temps du covoiturage, énoncés avant la liste : sans eux,
+            l'invité arrivait sur un tableau et un formulaire sans savoir
+            lequel des deux le concernait. */}
+        <Reveal className="mt-12 border-t border-border/70 pt-10">
+          <h3 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
+            {c.howHeading}
+          </h3>
+        </Reveal>
+
+        <div className="mt-8 grid gap-8 border-b border-border/70 pb-10 sm:grid-cols-3 sm:gap-10">
+          {c.steps.map((step, i) => (
+            <Reveal key={step.n} delay={i * 90}>
+              <p className="font-display text-[0.66rem] tracking-[0.24em] text-olive">{step.n}</p>
+              <h3 className="mt-4 font-serif text-[1.2rem] leading-snug font-light text-ink">
+                {step.title}
+              </h3>
+              <p className="mt-3 text-[0.88rem] leading-relaxed text-muted-foreground">
+                {step.text}
+              </p>
+            </Reveal>
+          ))}
+        </div>
+
         {boardOpen ? (
-          <div className="mt-14">
+          <div className="mt-16">
             <Reveal>
               <h3 className="font-display text-[0.72rem] tracking-[0.24em] uppercase text-ink">
                 {c.listHeading}

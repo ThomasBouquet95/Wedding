@@ -141,7 +141,7 @@ const fr = {
       {
         day: "Vendredi 25 juin",
         subtitle: "Soirée d'accueil",
-        note: "Prenez le temps d'arriver et de vous installer avant de nous retrouver dans le parc du Couvent pour commencer le week-end tous ensemble.",
+        note: "Prenez le temps d'arriver avant de nous retrouver dans le parc du Couvent pour commencer le week-end tous ensemble.",
         events: [
           { time: "À partir de 17h", label: "Arrivée" },
           { time: "18h", label: "Soirée d'accueil dans le parc du Couvent" },
@@ -291,7 +291,7 @@ const fr = {
         badge: "",
       },
       minimes: {
-        type: "Hôtel · env. 300 € / nuit",
+        type: "Hôtel · env. 800 € / nuit",
         description:
           "L'une des plus belles adresses des environs, à réserver directement auprès de l'hôtel.",
         badge: "Idéal en couple ou en famille",
@@ -330,7 +330,7 @@ const fr = {
     blocks: {
       dress: {
         title: "Tenue",
-        text: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le dimanche, une tenue soignée conviendra parfaitement. Une partie du week-end se déroulera à l'extérieur : privilégiez donc des chaussures adaptées aux allées en gravier et prévoyez une étole ou une veste légère pour la soirée.",
+        text: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le vendredi soir, le mot d'ordre est « pique-nique chic ». Une partie du week-end se déroulera à l'extérieur : privilégiez donc des chaussures adaptées aux allées en gravier et prévoyez une étole ou une veste légère pour la soirée.",
       },
       weather: {
         title: "Météo en juin",
@@ -390,9 +390,27 @@ const fr = {
   },
   covoiturage: {
     eyebrow: "Covoiturage",
-    heading: "Se retrouver sur la route",
+    heading: "Proposer ou trouver une place en voiture",
     intro:
-      "Beaucoup d'entre vous viendront en voiture ou en loueront une sur place. Inscrivez votre trajet en quelques secondes : les autres invités verront les places libres et pourront vous contacter directement.",
+      "Il n'y aura pas de navette à l'arrivée ni au départ du week-end : chacun organise son trajet. Ce tableau est là pour vous permettre de vous regrouper — celles et ceux qui conduisent y annoncent leurs places libres, les autres viennent y chercher la leur.",
+    howHeading: "Comment ça marche",
+    steps: [
+      {
+        n: "01",
+        title: "Vous venez en voiture",
+        text: "Remplissez le formulaire en bas de page : d'où vous partez, quand vous arrivez, quand vous repartez et combien de places restent libres. Comptez une minute.",
+      },
+      {
+        n: "02",
+        title: "Vous cherchez une place",
+        text: "Parcourez les trajets ci-dessous et repérez ceux qui partent près de chez vous ou passent par votre gare ou votre aéroport.",
+      },
+      {
+        n: "03",
+        title: "Vous vous arrangez entre vous",
+        text: "Appelez la personne qui conduit ou écrivez-lui sur WhatsApp, directement depuis sa carte. Rien ne passe par nous : c'est plus rapide.",
+      },
+    ],
     listHeading: "Les trajets proposés",
     listNote:
       "Chacun peut corriger ou retirer un trajet, le sien comme celui d'un autre en cas d'erreur.",
@@ -461,6 +479,28 @@ const fr = {
     copy: "Copier le récapitulatif",
     copied: "Copié",
   },
+  sejour: {
+    eyebrow: "Une petite question",
+    heading: "Où dormez-vous ?",
+    text: "Le samedi soir, nous organisons un retour vers les hébergements les plus proches. Pour prévoir le bon nombre de places, il nous faut simplement savoir où vous dormez.",
+    name: "Vos noms",
+    namePlaceholder: "Marion et Julien Vasseur",
+    accommodation: "Votre hébergement",
+    choose: "Choisir dans la liste",
+    other: "Une autre adresse",
+    otherPlaceholder: "Le nom de l'hébergement, ou la commune",
+    unknown: "Je ne sais pas encore",
+    people: "Nombre de personnes",
+    submit: "Envoyer",
+    sending: "Envoi…",
+    later: "Plus tard",
+    close: "Fermer",
+    done: "Merci, c'est noté !",
+    invalid: "Merci d'indiquer vos noms et votre hébergement.",
+    failed: "L'envoi n'a pas abouti. Vous pourrez réessayer plus tard.",
+    privacy:
+      "Ces informations ne servent qu'à organiser les retours du samedi soir et ne sont visibles que de nous deux.",
+  },
   faq: {
     title: "Questions — Alexandra & Thomas",
     description:
@@ -475,11 +515,11 @@ const fr = {
     items: [
       {
         q: "À quelle heure faut-il arriver ?",
-        a: "Le vendredi, vous pourrez arriver à partir de 17h pour vous installer. Nous nous retrouverons à partir de 18h pour commencer les festivités. Le samedi, merci de prévoir d'être sur place environ 20 minutes avant le début de la cérémonie, prévue vers 16h.",
+        a: "Le vendredi, vous pourrez arriver à partir de 17h. Nous nous retrouverons à partir de 18h pour commencer les festivités. Le samedi, merci de prévoir d'être sur place environ 20 minutes avant le début de la cérémonie, prévue vers 16h.",
       },
       {
         q: "Quelle tenue prévoir ?",
-        a: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le dimanche, une tenue soignée conviendra parfaitement. Les allées étant en partie en gravier, évitez si possible les talons très fins. Une étole ou une veste légère pourra également être utile en soirée.",
+        a: "Pour le samedi, nous vous invitons à porter une tenue élégante : robe longue et costume. Le vendredi soir, le mot d'ordre est « pique-nique chic ». Les allées étant en partie en gravier, évitez si possible les talons très fins. Une étole ou une veste légère pourra également être utile en soirée.",
       },
       {
         q: "Où séjourner ?",
@@ -652,7 +692,7 @@ const en: Translated<typeof fr> = {
       {
         day: "Friday 25 June",
         subtitle: "Welcome evening",
-        note: "Take your time to arrive and settle in before joining us in the Couvent gardens to begin the weekend together.",
+        note: "Take your time to arrive before joining us in the Couvent gardens to begin the weekend together.",
         events: [
           { time: "From 5 pm", label: "Arrival" },
           { time: "6 pm", label: "Welcome evening in the Couvent gardens" },
@@ -803,7 +843,7 @@ const en: Translated<typeof fr> = {
         badge: "",
       },
       minimes: {
-        type: "Hotel · around €300 / night",
+        type: "Hotel · around €800 / night",
         description: "One of the loveliest places nearby, to be booked directly with the hotel.",
         badge: "Great for couples & families",
       },
@@ -841,7 +881,7 @@ const en: Translated<typeof fr> = {
     blocks: {
       dress: {
         title: "Dress code",
-        text: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Sunday, smart attire will be perfect. Part of the weekend will take place outdoors, so we recommend shoes that are comfortable on gravel paths, as well as a light jacket or wrap for the evening.",
+        text: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Friday evening, the dress code is picnic chic. Part of the weekend will take place outdoors, so we recommend shoes that are comfortable on gravel paths, as well as a light jacket or wrap for the evening.",
       },
       weather: {
         title: "Weather in June",
@@ -900,9 +940,27 @@ const en: Translated<typeof fr> = {
   },
   covoiturage: {
     eyebrow: "Ride-sharing",
-    heading: "Sharing the road",
+    heading: "Offer or find a seat in a car",
     intro:
-      "Many of you will be driving or renting a car once here. Post your journey in a few seconds: other guests will see the free seats and can contact you directly.",
+      "There is no shuttle at the start or the end of the weekend: everyone makes their own way. This board is here so you can travel together — whoever is driving posts their free seats, and anyone looking for a lift comes here to find one.",
+    howHeading: "How it works",
+    steps: [
+      {
+        n: "01",
+        title: "You are driving",
+        text: "Fill in the form at the bottom of the page: where you set off from, when you arrive, when you leave and how many seats are free. It takes a minute.",
+      },
+      {
+        n: "02",
+        title: "You are looking for a seat",
+        text: "Look through the journeys below and spot the ones setting off near you, or passing through your station or airport.",
+      },
+      {
+        n: "03",
+        title: "You sort it out between you",
+        text: "Call the driver or message them on WhatsApp, straight from their card. Nothing goes through us — it is quicker that way.",
+      },
+    ],
     listHeading: "Journeys posted so far",
     listNote:
       "Anyone can correct or remove a journey — their own, or someone else's if there is a mistake.",
@@ -970,6 +1028,28 @@ const en: Translated<typeof fr> = {
     copy: "Copy the summary",
     copied: "Copied",
   },
+  sejour: {
+    eyebrow: "One quick question",
+    heading: "Where are you staying?",
+    text: "On Saturday night we are arranging transport back to the nearest places to stay. To plan the right number of seats, we simply need to know where you are sleeping.",
+    name: "Your names",
+    namePlaceholder: "Marion and Julien Vasseur",
+    accommodation: "Where you are staying",
+    choose: "Pick from the list",
+    other: "Somewhere else",
+    otherPlaceholder: "The name of the place, or the village",
+    unknown: "I don't know yet",
+    people: "Number of people",
+    submit: "Send",
+    sending: "Sending…",
+    later: "Later",
+    close: "Close",
+    done: "Thank you, noted!",
+    invalid: "Please give your names and where you are staying.",
+    failed: "That did not go through. You can try again later.",
+    privacy:
+      "This is only used to arrange Saturday night's transport, and only the two of us can see it.",
+  },
   faq: {
     title: "Questions — Alexandra & Thomas",
     description:
@@ -983,11 +1063,11 @@ const en: Translated<typeof fr> = {
     items: [
       {
         q: "What time should I arrive?",
-        a: "On Friday, you can arrive from 5 pm to settle in. We'll get together from 6 pm to start the celebrations. On Saturday, please plan to arrive around 20 minutes before the ceremony, which is currently scheduled for approximately 4 pm.",
+        a: "On Friday, you can arrive from 5 pm. We'll get together from 6 pm to start the celebrations. On Saturday, please plan to arrive around 20 minutes before the ceremony, which is currently scheduled for approximately 4 pm.",
       },
       {
         q: "What should I wear?",
-        a: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Sunday, smart attire will be perfect. As some of the paths are gravel, we recommend avoiding very thin heels. A light jacket or wrap may also be useful in the evening.",
+        a: "For Saturday, we invite you to dress elegantly: long dresses and suits. For Friday evening, the dress code is picnic chic. As some of the paths are gravel, we recommend avoiding very thin heels. A light jacket or wrap may also be useful in the evening.",
       },
       {
         q: "Where should I stay?",
