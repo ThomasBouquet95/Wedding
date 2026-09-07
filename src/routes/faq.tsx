@@ -50,6 +50,12 @@ export const Route = createFileRoute("/faq")({
   component: Page,
 });
 
+/** Où mènent les liens des réponses. Les clés viennent du dictionnaire. */
+const TARGETS = {
+  covoiturage: { to: "/informations", hash: "covoiturage" },
+  hebergements: { to: "/hebergements" },
+} as const;
+
 function Page() {
   const t = useT();
   const faqs = t.faq.items;
@@ -104,12 +110,12 @@ function Page() {
                 >
                   <div className="max-w-xl overflow-hidden">
                     <p className="text-[0.95rem] leading-relaxed text-muted-foreground">{f.a}</p>
-                    {/* `cta` vide = pas de lien ; la clé reste présente pour
-                        que les deux langues aient la même forme. */}
-                    {f.cta ? (
+                    {/* `cta` vide = pas de lien ; les clés restent présentes
+                        pour que les deux langues aient la même forme. La
+                        destination, elle, ne se traduit pas. */}
+                    {f.cta && f.ctaTo in TARGETS ? (
                       <Link
-                        to="/informations"
-                        hash="covoiturage"
+                        {...TARGETS[f.ctaTo as keyof typeof TARGETS]}
                         className="mt-5 inline-flex min-h-11 items-center border border-olive/50 px-5 py-2.5 font-display text-[0.7rem] tracking-[0.18em] uppercase text-ink transition-colors hover:bg-olive hover:text-primary-foreground"
                       >
                         {f.cta}
