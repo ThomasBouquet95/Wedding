@@ -9,6 +9,7 @@ import parc from "@/assets/parc.webp";
 import drone from "@/assets/drone.webp";
 import bambouseraie from "@/assets/bambouseraie.webp";
 import couloir from "@/assets/couloir.webp";
+import toits from "@/assets/toits.webp";
 import olive from "@/assets/olive-sprig.webp";
 import { Reveal } from "@/components/reveal";
 import { translations, useT } from "@/lib/i18n";
@@ -52,6 +53,7 @@ function Index() {
     { to: "/programme", n: "01", image: bambouseraie, ...home.sections.programme },
     { to: "/informations", n: "02", image: facadePiscine, ...home.sections.informations },
     { to: "/hebergements", n: "03", image: couloir, ...home.sections.hebergements },
+    { to: "/region", n: "04", image: toits, ...home.sections.region },
   ] as const;
 
   return (
@@ -166,14 +168,14 @@ function Index() {
         </div>
       </section>
 
-      {/* Les trois entrées principales */}
+      {/* Les quatre entrées principales */}
       <section className="container-page py-24 sm:py-32">
         <Reveal className="max-w-xl">
           <p className="eyebrow">{home.sections.eyebrow}</p>
           <h2 className="mt-5 display-md text-ink">{home.sections.heading}</h2>
         </Reveal>
 
-        <div className="mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
+        <div className="mt-14 grid gap-10 sm:grid-cols-2 md:gap-8 lg:grid-cols-4">
           {sections.map((item, i) => (
             <Reveal key={item.to} delay={i * 130}>
               <Link to={item.to} className="group block">

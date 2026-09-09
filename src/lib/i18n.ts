@@ -40,6 +40,7 @@ const fr = {
     lieu: { label: "Le Couvent", hint: "Couvent Notre-Dame des Prés" },
     informations: { label: "Accès & infos", hint: "Venir, tenue et parking" },
     hebergements: { label: "Hébergements", hint: "Où séjourner aux alentours" },
+    region: { label: "La région", hint: "Restaurants, courses et activités" },
     galerie: { label: "Galerie", hint: "Le Couvent en images" },
     faq: { label: "Questions", hint: "Les informations utiles" },
   },
@@ -102,6 +103,11 @@ const fr = {
         label: "Où séjourner",
         text: "Notre sélection d'hébergements autour de Reillanne et Forcalquier.",
         alt: "Couloir voûté du Couvent avec des oliviers en pot",
+      },
+      region: {
+        label: "La région",
+        text: "Restaurants, achats de dernière minute, coiffure et activités autour du Couvent.",
+        alt: "Toitures du Couvent et vue sur la vallée",
       },
     },
     gallery: {
@@ -187,10 +193,13 @@ const fr = {
       parc: "Parc du Couvent et ses arbres centenaires",
     },
     practical: [
-      { title: "Adresse", text: "Couvent Notre-Dame des Prés, 04110 Reillanne, Provence" },
+      {
+        title: "Adresse",
+        text: "Couvent Notre-Dame des Prés, 704 route de la Gare, 04110 Reillanne, Provence",
+      },
       {
         title: "Temps de trajet",
-        text: "Aix-en-Provence 1h · Marseille 1h30 · Avignon 1h15 · Nice 2h15",
+        text: "Aix-en-Provence TGV 1h · Aéroport Marseille-Provence 1h15 · Avignon TGV 1h20 · Nice 2h15",
       },
       {
         title: "Parking",
@@ -246,8 +255,9 @@ const fr = {
       "Voici les adresses que nous avons repérées autour du Couvent. Ce sont des suggestions : chacun réserve librement celle qui lui convient. Vous trouverez également de nombreuses locations sur Airbnb autour de Reillanne et de Forcalquier. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
     heroAlt: "Couloir voûté du Couvent avec des oliviers en pot",
     listEyebrow: "Nos adresses",
+    sleeps: "couchages",
     listHeading:
-      "Dix adresses situées entre quelques minutes à pied et une vingtaine de minutes en voiture du Couvent.",
+      "Quinze adresses, de quelques minutes à pied à une demi-heure de voiture du Couvent.",
     listNote:
       "Aucune chambre n'est retenue pour le mariage : chaque adresse ci-dessous est une simple suggestion, à réserver directement et librement auprès de l'établissement, en votre nom. Il n'y a pas d'hébergement disponible sur place au Couvent. Les tarifs sont donnés à titre indicatif et restent à vérifier au moment de la réservation.",
     footer:
@@ -274,6 +284,7 @@ const fr = {
       d20: "20 min en voiture",
       d21: "21 min en voiture",
       d25: "25 min en voiture",
+      d30: "30 min en voiture",
     },
     /** `badge` vide = pas de mention ; la clé reste présente pour que les deux
      *  langues aient exactement la même forme. */
@@ -331,12 +342,83 @@ const fr = {
         description: "L'option la plus économique de notre sélection.",
         badge: "",
       },
+      bastideNeuve: {
+        type: "Gîte",
+        description:
+          "Une grande maison à Céreste, pensée pour un groupe qui souhaite rester ensemble.",
+        badge: "Idéal entre amis",
+      },
+      bastidone: {
+        type: "Gîte",
+        description: "Un domaine à Céreste, lui aussi adapté à un grand groupe.",
+        badge: "Idéal entre amis",
+      },
+      maisonBleue: {
+        type: "Gîte",
+        description: "Une maison au cœur du village de Céreste, à partager à plusieurs.",
+        badge: "",
+      },
       ribiera: {
         type: "Hôtel · à partir de 280 € / nuit",
         description:
           "Un domaine de douze hectares à Niozelles, près de Forcalquier, avec spa, golf et restaurant gastronomique.",
         badge: "Idéal en couple",
       },
+      mautanne: {
+        type: "Hôtel",
+        description: "Un hôtel avec golf et restaurant bistronomique, du côté de Saint-Tulle.",
+        badge: "",
+      },
+    },
+  },
+  region: {
+    title: "Autour du Couvent — Alexandra & Thomas",
+    description:
+      "Les bonnes adresses autour du Couvent Notre-Dame des Prés : où déjeuner, où faire ses achats de dernière minute, coiffure et beauté, et les activités de la région.",
+    eyebrow: "Autour du Couvent",
+    heading: "Les bonnes adresses de la région",
+    intro:
+      "Le Couvent remet à ses invités un petit guide des environs. Nous en avons repris ici l'essentiel : de quoi déjeuner avant la cérémonie, remplacer ce qu'on a oublié, se faire coiffer, et profiter de la région avant ou après le week-end.",
+    heroAlt: "Façade du Couvent bordée d'oliviers et de lavandes",
+    fromCouvent: "du Couvent",
+    call: "Appeler",
+    source:
+      "Adresses issues du guide des invités du Couvent Notre-Dame des Prés, édition 2025. Les tarifs et les horaires peuvent avoir changé depuis : un appel avant de vous déplacer reste le plus sûr.",
+    groups: {
+      dejeuner: {
+        title: "Déjeuner",
+        note: "Tarifs indicatifs pour une entrée et un plat, ou un plat et un dessert. Les temps de route sont estimés depuis le Couvent.",
+      },
+      achats: {
+        title: "Achats de dernière minute",
+        note: "Une chemise oubliée, une paire de collants, une bouteille à offrir : tout se trouve à Reillanne, à Céreste ou à Manosque.",
+      },
+      beaute: {
+        title: "Coiffure et beauté",
+        note: "Pensez à réserver à l'avance : ce sont de petits salons de village, et nous serons nombreux le même week-end.",
+      },
+      activites: {
+        title: "Les activités de la région",
+        note: "Pour celles et ceux qui prolongent le séjour de quelques jours en Provence.",
+      },
+    },
+    /** Une note vide = le guide ne précise rien de plus que le nom. */
+    notes: {
+      superU: "Produits du quotidien : hygiène, alimentation, dépannage.",
+      cave: "Caviste : vins de la région et champagne.",
+      maison123: "Vêtements femme : chemisiers, robes, vestes.",
+      victorine: "Vêtements femme : chemisiers, robes, vestes.",
+      jackJones: "Vêtements homme : chemises, vestes.",
+      kj: "Coiffure homme et femme.",
+      source: "Coiffure et soins.",
+      ae: "Coiffure.",
+      luberon: "Le massif se parcourt à pied ou à vélo, au départ de Reillanne.",
+      cheval: "Balades à cheval dans le Luberon.",
+      montgolfiere: "Vol en montgolfière au-dessus de la Haute-Provence.",
+      villages:
+        "Saint-Michel-l'Observatoire, Forcalquier, Lourmarin, Gordes et Roussillon, tous à moins d'une heure.",
+      minimes: "Spa et restaurant gastronomique.",
+      golf: "Golf, ouvert aux joueurs de passage.",
     },
   },
   informations: {
@@ -359,15 +441,15 @@ const fr = {
       },
       plane: {
         title: "En avion",
-        text: "L'aéroport le plus pratique est Marseille-Provence. Depuis l'aéroport, le plus simple est de louer une voiture, ou de rejoindre un autre invité grâce au tableau de covoiturage ci-dessous.",
+        text: "L'aéroport le plus pratique est Marseille-Provence, à environ 1h15 de route du Couvent. Sur place, tous les grands loueurs sont représentés — Avis, Hertz, Europcar, Sixt, Enterprise, Budget. Vous pouvez aussi rejoindre un autre invité grâce au tableau de covoiturage ci-dessous.",
       },
       train: {
         title: "En train",
-        text: "Les gares les plus pratiques sont Aix-en-Provence TGV et Manosque-Gréoux-les-Bains. Une voiture sera ensuite nécessaire pour rejoindre le Couvent : le tableau de covoiturage ci-dessous permet de trouver une place auprès d'un autre invité.",
+        text: "Les gares les plus pratiques sont Aix-en-Provence TGV (environ 1h de route), Avignon TGV (1h20) et Manosque-Gréoux-les-Bains, la plus proche. Une voiture sera ensuite nécessaire pour rejoindre le Couvent : les grands loueurs sont présents dans les deux gares TGV, et le tableau de covoiturage ci-dessous permet de trouver une place auprès d'un autre invité.",
       },
       car: {
         title: "En voiture et parking",
-        text: "Depuis l'A51, prenez la sortie Manosque puis comptez environ 25 minutes de route jusqu'à Reillanne. Un parking gratuit est disponible à l'entrée du Couvent. Si vous venez en voiture, pensez à inscrire votre trajet ci-dessous : d'autres invités pourront vous rejoindre.",
+        text: "L'adresse à indiquer au GPS est : Couvent Notre-Dame des Prés, 704 route de la Gare, 04110 Reillanne. Depuis l'A51, prenez la sortie Manosque puis comptez environ 25 minutes de route jusqu'à Reillanne. Un parking gratuit est disponible à l'entrée du Couvent. Si vous venez en voiture, pensez à inscrire votre trajet ci-dessous : d'autres invités pourront vous rejoindre.",
       },
     },
     routes: {
@@ -558,6 +640,18 @@ const fr = {
         a: "Nous avons repéré plusieurs adresses à proximité, réunies sur la page Hébergements : ce sont des suggestions, sans aucune chambre retenue pour le mariage. Chacun réserve librement, directement auprès de l'établissement et en son nom. Nous vous recommandons de vous y prendre assez tôt, le mois de juin étant très demandé en Provence.",
       },
       {
+        q: "Où déjeuner le samedi midi ?",
+        cta: "Voir les adresses de la région",
+        ctaTo: "region",
+        a: "Aucun déjeuner n'est prévu au Couvent le samedi midi. Plusieurs restaurants se trouvent à moins de dix minutes, à Reillanne, Villemus ou Montfuron : nous en avons réuni les adresses et les numéros sur la page La région, avec les fourchettes de prix. Mieux vaut réserver, les tables de village étant peu nombreuses.",
+      },
+      {
+        q: "Que faire aux alentours avant ou après le week-end ?",
+        cta: "Voir les adresses de la région",
+        ctaTo: "region",
+        a: "Le Luberon se parcourt à pied, à vélo ou à cheval, et les villages provençaux les plus connus — Forcalquier, Lourmarin, Gordes, Roussillon — sont tous à moins d'une heure. Vol en montgolfière, spa et golf sont également possibles : les adresses et les numéros sont sur la page La région.",
+      },
+      {
         q: "Où se garer ?",
         cta: "",
         ctaTo: "",
@@ -630,6 +724,7 @@ const en: Translated<typeof fr> = {
     lieu: { label: "The Couvent", hint: "Couvent Notre-Dame des Prés" },
     informations: { label: "Travel & info", hint: "Getting there, dress code & parking" },
     hebergements: { label: "Where to stay", hint: "Places to stay nearby" },
+    region: { label: "Nearby", hint: "Restaurants, shops and things to do" },
     galerie: { label: "Gallery", hint: "The Couvent in pictures" },
     faq: { label: "Questions", hint: "Useful information" },
   },
@@ -695,6 +790,11 @@ const en: Translated<typeof fr> = {
         label: "Where to stay",
         text: "Our selection of places to stay around Reillanne and Forcalquier.",
         alt: "Vaulted Couvent corridor with potted olive trees",
+      },
+      region: {
+        label: "Nearby",
+        text: "Restaurants, last-minute shopping, hair and beauty, and things to do nearby.",
+        alt: "Couvent rooftops and the view over the valley",
       },
     },
     gallery: {
@@ -783,10 +883,13 @@ const en: Translated<typeof fr> = {
       parc: "The Couvent gardens and their century-old trees",
     },
     practical: [
-      { title: "Address", text: "Couvent Notre-Dame des Prés, 04110 Reillanne, Provence" },
+      {
+        title: "Address",
+        text: "Couvent Notre-Dame des Prés, 704 route de la Gare, 04110 Reillanne, Provence",
+      },
       {
         title: "Travel times",
-        text: "Aix-en-Provence 1 hr · Marseille 1 hr 30 · Avignon 1 hr 15 · Nice 2 hr 15",
+        text: "Aix-en-Provence TGV 1 hr · Marseille-Provence airport 1 hr 15 · Avignon TGV 1 hr 20 · Nice 2 hr 15",
       },
       {
         title: "Parking",
@@ -842,8 +945,9 @@ const en: Translated<typeof fr> = {
       "Here are the places we have found around the Couvent. They are suggestions: everyone books whichever suits them best. You will also find plenty of Airbnb rentals around Reillanne and Forcalquier. We recommend doing so early, as June is a popular time to visit Provence.",
     heroAlt: "Vaulted Couvent corridor with potted olive trees",
     listEyebrow: "Our recommendations",
+    sleeps: "beds",
     listHeading:
-      "Ten places to stay, ranging from a short walk to around twenty minutes by car from the Couvent.",
+      "Fifteen places to stay, from a short walk to half an hour by car from the Couvent.",
     listNote:
       "No rooms are being held for the wedding: each address below is simply a suggestion, to be booked directly and freely with the property, in your own name. There is no accommodation available on site at the Couvent. Prices are indicative and should be confirmed when booking.",
     footer:
@@ -870,6 +974,7 @@ const en: Translated<typeof fr> = {
       d20: "20 min by car",
       d21: "21 min by car",
       d25: "25 min by car",
+      d30: "30 min by car",
     },
     items: {
       paradis: {
@@ -924,12 +1029,81 @@ const en: Translated<typeof fr> = {
         description: "The most affordable option on our list.",
         badge: "",
       },
+      bastideNeuve: {
+        type: "Gîte",
+        description: "A large house in Céreste, made for a group wishing to stay together.",
+        badge: "Great for friends",
+      },
+      bastidone: {
+        type: "Gîte",
+        description: "An estate in Céreste, also suited to a large group.",
+        badge: "Great for friends",
+      },
+      maisonBleue: {
+        type: "Gîte",
+        description: "A house in the heart of the village of Céreste, to be shared by a group.",
+        badge: "",
+      },
       ribiera: {
         type: "Hotel · from €280 / night",
         description:
           "A twelve-hectare estate at Niozelles, near Forcalquier, with a spa, a golf course and a fine-dining restaurant.",
         badge: "Great for couples",
       },
+      mautanne: {
+        type: "Hotel",
+        description: "A hotel with a golf course and a bistronomic restaurant, near Saint-Tulle.",
+        badge: "",
+      },
+    },
+  },
+  region: {
+    title: "Around the Couvent — Alexandra & Thomas",
+    description:
+      "Local addresses around the Couvent Notre-Dame des Prés: where to have lunch, last-minute shopping, hair and beauty, and things to do in the area.",
+    eyebrow: "Around the Couvent",
+    heading: "Local addresses worth knowing",
+    intro:
+      "The Couvent gives its guests a short guide to the area. Here is the essential of it: somewhere to have lunch before the ceremony, a shop for whatever you forgot, a hairdresser, and a few ideas for the days around the weekend.",
+    heroAlt: "Couvent façade lined with olive trees and lavender",
+    fromCouvent: "from the Couvent",
+    call: "Call",
+    source:
+      "Addresses taken from the Couvent Notre-Dame des Prés guest guide, 2025 edition. Prices and opening hours may have changed since: a phone call before setting off is the safest bet.",
+    groups: {
+      dejeuner: {
+        title: "Lunch",
+        note: "Prices are a guide, for a starter and a main or a main and a dessert. Driving times are estimated from the Couvent.",
+      },
+      achats: {
+        title: "Last-minute shopping",
+        note: "A forgotten shirt, a pair of tights, a bottle to bring along: all of it can be found in Reillanne, Céreste or Manosque.",
+      },
+      beaute: {
+        title: "Hair and beauty",
+        note: "Do book ahead: these are small village salons, and there will be a lot of us over the same weekend.",
+      },
+      activites: {
+        title: "Things to do nearby",
+        note: "For those staying on in Provence for a few days.",
+      },
+    },
+    notes: {
+      superU: "Everyday essentials: toiletries, food and anything forgotten.",
+      cave: "Wine merchant: local wines and champagne.",
+      maison123: "Womenswear: blouses, dresses, jackets.",
+      victorine: "Womenswear: blouses, dresses, jackets.",
+      jackJones: "Menswear: shirts and jackets.",
+      kj: "Hairdresser, for men and women.",
+      source: "Hair and beauty treatments.",
+      ae: "Hairdresser.",
+      luberon: "The range can be walked or cycled, starting from Reillanne itself.",
+      cheval: "Horse riding in the Luberon.",
+      montgolfiere: "Hot-air balloon flights over Haute-Provence.",
+      villages:
+        "Saint-Michel-l'Observatoire, Forcalquier, Lourmarin, Gordes and Roussillon, all less than an hour away.",
+      minimes: "Spa and fine-dining restaurant.",
+      golf: "Golf course, open to visiting players.",
     },
   },
   informations: {
@@ -952,15 +1126,15 @@ const en: Translated<typeof fr> = {
       },
       plane: {
         title: "By plane",
-        text: "The most convenient airport is Marseille-Provence. From the airport, the simplest option is to rent a car, or to join another guest through the ride-sharing board below.",
+        text: "The most convenient airport is Marseille-Provence, around 1 hr 15 by road from the Couvent. All the major rental companies are represented there — Avis, Hertz, Europcar, Sixt, Enterprise, Budget. You can also join another guest through the ride-sharing board below.",
       },
       train: {
         title: "By train",
-        text: "The most convenient stations are Aix-en-Provence TGV and Manosque-Gréoux-les-Bains. You will need a car for the final part of the journey: the ride-sharing board below lets you find a seat with another guest.",
+        text: "The most convenient stations are Aix-en-Provence TGV (around 1 hr by road), Avignon TGV (1 hr 20) and Manosque-Gréoux-les-Bains, the closest one. You will need a car for the final part of the journey: the major rental companies are present at both TGV stations, and the ride-sharing board below lets you find a seat with another guest.",
       },
       car: {
         title: "By car and parking",
-        text: "From the A51 motorway, take the Manosque exit and allow approximately 25 minutes to reach Reillanne. Free parking is available at the entrance to the Couvent. If you are driving, do post your journey below: other guests may be able to join you.",
+        text: "The address to give your GPS is: Couvent Notre-Dame des Prés, 704 route de la Gare, 04110 Reillanne. From the A51 motorway, take the Manosque exit and allow approximately 25 minutes to reach Reillanne. Free parking is available at the entrance to the Couvent. If you are driving, do post your journey below: other guests may be able to join you.",
       },
     },
     routes: {
@@ -1146,6 +1320,18 @@ const en: Translated<typeof fr> = {
         cta: "See where to stay",
         ctaTo: "hebergements",
         a: "We have found several places nearby, gathered on the Where to stay page: they are suggestions, with no rooms held for the wedding. Everyone books freely, directly with the property and in their own name. We recommend booking early, as June is a particularly popular time in Provence.",
+      },
+      {
+        q: "Where can we have lunch on Saturday?",
+        cta: "See local addresses",
+        ctaTo: "region",
+        a: "No lunch is planned at the Couvent on Saturday. Several restaurants are less than ten minutes away, in Reillanne, Villemus or Montfuron: we have gathered their addresses, phone numbers and price ranges on the Nearby page. Do book ahead — village restaurants are few and small.",
+      },
+      {
+        q: "What is there to do around the Couvent before or after the weekend?",
+        cta: "See local addresses",
+        ctaTo: "region",
+        a: "The Luberon can be explored on foot, by bike or on horseback, and the best-known Provençal villages — Forcalquier, Lourmarin, Gordes, Roussillon — are all less than an hour away. Hot-air balloon flights, a spa and a golf course are options too: addresses and phone numbers are on the Nearby page.",
       },
       {
         q: "Where can I park?",

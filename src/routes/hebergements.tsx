@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Phone } from "lucide-react";
 import { SITE_URL } from "@/lib/site";
 import couloir from "@/assets/couloir.webp";
 import { PageHero } from "@/components/page-hero";
 import { Reveal } from "@/components/reveal";
 import { cn } from "@/lib/utils";
 import { translations, useT } from "@/lib/i18n";
-import { stays } from "@/lib/hebergements";
+import { stayDetails, stays } from "@/lib/hebergements";
+import { telHref } from "@/lib/region";
 
 export const Route = createFileRoute("/hebergements")({
   head: ({ match }) => {
@@ -69,43 +70,73 @@ function Page() {
         </Reveal>
 
         <div className="mt-16 grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-          {stays.map((s, i) => (
-            <Reveal
-              key={s.id}
-              delay={i * 70}
-              className={cn(
-                "flex flex-col p-8 transition-colors duration-500 sm:p-10",
-                "highlight" in s ? "bg-sand/50 hover:bg-sand/70" : "bg-background hover:bg-sand/25",
-              )}
-            >
-              <div className="flex items-baseline justify-between gap-4">
-                <p className="font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.66rem] sm:tracking-[0.24em]">
-                  {h.distances[s.distance]}
+          {stays.map((s, i) => {
+            const d = stayDetails(s);
+            return (
+              <Reveal
+                key={s.id}
+                delay={i * 70}
+                className={cn(
+                  "flex flex-col p-8 transition-colors duration-500 sm:p-10",
+                  "highlight" in s
+                    ? "bg-sand/50 hover:bg-sand/70"
+                    : "bg-background hover:bg-sand/25",
+                )}
+              >
+                <div className="flex items-baseline justify-between gap-4">
+                  <p className="font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.66rem] sm:tracking-[0.24em]">
+                    {h.distances[s.distance]}
+                  </p>
+                  {"stars" in s ? (
+                    <p className="shrink-0 text-[0.8rem] text-muted-foreground">{s.stars}</p>
+                  ) : null}
+                </div>
+
+                <h2 className="mt-4 font-serif text-[1.45rem] leading-snug font-light text-ink">
+                  {s.name}
+                </h2>
+
+                <p className="mt-2 text-[0.82rem] tracking-wide text-muted-foreground/80">
+                  {h.items[s.id].type}
                 </p>
-                {"stars" in s ? (
-                  <p className="shrink-0 text-[0.8rem] text-muted-foreground">{s.stars}</p>
+
+                <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">
+                  {h.items[s.id].description}
+                </p>
+
+                {/* Adresse, couchages et numéro viennent du guide du Couvent :
+                  de quoi réserver sans repartir en recherche. Ils manquent là
+                  où le guide ne les donne pas. */}
+                {d.address || d.sleeps || d.phone ? (
+                  <div className="mt-5 space-y-1.5 text-[0.82rem] leading-relaxed text-muted-foreground/80">
+                    {d.address ? <p>{d.address}</p> : null}
+                    <p className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      {d.sleeps ? (
+                        <span>
+                          {d.sleeps} {h.sleeps}
+                        </span>
+                      ) : null}
+                      {d.phone ? (
+                        <a
+                          href={telHref(d.phone)}
+                          className="inline-flex min-h-8 items-center gap-2 text-ink transition-colors hover:text-olive"
+                        >
+                          <Phone className="size-3.5 shrink-0 text-olive" strokeWidth={1.3} />
+                          {d.phone}
+                        </a>
+                      ) : null}
+                    </p>
+                  </div>
                 ) : null}
-              </div>
 
-              <h2 className="mt-4 font-serif text-[1.45rem] leading-snug font-light text-ink">
-                {s.name}
-              </h2>
-
-              <p className="mt-2 text-[0.82rem] tracking-wide text-muted-foreground/80">
-                {h.items[s.id].type}
-              </p>
-
-              <p className="mt-5 text-[0.92rem] leading-relaxed text-muted-foreground">
-                {h.items[s.id].description}
-              </p>
-
-              {h.items[s.id].badge ? (
-                <p className="mt-auto pt-6 font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.64rem]">
-                  {h.items[s.id].badge}
-                </p>
-              ) : null}
-            </Reveal>
-          ))}
+                {h.items[s.id].badge ? (
+                  <p className="mt-auto pt-6 font-display text-[0.75rem] tracking-[0.2em] uppercase text-olive sm:text-[0.64rem]">
+                    {h.items[s.id].badge}
+                  </p>
+                ) : null}
+              </Reveal>
+            );
+          })}
 
           {/* Deux cartes de plus, dans la même grille : notre sélection n'a
               rien d'exhaustif. Les recherches sont pré-remplies — Reillanne,

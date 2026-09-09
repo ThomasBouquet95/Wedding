@@ -10,6 +10,7 @@ export const navPaths = [
   { to: "/lieu", key: "lieu" },
   { to: "/informations", key: "informations" },
   { to: "/hebergements", key: "hebergements" },
+  { to: "/region", key: "region" },
   { to: "/galerie", key: "galerie" },
   { to: "/faq", key: "faq" },
 ] as const;
@@ -123,7 +124,10 @@ export function SiteHeader() {
             A<span className={solid ? "text-olive" : "text-background/70"}>&amp;</span>T
           </Link>
 
-          <nav className="hidden items-center gap-6 lg:flex lg:justify-self-center xl:gap-8">
+          {/* Sept liens : à 1024 px, l'écartement de 1,5 rem faisait toucher le
+              dernier lien et le sélecteur de langue. Il s'ouvre avec la place
+              disponible. */}
+          <nav className="hidden items-center gap-4 lg:flex lg:justify-self-center xl:gap-7 2xl:gap-8">
             {navPaths.slice(1).map((link) => (
               <Link
                 key={link.to}

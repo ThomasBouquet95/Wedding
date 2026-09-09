@@ -17,6 +17,7 @@ import { Route as HebergementsRouteImport } from './routes/hebergements'
 import { Route as InformationsRouteImport } from './routes/informations'
 import { Route as LieuRouteImport } from './routes/lieu'
 import { Route as ProgrammeRouteImport } from './routes/programme'
+import { Route as RegionRouteImport } from './routes/region'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +59,11 @@ const ProgrammeRoute = ProgrammeRouteImport.update({
   path: '/programme',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegionRoute = RegionRouteImport.update({
+  id: '/region',
+  path: '/region',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/informations': typeof InformationsRoute
   '/lieu': typeof LieuRoute
   '/programme': typeof ProgrammeRoute
+  '/region': typeof RegionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/informations': typeof InformationsRoute
   '/lieu': typeof LieuRoute
   '/programme': typeof ProgrammeRoute
+  '/region': typeof RegionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/informations': typeof InformationsRoute
   '/lieu': typeof LieuRoute
   '/programme': typeof ProgrammeRoute
+  '/region': typeof RegionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/informations'
     | '/lieu'
     | '/programme'
+    | '/region'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/informations'
     | '/lieu'
     | '/programme'
+    | '/region'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/informations'
     | '/lieu'
     | '/programme'
+    | '/region'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   InformationsRoute: typeof InformationsRoute
   LieuRoute: typeof LieuRoute
   ProgrammeRoute: typeof ProgrammeRoute
+  RegionRoute: typeof RegionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProgrammeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/region': {
+      id: '/region'
+      path: '/region'
+      fullPath: '/region'
+      preLoaderRoute: typeof RegionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   InformationsRoute: InformationsRoute,
   LieuRoute: LieuRoute,
   ProgrammeRoute: ProgrammeRoute,
+  RegionRoute: RegionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

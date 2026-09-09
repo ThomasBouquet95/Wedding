@@ -54,6 +54,7 @@ export const Route = createFileRoute("/faq")({
 const TARGETS = {
   covoiturage: { to: "/informations", hash: "covoiturage" },
   hebergements: { to: "/hebergements" },
+  region: { to: "/region" },
 } as const;
 
 function Page() {
